@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Panels>
+  <Panel ID="1" Title="Enemy Debuffs" DisplayTargetInfo="true">
+    <Rows>
+      <Row DisplayText="Devour Dexterity" Color="0.7f, 0.7f, 0.7f, 0.7f" Persistant="true" ShowUpTime="true" Position="1"/>
+      <Row DisplayText="Devour Strength" Color="0.6f, 0.6f, 0.6f, 0.6f" Persistant="true" ShowUpTime="true" Position="2"/>
+      <Row DisplayText="Devour Presence" Color="0.5f, 0.5f, 0.5f, 0.5f" Persistant="true" ShowUpTime="true" Position="3"/>
+    </Rows>
+  </Panel>
+	<Panel ID="2" Title="Healer Assistant" DisplayTargetInfo="false">
+    <Rows>
+		<Row DisplayText="Thorncoat" Color="0.7f, 0.7f, 0.7f, 0.7f" Persistant="false" ShowUpTime="false" Position="1"/>
+		<Row DisplayText="Verdanfire Seed" Color="0.6f, 0.6f, 0.6f, 0.6f" Persistant="false" ShowUpTime="false" Position="2"/>
+		<Row DisplayText="Verdanfire Seed" Color="0.5f, 0.5f, 0.5f, 0.5f" Persistant="false" ShowUpTime="false" Position="3"/>
+    </Rows>
+  </Panel>
+</Panels>
