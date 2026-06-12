@@ -103,27 +103,30 @@ namespace FlexiBuffDisplayPannel
                     // Update this immediatly so we dont flood in here
                     _timeSinceLastUpdate = 0f;
 
-                    // Update the progress bars
-                    EntityManager.EntityManager.UpdateDurationRemaining();
-
-                    // Call the entitiy manager and get it to update the uptime timers
-                    EntityManager.EntityManager.UpdateEncounterUpTime();
                     EntityData partyEntityData = EntityManager.EntityManager.GetEntityData(Globals.Party);
-                    MelonLogger.Warning($"OnUpdate() 1 partyEntityData.debuffData.Count = {partyEntityData.debuffData.Count}");
                     EntityData enemyEntityData = new EntityData();
 
                     // If gCurrentTargetNetworkId is not populated there is no debuff information to update
                     if (!gCurrentTargetNetworkId.Equals(""))
                     {
                         enemyEntityData = EntityManager.EntityManager.GetEntityData(gCurrentTargetNetworkId);
-                        MelonLogger.Warning($"OnUpdate() 1 enemyEntityData.debuffData.Count = {enemyEntityData.debuffData.Count}");
                         // This will occur If the current entity despawns whilst targetted, dont try and update anything
                         if (enemyEntityData == null)
                         {
                             //MelonLogger.Error($"OnUpdate() NO ENTITY DATA IN ONUPDATE gCurrentTargetNetworkId = {gCurrentTargetNetworkId}");
                             gCurrentTargetNetworkId = "";
                         }
+                        // If the enemy is dead, remove all the debuffs
+                        if (enemyEntityData.isDead == true)
+                        {
+                            enemyEntityData.debuffData.Clear();
+                        }
                     }
+
+                    // Update the progress bars
+                    EntityManager.EntityManager.UpdateDurationRemaining();
+                    // Call the entitiy manager and get it to update the uptime timers
+                    EntityManager.EntityManager.UpdateEncounterUpTime();
                     // We must always update the panels as we may have party related information to update
                     gDebuffPanel.ClearPanels();
                     gDebuffPanel.UpdatePanels(enemyEntityData, partyEntityData);
