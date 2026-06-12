@@ -64,7 +64,6 @@ namespace FlexiBuffDisplayPannel
         public string color;
         public string persistant; // determines if the row will dissapear when timer reaches zero
         public string showUpTime; // Determines if uptime will be dispalyed for this row
-        public string position; // Determines the position of the row in the panel
     };
 
 
@@ -83,10 +82,12 @@ namespace FlexiBuffDisplayPannel
         // Debuffs we want to ignore
         private static readonly string[] DebuffBlacklist = { TraitSubString, "Mana Guzzle", "Taunt Immunity", "Temporary Invulnerability", EntityStatusType.Silenced.ToString(), EntityStatusType.Stunned.ToString(), EntityStatusType.Feared.ToString(), "Taunt"};
         private static ConfigParser configParser = new ConfigParser();
+        private static Dictionary<string, PanelConfig> panelConfigDictionary = new Dictionary<string, PanelConfig>();
 
         public override void OnInitializeMelon() {
+            configParser.ParseConfig(ref panelConfigDictionary);
             // Parse out the config to populate the panels and rows
-            configParser.ParseConfig();
+            gDebuffPanel.SetPanelConfig(ref panelConfigDictionary);
         }
 
         // Updates the duration timers on the panel
@@ -125,7 +126,7 @@ namespace FlexiBuffDisplayPannel
                         if (entityData.isDead == false)
                         {
                             // If we have a valid debuff list for the current target, update the screen
-                            gDebuffPanel.UpdatePanel(entityData);
+                            gDebuffPanel.UpdatePanels(entityData);
                         }
                     }
                 }
@@ -151,10 +152,12 @@ namespace FlexiBuffDisplayPannel
         // Called to show the debuff panel
         public static void ShowDebuffPanel()
         {
+            MelonLogger.Warning($"ShowDebuffPanel() 1");
             // Display the panel if the gloabl is set to allow it
             if (Globals.ShowDebuffPanel == true)
             {
-                gDebuffPanel.ShowDebuffPanel();
+                MelonLogger.Warning($"ShowDebuffPanel() 2");
+                gDebuffPanel.ShowDebuffPanels();
             }
         }
 
@@ -184,7 +187,7 @@ namespace FlexiBuffDisplayPannel
                 }
 
                 // Clear out the user visible data
-                gDebuffPanel.ClearPanel();
+                gDebuffPanel.ClearPanels();
                 // Clear out the row data from the panel
                 ClearPanelLists();
 
@@ -256,7 +259,7 @@ namespace FlexiBuffDisplayPannel
                 if (entityData.debuffData == null)
                 {
                     // update the debuff list to be empty
-                    gDebuffPanel.ClearPanel();
+                    gDebuffPanel.ClearPanels();
                     return;
                 }
 
@@ -275,8 +278,8 @@ namespace FlexiBuffDisplayPannel
                         // Only update the panel if we are looking at this exact entity
                         if (entityData.entityNetworkId == buff.Target.NetworkId.ToString() && entityData.entityNetworkId == gCurrentTargetNetworkId)
                         {
-                            gDebuffPanel.ClearPanel();
-                            gDebuffPanel.UpdatePanel(entityData);
+                            gDebuffPanel.ClearPanels();
+                            gDebuffPanel.UpdatePanels(entityData);
                         }
                     }
                 }
@@ -327,7 +330,7 @@ namespace FlexiBuffDisplayPannel
                     {
                         //MelonLogger.Warning($"OnAddOrRefreshDebuff() 2 UpdateDebuffPanel entityData.entityNetworkId = {entityData.entityNetworkId}, buff.Target.NetworkId.ToString() = {buff.Target.NetworkId.ToString()}, gCurrentTargetNetworkId = {gCurrentTargetNetworkId.ToString()}");
                         EntityManager.EntityManager.AddEntityToUniqueDebuffs(buff.Target?.NetworkId.ToString(), newDebuff.debuffName);
-                        gDebuffPanel.UpdatePanel(entityData);
+                        gDebuffPanel.UpdatePanels(entityData);
                     }
                 }
             }
@@ -342,7 +345,7 @@ namespace FlexiBuffDisplayPannel
             {
                 // Either the user has pressed ESC so they are targetting nothing or something has gone wrong somewhere
                 gCurrentTargetNetworkId = "";
-                gDebuffPanel.ClearPanel();
+                gDebuffPanel.ClearPanels();
                 return;
             }
 
@@ -361,8 +364,8 @@ namespace FlexiBuffDisplayPannel
             }
 
             // Reset the panel, we must do this to clear the window when somebody switches to a new target
-            gDebuffPanel.ClearPanel();
-            gDebuffPanel.UpdatePanel(entityData);
+            gDebuffPanel.ClearPanels();
+            gDebuffPanel.UpdatePanels(entityData);
 
             // Store this for use in OnUpdate()
             gCurrentTargetNetworkId = targetLogic.Offensive.NetworkId.ToString();

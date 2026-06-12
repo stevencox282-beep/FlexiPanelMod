@@ -1,4 +1,5 @@
 ﻿using FlexiBuffDisplayPannel;
+using Il2CppServiceStack;
 using MelonLoader;
 using System.Xml;
 
@@ -8,7 +9,7 @@ namespace FlexiBuffDisplayPanel.ConfigParser
     {
 
         // Parses the Panel configuration from the XML file and uses it to setup the panels
-        public void ParseConfig()
+        public void ParseConfig(ref Dictionary<string, PanelConfig> panelConfigDictionary)
         {
             PanelConfig panelConfig = new PanelConfig();
 
@@ -49,11 +50,15 @@ namespace FlexiBuffDisplayPanel.ConfigParser
                     rowConfig.color = rowAttributes["Color"].Value;
                     rowConfig.persistant = rowAttributes["Persistant"].Value;
                     rowConfig.showUpTime = rowAttributes["ShowUpTime"].Value;
-                    rowConfig.position = rowAttributes["Position"].Value;
                     panelConfig.rowConfig.Add(rowConfig);
 
-                    MelonLogger.Warning($"RowConfig() displayText = {rowConfig.displayText}, color = {rowConfig.color}, persistant = {rowConfig.persistant}, showUpTime = {rowConfig.showUpTime}, position = {rowConfig.position}");
+                    MelonLogger.Warning($"RowConfig() displayText = {rowConfig.displayText}, color = {rowConfig.color}, persistant = {rowConfig.persistant}, showUpTime = {rowConfig.showUpTime}");
 
+                }
+                // If we have a new panel, add it
+                if (!panelConfig.panelID.IsEmpty())
+                {
+                    panelConfigDictionary.Add(panelConfig.panelID, panelConfig);
                 }
             }
         }
