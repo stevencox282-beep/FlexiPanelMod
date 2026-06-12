@@ -9,8 +9,12 @@ public static class Globals
     public static bool PlayerIsLoaded = false;
     public static int PlayerLevel = 0;
     public static bool ShowDebuffPanel = true;
+    public static List<string> GroupMembers = new List<string>();
+    public static string PlayerNetworkId = string.Empty;
     public static EntityPlayerGameObject? LocalPlayer = null;
-    
+    public static string Party = "Party";
+
+
     public static string SetNumberOfRowsCommand = "setdebuffrows";
     public static int NumDisplayableDebuffs = 10;
     

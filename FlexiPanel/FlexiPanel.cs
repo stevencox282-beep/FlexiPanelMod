@@ -3,8 +3,10 @@ using Il2CppPantheonPersist;
 using Il2CppServiceStack;
 using Il2CppTMPro;
 using MelonLoader;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
 
 namespace FlexiBuffDisplayPannel.FlexiPanel
@@ -388,24 +390,28 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         }
 
         // Update the text displayed in the Debuff Box
-        public void UpdatePanels(EntityData entityData)
+        public void UpdatePanels(EntityData enemyEntityData, EntityData partyEntityData)
         {
-            MelonLogger.Warning($"UpdatePanels() 1");
+            MelonLogger.Warning($"UpdatePanels() 1 enemyEntityData.debuffData.Count = {enemyEntityData.debuffData.Count}, partyEntityData.debuffData.Count = {partyEntityData.debuffData.Count} ");
+            EntityData entityData = MergeEntityData(enemyEntityData, partyEntityData);
+            MelonLogger.Warning($"UpdatePanels() 2 enemyEntityData.debuffData.Count = {enemyEntityData.debuffData.Count}, partyEntityData.debuffData.Count = {partyEntityData.debuffData.Count} ");
+            MelonLogger.Warning($"UpdatePanels() 2 entityData.debuffData.Count = {entityData.debuffData.Count}");
+
+
             // Try and stop unwanted access to the panel to prevent exceptions
-            if (uiWindowPanelList.Count > 0 && entityData.entityNetworkId != null & entityData.entityNetworkId != "" && !entityData.targetName.IsEmpty())
+            if (uiWindowPanelList.Count > 0)
             {
-                MelonLogger.Warning($"UpdatePanels() 2");
+//                MelonLogger.Warning($"UpdatePanels() 2");
                 // Get the difference in levels between player and entity
                 int levelDelta = entityData.entityLevel - Globals.PlayerLevel;
                 string levelDeltaString = (levelDelta < 0) ? $"{levelDelta}" : $"+{levelDelta}";
-                pullMessage = $"Pulling {entityData.targetName.ToUpperSafe()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
-                popMessage = $"POP {entityData.targetName.ToUpperSafe()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
+
 
                 // We must now search every panel and find if that panel is tracking this buff/debuff and if it is follow its row rules
-                MelonLogger.Warning($"UpdatePanels() 3");
+//                MelonLogger.Warning($"UpdatePanels() 3");
                 foreach (UIWindowPanel uiWindowPanel in uiWindowPanelList)
                 {
-                    MelonLogger.Warning($"UpdatePanels() 4");
+//                    MelonLogger.Warning($"UpdatePanels() 4");
                     // Get the panel details for this window
                     string panelID = uiWindowPanel._displayName;
                     PanelConfig panelConfig = gPanelConfigDictionary[panelID];
@@ -417,24 +423,25 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                     // Update the target information, leave the leading space in
                     foreach (Transform targetTransform in targetTransformList)
                     {
-                        MelonLogger.Warning($"UpdatePanels() 5");
+//                        MelonLogger.Warning($"UpdatePanels() 5");
                         targetTransform.GetComponent<TextMeshProUGUI>().text = $" <b>Target:</b> {entityData.targetName.ToUpperSafe()}({levelDeltaString}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
                     }
 
-                    MelonLogger.Warning($"UpdatePanels() 6");
+//                    MelonLogger.Warning($"UpdatePanels() 6");
                     // Tracks the row in the panel that is the next to use
                     int panelDisplayIndex = 0;
                     // Parse the list of all viable rows then find a mtach in the buffs list on the current target and update the rows for the panel
                     foreach (RowConfig rowConfig in panelConfig.rowConfig)
                     {
+                        // Search every buff for the row that contains the buff in the RowConfig
                         for (int i = 0; (i < entityData.debuffData.Count && i < Globals.NumDisplayableDebuffs); i++)
                         {
-                            MelonLogger.Warning($"UpdatePanels() 7 i = {i}");
+//                            MelonLogger.Warning($"UpdatePanels() 7 i = {i}");
                             DebuffData debuff = entityData.debuffData[i];
-                            MelonLogger.Warning($"UpdatePanels() 8 debuff.debuffName = {debuff.debuffName}, rowConfig.displayText = {rowConfig.displayText}");
+//                            MelonLogger.Warning($"UpdatePanels() 8 debuff.debuffName = {debuff.debuffName}, rowConfig.displayText = {rowConfig.displayText}");
                             if (debuff.debuffName.Contains(rowConfig.displayText))
                             {
-                                MelonLogger.Warning($"UpdatePanels() 9 Match found. debuff.debuffName = {debuff.debuffName} contains rowConfig.displayText {rowConfig.displayText}");
+                                //MelonLogger.Warning($"UpdatePanels() 9 Match found. entityData.debuffData.Count = {entityData.debuffData.Count}  debuff.debuffName = {debuff.debuffName} contains rowConfig.displayText {rowConfig.displayText}, i = {i}, panelDisplayIndex = {panelDisplayIndex}");
                                 // Found a required buff/debuff, update the panel with this data
                                 textMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $" {debuff.debuffName} ({debuff.numStacks}/{debuff.maxStacks}), ({debuff.casterName})";
 
@@ -466,6 +473,61 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                 }
             }
         }
+
+        // This function takes the current enemies debuffs anad the party buffs and merges them into a single EntityData to make the update of the display panels simpler
+        public EntityData MergeEntityData(EntityData enemyEntityData, EntityData partyEntityData)
+        {
+            MelonLogger.Warning($"MergeEntityData() 1 enemyEntityData.debuffData.Count = {enemyEntityData.debuffData.Count}, partyEntityData.debuffData.Count = {partyEntityData.debuffData.Count}");
+            EntityData finalEntityData = new EntityData();
+            MelonLogger.Warning($"MergeEntityData() 2 finalEntityData.debuffData.Count = {finalEntityData.debuffData.Count}");
+
+            CopyByValue(partyEntityData, ref finalEntityData);
+            CopyByValue(enemyEntityData, ref finalEntityData);
+            MelonLogger.Warning($"MergeEntityData() 5 finalEntityData.debuffData.Count = {finalEntityData.debuffData.Count}");
+
+            // This MUST be a copy by value, otherwise a reference to enemyEntityData.dbeuffData is created and enemyEntityData.debuffData constaly doubles in size each call to OnUpdate()
+            
+            MelonLogger.Warning($"MergeEntityData() 8 finalEntityData.debuffData.Count = {finalEntityData.debuffData.Count}");
+            return finalEntityData;
+        }
+
+        private static void CopyByValue(EntityData source, ref EntityData destination)
+        {
+            destination.traits = source.traits;
+            destination.isDead = source.isDead;
+            destination.encounterStartTime = source.encounterStartTime;
+            destination.entityLevel = source.entityLevel;
+            destination.entityNetworkId = source.entityNetworkId;
+            destination.totalEncounterTime = source.totalEncounterTime;
+            destination.targetClass = source.targetClass;
+            destination.targetKind = source.targetKind;
+            destination.targetName = source.targetName;
+
+            // Now copy by value to avoid the nasty duplication caused if you copy using a reference
+            MelonLogger.Warning($"MergeEntityData() 6");
+            foreach (var buff in source.debuffData)
+            {
+                MelonLogger.Warning($"MergeEntityData() 7 buff = {buff.debuffName}");
+                DebuffData newDebuffdata = new DebuffData();
+                newDebuffdata.debuffDuration = buff.debuffDuration;
+                newDebuffdata.debuffName = buff.debuffName;
+                newDebuffdata.debuffDurationRemaining = buff.debuffDurationRemaining;
+                newDebuffdata.targetName = buff.targetName;
+                newDebuffdata.casterName = buff.casterName;
+                newDebuffdata.casterNetworkId = buff.casterNetworkId;
+                newDebuffdata.targetNetworkId = buff.targetNetworkId;
+                newDebuffdata.consolidatedEncounterUptime = buff.consolidatedEncounterUptime;
+                newDebuffdata.consolidatedEncounterUptimePercent = buff.consolidatedEncounterUptimePercent;
+                newDebuffdata.maxStacks = buff.maxStacks;
+                newDebuffdata.numStacks = buff.numStacks;
+                newDebuffdata.spellType = buff.spellType;
+                newDebuffdata.targetClass = buff.targetClass;
+                newDebuffdata.targetKind = buff.targetKind;
+                destination.debuffData.Add(newDebuffdata);
+            }
+
+        }
+
 
         public void ShowPullMessage(EntityClientMessaging.Logic __instance)
         {

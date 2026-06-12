@@ -18,8 +18,12 @@ public class PlayerNetworkStart
         
         if (__instance.NetworkId.Value == EntityPlayerGameObject.LocalPlayerId.Value)
         {
-            Globals.PlayerIsLoaded = true;
             Globals.LocalPlayer = __instance;
+            Globals.PlayerIsLoaded = true;
+            if (Globals.PlayerNetworkId.Equals(string.Empty))
+            {
+                Globals.PlayerNetworkId = EntityPlayerGameObject.LocalPlayerId.ToString();
+            }
 
             try
             {
@@ -49,9 +53,10 @@ public class PlayerNetworkStop
 
         if (__instance.NetworkId.Value == EntityPlayerGameObject.LocalPlayerId.Value)
         {
-            Globals.PlayerIsLoaded = false;
-            Globals.PlayerLevel = 0;
             Globals.LocalPlayer = null;
+            Globals.PlayerIsLoaded = false;
+            Globals.PlayerNetworkId = string.Empty;
+            Globals.PlayerLevel = 0;
             return;
         }
     }

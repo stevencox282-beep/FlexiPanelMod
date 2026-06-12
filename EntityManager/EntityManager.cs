@@ -26,8 +26,14 @@ public static class EntityManager
 
     // List of debuffs to ignore on the entity
     private static string[] debuffBlacklist = { "Mana Guzzle", "Taunt Immunity", "Feared", "Temporary Invulnerability", "Tainted Claws", "Ready Up!", "Dripping Fangs", "Web Spray", "Icebound Familiar", "Synthetic Toxin", "Repair" };
-    private static string[] traitTargetBlacklist = { "Fading Prescence" };
+    private static string[] traitTargetBlacklist = { "Fading Presence" };
     
+    static EntityManager()
+    {
+        // We add an entity that will contain all party buffs/debuffs
+        AddEntityIfMissing(Globals.Party);
+    }
+
     // This funciton returns the entity data for a given network ID
     public static EntityData GetEntityData(string targetNetworkId)
     {
@@ -144,20 +150,23 @@ public static class EntityManager
     }
 
     // This function updates the duration remaining for all the progress bars
-    public static void UpdateDurationRemaining()
+    public static void UpdateDurationRemaining(bool removal = true)
     {
         for (int i = 0; i < gEntityDebuffDictionary.Count; i++)
         {
             EntityData entityData = gEntityDebuffDictionary.ElementAt(i).Value;
             List<DebuffData> debuffData = entityData.debuffData;
 
-            // For all debuffs for this entity
-            for (int j = 0; j < debuffData.Count; j++)
+            for (int j = debuffData.Count -1; j >= 0; j--)
             {
                 DebuffData debuff = debuffData.ElementAt(j);
                 // Update the time remaining and the size of the progress bar, stop at zero seconds
                 debuff.debuffDurationRemaining = (debuff.debuffDurationRemaining == 0) ? 0 : debuff.debuffDurationRemaining - 1;
-            } // End of FOR all debuffs for a entity
+                if (debuff.debuffDurationRemaining <= 0 && removal == true)
+                {
+                    debuffData.RemoveAt(j);
+                }
+            } // End of FOR all debuffs
         } // End of FOR all entities
     }
 
@@ -236,6 +245,7 @@ public static class EntityManager
             newMonster.entityNetworkId = targetNetworkId;
             newMonster.isDead = false;
             newMonster.debuffData = new List<DebuffData>();
+            newMonster.targetName = (targetNetworkId == Globals.Party) ? Globals.Party : string.Empty; // Set to PARTY if we are creating the party entity
             gEntityDebuffDictionary.Add(targetNetworkId, newMonster);
         }
     }
