@@ -12,7 +12,7 @@ namespace FlexiBuffDisplayPanel.ConfigParser
         public void ParseConfig(ref Dictionary<string, PanelConfig> panelConfigDictionary)
         {
             XmlDocument xmlDoc = new XmlDocument(); // Create an XML document object
-            xmlDoc.Load("ExampleConfig.xml"); // Load the XML document from the specified file
+            xmlDoc.Load(".\\UserData\\FlexiPanelConfig.xml"); // Load the XML document from the specified file
 
             // Get elements
             XmlNodeList panelsList = xmlDoc.GetElementsByTagName("Panels");

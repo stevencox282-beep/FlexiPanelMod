@@ -444,5 +444,15 @@ namespace FlexiBuffDisplayPannel
                 }
             }
         }
+
+        public static void ShowPullMessage(EntityClientMessaging.Logic __instance)
+        {
+            gDebuffPanel.ShowPullMessage(__instance);
+        }
+
+        public static void ShowPopMessage(EntityClientMessaging.Logic __instance)
+        {
+            gDebuffPanel.ShowPopMessage(__instance);
+        }
     }
 }

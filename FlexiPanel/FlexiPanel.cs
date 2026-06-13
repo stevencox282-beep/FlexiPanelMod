@@ -1,4 +1,5 @@
 ﻿using Il2Cpp;
+using Il2CppPantheonPersist;
 using Il2CppServiceStack;
 using Il2CppTMPro;
 using MelonLoader;
@@ -29,6 +30,8 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         // Holds the debuff window
         private static List<UIWindowPanel> uiWindowPanelList  = new List<UIWindowPanel>();
         private static Dictionary<string, PanelConfig> gPanelConfigDictionary = new Dictionary<string, PanelConfig>();
+        private static string pullMessage = "";
+        private static string popMessage = "";
 
         // Tidy up the alloated resources when we logout / rechange the number of rows in the panel
         public void ClearPanelLists()
@@ -410,7 +413,14 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                     // Update the panel title
                     foreach (Transform targetTransform in targetTransformList)
                     {
-                        targetTransform.GetComponent<TextMeshProUGUI>().text = panelConfig.panelTitle;
+                        if (panelConfig.displayTargetInfo.Equals("title"))
+                        {
+                            targetTransform.GetComponent<TextMeshProUGUI>().text = panelConfig.panelTitle;
+                        }
+                        else
+                        {
+                            targetTransform.GetComponent<TextMeshProUGUI>().text = $" <b>Target:</b> {entityData.targetName.ToUpperSafe()}({levelDeltaString}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
+                        }
                     }
 
                     // Tracks the row in the panel that is the next to use
@@ -514,5 +524,15 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                 destination.debuffData.Add(newDebuffdata);
             }
         }
+        public void ShowPullMessage(EntityClientMessaging.Logic __instance)
+        {
+            __instance.SendChatMessage(pullMessage, ChatChannelType.Group);
+        }
+
+        public void ShowPopMessage(EntityClientMessaging.Logic __instance)
+        {
+            __instance.SendChatMessage(popMessage, ChatChannelType.Group);
+        }
+
     }
 }

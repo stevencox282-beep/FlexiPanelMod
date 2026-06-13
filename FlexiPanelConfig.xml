@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Panels>
-  <Panel ID="1" Title="Enemy Debuffs" DisplayTargetInfo="true">
+  <Panel ID="1" Title="Enemy Debuffs" TargetOrTitle="target">
     <Rows>
       <Row DisplayText="Devour Dexterity" Color="blue" Persistant="true" ShowUpTime="true"/>
       <Row DisplayText="Devour Constitution" Color="burlyWood" Persistant="true" ShowUpTime="true"/>
@@ -15,7 +15,7 @@
       <Row DisplayText="Divine Favor" Color="lavender" Persistant="true" ShowUpTime="true"/>
     </Rows>
   </Panel>
-  <Panel ID="2" Title="More Enemy Debuffs" DisplayTargetInfo="true">
+  <Panel ID="2" Title="More Enemy Debuffs" DisplayTargetInfo="title">
     <Rows>
       <Row DisplayText="Devour Dexterity" Color="blue" Persistant="true" ShowUpTime="true"/>
       <Row DisplayText="Devour Constitution" Color="burlyWood" Persistant="true" ShowUpTime="true"/>
