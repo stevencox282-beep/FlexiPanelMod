@@ -23,11 +23,8 @@ public static class EntityManager
     // Holds the data for calculating Uptime for each debuff
     private static Dictionary<string, List<ConsolidatedUptime>> consolidatedUptimeDictionary = new Dictionary<string, List<ConsolidatedUptime>>(); // networkId, List<debuffName, uptime>
     private static Dictionary<string, List<string>> uniqueDebuffsDictionary = new Dictionary<string, List<string>>(); // NetworkId, List<debuffName>
+    private static string traitString = "Trait: ";
 
-    // List of debuffs to ignore on the entity
-    private static string[] debuffBlacklist = { "Mana Guzzle", "Taunt Immunity", "Feared", "Temporary Invulnerability", "Tainted Claws", "Ready Up!", "Dripping Fangs", "Web Spray", "Icebound Familiar", "Synthetic Toxin", "Repair" };
-    private static string[] traitTargetBlacklist = { "Fading Presence" };
-    
     static EntityManager()
     {
         // We add an entity that will contain all party buffs/debuffs
@@ -314,10 +311,10 @@ public static class EntityManager
             foreach (ActiveBuff activeBuff in entityNpcGameObject.Buffs.myActiveBuffs)
             {
                 string activeBuffName = activeBuff.BuffData.DisplayName.ToString();
-                // Find all traits, ignor any traits we dont want to display in the Target bar
-                if (activeBuffName.Contains("Trait: ") && !traitTargetBlacklist.Contains(activeBuffName))
+                // Find all traits, ignore any traits we dont want to display in the Target bar
+                if (activeBuffName.Contains(traitString))
                 {
-                    string[] result = activeBuffName.Split("Trait: ");
+                    string[] result = activeBuffName.Split(traitString);
                     if (result.Length > 1)
                     {
                         // We have a trait.  if this is the first trait, we dont want the leading comma
@@ -331,16 +328,7 @@ public static class EntityManager
                             newEntity.traits = newEntity.traits + ", " + result[1];
                         }
                     }
-                }
-                else
-                {
-                    // Do not process anything in the blacklist.  TODO - we do not need this, can be removed, just for debuggin purposes
-                    if (!debuffBlacklist.Contains(activeBuffName.ToString()))
-                    {
-                        // Do we do anything about this?
-                        MelonLogger.Error($"OnNpcAdded() MONSTER WITH DEBUFF {activeBuffName} FOUND, DO WE WANT TO TRACK THIS ?");
-                    }
-                }
+                }                
             }
             // Set the remaining common data
             newEntity.targetClass = entityNpcGameObject.Info.Class.ToString();

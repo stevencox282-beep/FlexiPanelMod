@@ -11,8 +11,6 @@ namespace FlexiBuffDisplayPanel.ConfigParser
         // Parses the Panel configuration from the XML file and uses it to setup the panels
         public void ParseConfig(ref Dictionary<string, PanelConfig> panelConfigDictionary)
         {
-            PanelConfig panelConfig = new PanelConfig();
-
             XmlDocument xmlDoc = new XmlDocument(); // Create an XML document object
             xmlDoc.Load("ExampleConfig.xml"); // Load the XML document from the specified file
 
@@ -23,13 +21,15 @@ namespace FlexiBuffDisplayPanel.ConfigParser
             // Process all Panels
             for (int panelIndex = 0; panelIndex < panelList.Count; panelIndex++)
             {
+                PanelConfig panelConfig = new PanelConfig();
+
                 // Current Panel
                 XmlNode panel = panelList[panelIndex];
                 XmlAttributeCollection panelAttributes = panel.Attributes;
                 panelConfig.panelID = panelAttributes["ID"].Value;
                 panelConfig.panelTitle = panelAttributes["Title"].Value;
                 panelConfig.displayTargetInfo = panelAttributes["DisplayTargetInfo"].Value;
-                MelonLogger.Warning($"ParseConfig() panelID = {panelConfig.panelID}, panelTitle = {panelConfig.panelTitle}, displayTargetInfo = {panelConfig.displayTargetInfo}");
+//                MelonLogger.Warning($"ParseConfig() panelID = {panelConfig.panelID}, panelTitle = {panelConfig.panelTitle}, displayTargetInfo = {panelConfig.displayTargetInfo}");
 
                 // Get the Row data for this panel
                 XmlNodeList rowsList = panel.ChildNodes;
@@ -52,15 +52,18 @@ namespace FlexiBuffDisplayPanel.ConfigParser
                     rowConfig.showUpTime = rowAttributes["ShowUpTime"].Value;
                     panelConfig.rowConfig.Add(rowConfig);
 
-                    MelonLogger.Warning($"RowConfig() displayText = {rowConfig.displayText}, color = {rowConfig.color}, persistant = {rowConfig.persistant}, showUpTime = {rowConfig.showUpTime}");
+//                    MelonLogger.Warning($"RowConfig() displayText = {rowConfig.displayText}, color = {rowConfig.color}, persistant = {rowConfig.persistant}, showUpTime = {rowConfig.showUpTime}");
 
                 }
                 // If we have a new panel, add it
                 if (!panelConfig.panelID.IsEmpty())
                 {
+//                    MelonLogger.Warning($"ParseConfig() Adding new Panel to Dictionary with panelConfig.panelID = {panelConfig.panelID}");
                     panelConfigDictionary.Add(panelConfig.panelID, panelConfig);
                 }
             }
+
+
         }
     }
 }

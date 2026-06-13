@@ -1,12 +1,9 @@
 ﻿using Il2Cpp;
-using Il2CppPantheonPersist;
 using Il2CppServiceStack;
 using Il2CppTMPro;
 using MelonLoader;
-using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
 
 namespace FlexiBuffDisplayPannel.FlexiPanel
@@ -21,8 +18,6 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         private static string baseImageName = "FBDP_ImageName_FBDP_";
         // Returns a Color for the progress bar based on the debuff spellType for that row
         private static string basePanelName = "FBDP_DebuffPanel_FBDP_";
-        private static string pullMessage = "";
-        private static string popMessage = "";
 
         // Setup lists that will hold all our transforms
         Dictionary<string, List<Transform>> targetNameTextMeshDictionary = new Dictionary<string, List<Transform>>();
@@ -75,8 +70,6 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
 
         public void SetPanelConfig(ref Dictionary<string, PanelConfig> panelConfigDictionary)
         {
-            MelonLogger.Warning($"SetPanelConfig() 1 panelConfig.Count = {panelConfigDictionary.Count}");
-
             gPanelConfigDictionary = panelConfigDictionary;
         }
 
@@ -93,6 +86,9 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                     Destroy(uiWindowPanelList[i]);
                 }
             }
+            // Clear the list
+            uiWindowPanelList.Clear();
+
             // Create the panels
             CreatePanels();
         }
@@ -100,7 +96,6 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         // Creates the panels to display
         private void CreatePanels()
         {
-            MelonLogger.Warning($"CreatePanels() gPanelConfig.Count = {gPanelConfigDictionary.Count}");
             foreach (KeyValuePair<string, PanelConfig> item in gPanelConfigDictionary)
             {
                 PanelConfig panelConfig = item.Value;
@@ -127,7 +122,7 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                 // Setup the Window Panel
                 uiDraggable._windowPanel = uiWindowPanel;
                 uiWindowPanel.CanvasGroup = canvasGroup;
-                uiWindowPanel._displayName = panelConfig.panelID;
+                uiWindowPanel._displayName = item.Key;
 
                 // Add the MANDATORY elements to a panel, the compilor will not error if you don't do this but nothing will work
                 BuildCloseButtonAndBackground(rectTransform, gameObject, uiWindowPanel);
@@ -141,7 +136,6 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                 // Add the new panel to the list of all panels
                 uiWindowPanelList.Add(uiWindowPanel);
             }
-
             ShowDebuffPanels();
         }
 
@@ -392,42 +386,40 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         // Update the text displayed in the Debuff Box
         public void UpdatePanels(EntityData enemyEntityData, EntityData partyEntityData)
         {
-            MelonLogger.Warning($"UpdatePanels() 1 enemyEntityData.debuffData.Count = {enemyEntityData.debuffData.Count}, partyEntityData.debuffData.Count = {partyEntityData.debuffData.Count} ");
             EntityData entityData = MergeEntityData(enemyEntityData, partyEntityData);
-            MelonLogger.Warning($"UpdatePanels() 2 enemyEntityData.debuffData.Count = {enemyEntityData.debuffData.Count}, partyEntityData.debuffData.Count = {partyEntityData.debuffData.Count} ");
-            MelonLogger.Warning($"UpdatePanels() 2 entityData.debuffData.Count = {entityData.debuffData.Count}");
-
 
             // Try and stop unwanted access to the panel to prevent exceptions
             if (uiWindowPanelList.Count > 0)
             {
-//                MelonLogger.Warning($"UpdatePanels() 2");
                 // Get the difference in levels between player and entity
                 int levelDelta = entityData.entityLevel - Globals.PlayerLevel;
                 string levelDeltaString = (levelDelta < 0) ? $"{levelDelta}" : $"+{levelDelta}";
 
 
                 // We must now search every panel and find if that panel is tracking this buff/debuff and if it is follow its row rules
-//                MelonLogger.Warning($"UpdatePanels() 3");
                 foreach (UIWindowPanel uiWindowPanel in uiWindowPanelList)
                 {
-//                    MelonLogger.Warning($"UpdatePanels() 4");
                     // Get the panel details for this window
                     string panelID = uiWindowPanel._displayName;
                     PanelConfig panelConfig = gPanelConfigDictionary[panelID];
                     List<Transform> targetTransformList = targetNameTextMeshDictionary[panelID];
                     List<Transform> timeTextMeshTransformList = timeTextMeshDictionary[panelID];
-                    List<Transform> textMeshTransformList = textMeshDictionary[panelID];                    
+                    List<Transform> textMeshTransformList = textMeshDictionary[panelID];
                     List<Transform> imageTransformList = imageDictionary[panelID];
 
                     // Update the target information, leave the leading space in
                     foreach (Transform targetTransform in targetTransformList)
                     {
-//                        MelonLogger.Warning($"UpdatePanels() 5");
-                        targetTransform.GetComponent<TextMeshProUGUI>().text = $" <b>Target:</b> {entityData.targetName.ToUpperSafe()}({levelDeltaString}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
+                        if (entityData.targetName.Equals(Globals.Party))
+                        {
+                            targetTransform.GetComponent<TextMeshProUGUI>().text = Globals.Party;
+                        }
+                        else
+                        {
+                            targetTransform.GetComponent<TextMeshProUGUI>().text = $" <b>Target:</b> {entityData.targetName.ToUpperSafe()}({levelDeltaString}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
+                        }
                     }
 
-//                    MelonLogger.Warning($"UpdatePanels() 6");
                     // Tracks the row in the panel that is the next to use
                     int panelDisplayIndex = 0;
                     // Parse the list of all viable rows then find a mtach in the buffs list on the current target and update the rows for the panel
@@ -436,34 +428,43 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                         // Search every buff for the row that contains the buff in the RowConfig
                         for (int i = 0; (i < entityData.debuffData.Count && i < Globals.NumDisplayableDebuffs); i++)
                         {
-//                            MelonLogger.Warning($"UpdatePanels() 7 i = {i}");
                             DebuffData debuff = entityData.debuffData[i];
-//                            MelonLogger.Warning($"UpdatePanels() 8 debuff.debuffName = {debuff.debuffName}, rowConfig.displayText = {rowConfig.displayText}");
                             if (debuff.debuffName.Contains(rowConfig.displayText))
                             {
-                                //MelonLogger.Warning($"UpdatePanels() 9 Match found. entityData.debuffData.Count = {entityData.debuffData.Count}  debuff.debuffName = {debuff.debuffName} contains rowConfig.displayText {rowConfig.displayText}, i = {i}, panelDisplayIndex = {panelDisplayIndex}");
                                 // Found a required buff/debuff, update the panel with this data
                                 textMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $" {debuff.debuffName} ({debuff.numStacks}/{debuff.maxStacks}), ({debuff.casterName})";
 
                                 // Format the time remianing to be human redable
                                 if (debuff.debuffDurationRemaining < 60)
                                 {
-                                    timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $"{debuff.debuffDurationRemaining}s";
-                                    // Display the remaining time in seconds
-                                    timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $"{debuff.debuffDurationRemaining}s ({debuff.consolidatedEncounterUptimePercent.ToString("0")}%)";
+                                    if (debuff.categoryType == BuffCategoryType.Beneficial.ToString())
+                                    {
+                                        timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $"{debuff.debuffDurationRemaining}s";
+                                    }
+                                    else
+                                    {
+                                        // Display the remaining time in seconds
+                                        timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $"{debuff.debuffDurationRemaining}s ({debuff.consolidatedEncounterUptimePercent.ToString("0")}%)";
+                                    }
                                 }
                                 else
                                 {
-                                    timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $"{Math.Floor((decimal)debuff.debuffDurationRemaining / 60)}m{debuff.debuffDurationRemaining % 60}s";
-                                    // Display the remaining time in minutes and seconds
-                                    timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $"{Math.Floor((decimal)debuff.debuffDurationRemaining / 60)}m{Math.Floor((decimal)debuff.debuffDurationRemaining) % 60}s, ({debuff.consolidatedEncounterUptimePercent.ToString("0")}%)";
+                                    if (debuff.categoryType == BuffCategoryType.Beneficial.ToString())
+                                    {
+                                        timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $"{Math.Floor((decimal)debuff.debuffDurationRemaining / 60)}m{Math.Floor((decimal)debuff.debuffDurationRemaining) % 60}s";
+                                    }
+                                    else
+                                    {
+                                        // Display the remaining time in minutes and seconds
+                                        timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $"{Math.Floor((decimal)debuff.debuffDurationRemaining / 60)}m{Math.Floor((decimal)debuff.debuffDurationRemaining) % 60}s, ({debuff.consolidatedEncounterUptimePercent.ToString("0")}%)";
+                                    }
                                 }
 
                                 // Now update the progress bar colour and time
                                 Image image = imageTransformList[panelDisplayIndex].transform.GetComponent<Image>();
                                 // Set colour based on the user defined color or spell type
-                                image.color = FlexiPanelUtils.getBarColours(debuff.spellType.ToString());
-                                // Set the fill amount  1.0f is full, 0.0f is empty
+                                image.color = (Color)typeof(Color).GetProperty(rowConfig.color.ToLowerInvariant()).GetValue(null, null);
+                                // Set the fill amount 1.0f is full, 0.0f is empty
                                 image.fillAmount = ((1 / debuff.debuffDuration) * debuff.debuffDurationRemaining);
                                 // Move to the next row in the panel
                                 panelDisplayIndex++;
@@ -477,21 +478,16 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         // This function takes the current enemies debuffs anad the party buffs and merges them into a single EntityData to make the update of the display panels simpler
         public EntityData MergeEntityData(EntityData enemyEntityData, EntityData partyEntityData)
         {
-            MelonLogger.Warning($"MergeEntityData() 1 enemyEntityData.debuffData.Count = {enemyEntityData.debuffData.Count}, partyEntityData.debuffData.Count = {partyEntityData.debuffData.Count}");
             EntityData finalEntityData = new EntityData();
-            MelonLogger.Warning($"MergeEntityData() 2 finalEntityData.debuffData.Count = {finalEntityData.debuffData.Count}");
-
-            CopyByValue(partyEntityData, ref finalEntityData);
-            CopyByValue(enemyEntityData, ref finalEntityData);
-            MelonLogger.Warning($"MergeEntityData() 5 finalEntityData.debuffData.Count = {finalEntityData.debuffData.Count}");
 
             // This MUST be a copy by value, otherwise a reference to enemyEntityData.dbeuffData is created and enemyEntityData.debuffData constaly doubles in size each call to OnUpdate()
-            
-            MelonLogger.Warning($"MergeEntityData() 8 finalEntityData.debuffData.Count = {finalEntityData.debuffData.Count}");
+            CopyByValue(partyEntityData, ref finalEntityData);
+            CopyByValue(enemyEntityData, ref finalEntityData);
+
             return finalEntityData;
         }
 
-        private static void CopyByValue(EntityData source, ref EntityData destination)
+        private void CopyByValue(EntityData source, ref EntityData destination)
         {
             destination.traits = source.traits;
             destination.isDead = source.isDead;
@@ -501,13 +497,11 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
             destination.totalEncounterTime = source.totalEncounterTime;
             destination.targetClass = source.targetClass;
             destination.targetKind = source.targetKind;
-            destination.targetName = source.targetName;
+            destination.targetName = (source.targetName.IsEmpty()) ? Globals.Party : source.targetName;
 
             // Now copy by value to avoid the nasty duplication caused if you copy using a reference
-            MelonLogger.Warning($"MergeEntityData() 6");
             foreach (var buff in source.debuffData)
             {
-                MelonLogger.Warning($"MergeEntityData() 7 buff = {buff.debuffName}");
                 DebuffData newDebuffdata = new DebuffData();
                 newDebuffdata.debuffDuration = buff.debuffDuration;
                 newDebuffdata.debuffName = buff.debuffName;
@@ -523,20 +517,9 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                 newDebuffdata.spellType = buff.spellType;
                 newDebuffdata.targetClass = buff.targetClass;
                 newDebuffdata.targetKind = buff.targetKind;
+                newDebuffdata.categoryType = buff.categoryType;
                 destination.debuffData.Add(newDebuffdata);
             }
-
-        }
-
-
-        public void ShowPullMessage(EntityClientMessaging.Logic __instance)
-        {
-            __instance.SendChatMessage(pullMessage, ChatChannelType.Group);
-        }
-        
-        public void ShowPopMessage(EntityClientMessaging.Logic __instance)
-        {
-            __instance.SendChatMessage(popMessage, ChatChannelType.Group);
         }
     }
 }

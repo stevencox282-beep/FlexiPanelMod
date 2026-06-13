@@ -10,7 +10,6 @@ public class UICompassHooks
 {
     private static void Postfix(UICompass __instance)
     {
-        MelonLogger.Warning($"UICompassHooks() 1");
         // Do not block this on PlayerIsLoaded, it will exception if you do as OnUpdate() gets called before the panel is made and kaboom
         ModMain.AddPanelsToUI();
     }

@@ -12,3 +12,13 @@ public class BuffLogicAdd
         ModMain.OnAddOrRefreshBuff(time, buff, putInBackground, isRefresh, isItemBuff);
     }
 }
+
+// This hook fires when any entity in range receives any buff / debuff
+[HarmonyPatch(typeof(Buffs.Logic), nameof(Buffs.Logic.RemoveMyActiveBuff), typeof(double), typeof(ActiveBuff))]
+public class BuffLogicRemove
+{
+    private static void Prefix(double time, ActiveBuff buff)
+    {
+        ModMain.RemoveBuff(time, buff);
+    }
+}

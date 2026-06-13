@@ -2,16 +2,32 @@
 <Panels>
   <Panel ID="1" Title="Enemy Debuffs" DisplayTargetInfo="true">
     <Rows>
-      <Row DisplayText="Devour Dexterity" Color="0.7f, 0.7f, 0.7f, 0.7f" Persistant="true" ShowUpTime="true"/>
-      <Row DisplayText="Devour Constitution" Color="0.6f, 0.6f, 0.6f, 0.6f" Persistant="true" ShowUpTime="true"/>
-      <Row DisplayText="Devour Intelligence" Color="0.5f, 0.5f, 0.5f, 0.5f" Persistant="true" ShowUpTime="true"/>
-      <Row DisplayText="Provoking Phantoms" Color="0.5f, 0.5f, 0.5f, 0.5f" Persistant="true" ShowUpTime="true"/>
-      <Row DisplayText="Verdanfire Seed" Color="0.5f, 0.5f, 0.5f, 0.5f" Persistant="true" ShowUpTime="true"/>
-      <Row DisplayText="Thorncoat" Color="0.7f, 0.7f, 0.7f, 0.7f" Persistant="true" ShowUpTime="true"/>
-      <Row DisplayText="Umbravines" Color="0.7f, 0.7f, 0.7f, 0.7f" Persistant="true" ShowUpTime="true"/>
-      <Row DisplayText="Stinging Swarm" Color="0.7f, 0.7f, 0.7f, 0.7f" Persistant="true" ShowUpTime="true"/>
-      <Row DisplayText="Diving Weakening" Color="0.7f, 0.7f, 0.7f, 0.7f" Persistant="true" ShowUpTime="true"/>
-      <Row DisplayText="Shining Barrier" Color="0.7f, 0.7f, 0.7f, 0.7f" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Devour Dexterity" Color="blue" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Devour Constitution" Color="burlyWood" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Devour Intelligence" Color="cadetBlue" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Provoking Phantoms" Color="darkOliveGreen" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Verdanfire Seed" Color="gold" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Thorncoat" Color="purple" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Umbravines" Color="pink" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Stinging Swarm" Color="ghostWhite" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Divine Weakening" Color="orange" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Shining Barrier" Color="red" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Divine Favor" Color="lavender" Persistant="true" ShowUpTime="true"/>
+    </Rows>
+  </Panel>
+  <Panel ID="2" Title="More Enemy Debuffs" DisplayTargetInfo="true">
+    <Rows>
+      <Row DisplayText="Devour Dexterity" Color="blue" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Devour Constitution" Color="burlyWood" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Devour Intelligence" Color="cadetBlue" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Provoking Phantoms" Color="darkOliveGreen" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Verdanfire Seed" Color="gold" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Thorncoat" Color="purple" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Umbravines" Color="pink" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Stinging Swarm" Color="ghostWhite" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Divine Weakening" Color="orange" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Shining Barrier" Color="red" Persistant="true" ShowUpTime="true"/>
+      <Row DisplayText="Divine Favor" Color="lavender" Persistant="true" ShowUpTime="true"/>
     </Rows>
   </Panel>
 </Panels>

@@ -34,23 +34,6 @@ public class SendChatMessageHook
                 ModMain.SetNumDebuffRows(message);
                 return false;
             }
-
-            if (message == "/pulling")
-            {
-                // Set show debuffs to false and hide the debuff panel
-                Globals.ShowDebuffPanel = false;                
-                ModMain.ShowPullMessage(__instance);
-                return false;
-            }
-
-            if (message == "/popping")
-            {
-                // Set show debuffs to false and hide the debuff panel
-                Globals.ShowDebuffPanel = false;
-                ModMain.ShowPopMessage(__instance);
-                return false;
-            }
-
         }
         return true;
     }

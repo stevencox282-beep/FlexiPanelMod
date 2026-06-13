@@ -44,6 +44,7 @@ namespace FlexiBuffDisplayPannel
         public int numStacks; // Number of stacks
         public int maxStacks; // Max stacks
         public string spellType; // Spell Type (Nature, Corruption)
+        public string categoryType; // Beneficial, Detrimental, Both
 
         public long consolidatedEncounterUptime; // Time the debuff has been up as a % of total encounter time
         public float consolidatedEncounterUptimePercent; // Time the debuff has been up as a % of total encounter time
@@ -78,14 +79,21 @@ namespace FlexiBuffDisplayPannel
         private static string gCurrentTargetNetworkId = ""; // Only update in offensive target select and only use in OnUpdate
         private const float UpdateInterval = 1.0f; // Update interval in seconds
         private static float _timeSinceLastUpdate;
-        private static string TraitSubString = "Trait: ";
         // Debuffs we want to ignore
-        private static readonly string[] DebuffBlacklist = { TraitSubString, "Mana Guzzle", "Taunt Immunity", "Temporary Invulnerability", EntityStatusType.Silenced.ToString(), EntityStatusType.Stunned.ToString(), EntityStatusType.Feared.ToString(), "Taunt"};
         private static ConfigParser configParser = new ConfigParser();
         private static Dictionary<string, PanelConfig> panelConfigDictionary = new Dictionary<string, PanelConfig>();
 
-        public override void OnInitializeMelon() {
-            configParser.ParseConfig(ref panelConfigDictionary);
+        public override void OnInitializeMelon()
+        {
+            try
+            {
+                configParser.ParseConfig(ref panelConfigDictionary);
+            }
+            catch(Exception e)
+            {
+                MelonLogger.Error("ERROR: Unable to parse XML configuration");
+                throw (e);
+            }
             // Parse out the config to populate the panels and rows
             gDebuffPanel.SetPanelConfig(ref panelConfigDictionary);
         }
@@ -187,8 +195,6 @@ namespace FlexiBuffDisplayPannel
 
                 // Clear out the user visible data
                 gDebuffPanel.ClearPanels();
-                // Clear out the row data from the panel
-                ClearPanelLists();
 
                 // Set the new number of rows to be drawn (dont do this earlier, it can cause problems tearing down the correct number of TextMesh and Image tranforms)
                 Globals.NumDisplayableDebuffs = numRows;
@@ -233,8 +239,8 @@ namespace FlexiBuffDisplayPannel
         // Adds a new buff or refreshes a buff to the list of all buffs and updates the UI only if the entity reciveing the debuff is the active offensive target entity
         public static void OnAddOrRefreshBuff(double time, ActiveBuff buff, bool inBackground, bool isRefresh, bool isItemBuff)
         {
-            MelonLogger.Warning($"OnAddOrRefreshBuff() 0a buff.BuffData.DisplayName.ToString() = {buff.BuffData.DisplayName.ToString()}, isRefresh = {isRefresh}, inBackground = {inBackground}, isItemBuff = {isItemBuff}");
-            MelonLogger.Warning($"OnAddOrRefreshBuff() 0b buff.Target?.NetworkId.ToString() = {buff.Target?.NetworkId.ToString()}, buff.Target.Nameplate.nameText.text = {buff.Target?.Nameplate?.nameText.text}, gCurrentTargetNetworkId = {gCurrentTargetNetworkId}");
+            //MelonLogger.Warning($"OnAddOrRefreshBuff() 0a buff.BuffData.DisplayName.ToString() = {buff.BuffData.DisplayName.ToString()}, isRefresh = {isRefresh}, inBackground = {inBackground}, isItemBuff = {isItemBuff}");
+            //MelonLogger.Warning($"OnAddOrRefreshBuff() 0b buff.Target?.NetworkId.ToString() = {buff.Target?.NetworkId.ToString()}, buff.Target.Nameplate.nameText.text = {buff.Target?.Nameplate?.nameText.text}, gCurrentTargetNetworkId = {gCurrentTargetNetworkId}");
             //MelonLogger.Warning($"OnAddOrRefreshBuff() 0c buff.Caster?.NetworkId.ToString() = {buff.Caster?.NetworkId.ToString()}, buff.Caster.Nameplate.nameText.text = {buff.Caster?.Nameplate?.nameText.text}, gCurrentTargetNetworkId = {gCurrentTargetNetworkId}");
             //MelonLogger.Warning($"OnAddOrRefreshBuff buff.Target.Experience.Level = {buff.Target.Experience.Level}, Globals.PlayerLevel = {Globals.PlayerLevel}");
 
@@ -281,7 +287,10 @@ namespace FlexiBuffDisplayPannel
                 {
 //                    MelonLogger.Warning($"OnAddOrRefreshBuff() PARTY");
                     entityData = partyEntityData;
-                    enemyEntityData = EntityManager.EntityManager.GetEntityData(gCurrentTargetNetworkId);
+                    if (gCurrentTargetNetworkId != "")
+                    {
+                        enemyEntityData = EntityManager.EntityManager.GetEntityData(gCurrentTargetNetworkId);
+                    }
                 }
                 else
                 {
@@ -338,6 +347,7 @@ namespace FlexiBuffDisplayPannel
                     newDebuff.debuffDurationRemaining = (int)Math.Ceiling(buff.EstimatedTotalTime); // This allows us to deal with debuffs that have diminishign returns like Bind and Mez
                     newDebuff.numStacks = buff.StackCount;
                     newDebuff.maxStacks = buff.BuffData.MaxStacks;
+                    newDebuff.categoryType = buff.BuffData.CategoryType.ToString();
                     try
                     {
                         // Bug in ILC2PP, handle it here and default if we crash
@@ -352,20 +362,14 @@ namespace FlexiBuffDisplayPannel
                     entityData.debuffData.Add(newDebuff);
                     EntityManager.EntityManager.AddConsolidatedUptime(buff.Target.NetworkId.ToString(), newDebuff);
 
-                    // Update the panel if we are a debuff
-                    if (buff.BuffData.CategoryType == BuffCategoryType.Beneficial)
-                    {
-//                        MelonLogger.Warning($"OnAddOrRefreshBuff() 14 entityData.targetName = {entityData.targetName}");
-                        gDebuffPanel.UpdatePanels(enemyEntityData, partyEntityData);
-                    }
                     // Update the panel only if the debuff is for the current targets monster
-                    else if (gCurrentTargetNetworkId.Equals(buff.Target?.NetworkId.ToString()))
+                    if (gCurrentTargetNetworkId.Equals(buff.Target?.NetworkId.ToString()))
                     {
-//                        MelonLogger.Warning($"OnAddOrRefreshDebuff() 15 UpdateDebuffPanel entityData.entityNetworkId = {entityData.entityNetworkId}, buff.Target.NetworkId.ToString() = {buff.Target.NetworkId.ToString()}, gCurrentTargetNetworkId = {gCurrentTargetNetworkId.ToString()}");
                         EntityManager.EntityManager.AddEntityToUniqueDebuffs(buff.Target?.NetworkId.ToString(), newDebuff.debuffName);
-                        gDebuffPanel.UpdatePanels(enemyEntityData, partyEntityData);
                     }
-  //                  MelonLogger.Warning($"OnAddOrRefreshBuff() 16");
+                    gDebuffPanel.UpdatePanels(enemyEntityData, partyEntityData);
+                    gDebuffPanel.UpdatePanels(enemyEntityData, partyEntityData);
+                    //                  MelonLogger.Warning($"OnAddOrRefreshBuff() 16");
                 }
             }
         }
@@ -412,14 +416,33 @@ namespace FlexiBuffDisplayPannel
             gCurrentTargetNetworkId = targetLogic.Offensive.NetworkId.ToString();
         }
 
-        public static void ShowPullMessage(EntityClientMessaging.Logic __instance)
+        // We only process removal of my buffs, specifically for handling of Hurry The Past which causes our mantle to finish early
+        public static void RemoveBuff(double time, ActiveBuff buff)
         {
-            gDebuffPanel.ShowPullMessage(__instance);
-        }
+            //            MelonLogger.Warning($"RemoveDeBuff() 0a buff.BuffData.DisplayName.ToString() = {buff.BuffData.DisplayName.ToString()}");
+            //            MelonLogger.Warning($"RemoveDeBuff() 0b buff.Target?.NetworkId.ToString() = {buff.Target?.NetworkId.ToString()}, buff.Target.Nameplate.nameText.text = {buff.Target?.Nameplate?.nameText.text}, gCurrentTargetNetworkId = {gCurrentTargetNetworkId}");
+            //            MelonLogger.Warning($"RemoveDeBuff() 0c buff.Caster?.NetworkId.ToString() = {buff.Caster?.NetworkId.ToString()}, buff.Caster.Nameplate.nameText.text = {buff.Caster?.Nameplate?.nameText.text}, gCurrentTargetNetworkId = {gCurrentTargetNetworkId}");
 
-        public static void ShowPopMessage(EntityClientMessaging.Logic __instance)
-        {
-            gDebuffPanel.ShowPopMessage(__instance);
+            // We only handle the consequences of Hurry The Past which causes your mantle to expire, there is no buff "Hurry The Past" to track, the mantle simply expires
+            string buffname = buff.BuffData.DisplayName.ToString();
+            // Get the list for the current player
+            EntityData enemyEntityData = (gCurrentTargetNetworkId.IsEmpty()) ? new EntityData() : EntityManager.EntityManager.GetEntityData(gCurrentTargetNetworkId);
+            EntityData partyEntityData = EntityManager.EntityManager.GetEntityData(Globals.Party);
+            // Remove the mantle from the list
+            for (int i = 0; i < partyEntityData.debuffData.Count; i++)
+            {
+                DebuffData buffData = partyEntityData.debuffData[i];
+                // If we are the correct debuff and its the correct target and it is cast by us, set its duration remaining to zero
+                if (buffData.debuffName.ToString() == buff.BuffData.DisplayName.ToString() && buffData.targetNetworkId.ToString() == buff.Target.NetworkId.ToString() && Globals.PlayerNetworkId == buff.Caster.NetworkId.ToString())
+                {
+                    buffData.debuffDurationRemaining = 0;
+                    buffData.numStacks = buff.StackCount;
+                    EntityManager.EntityManager.UpdateDurationRemaining();
+                    gDebuffPanel.ClearPanels();
+                    gDebuffPanel.UpdatePanels(enemyEntityData, partyEntityData);
+                    return;
+                }
+            }
         }
     }
 }

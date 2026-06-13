@@ -12,7 +12,7 @@ public static class Globals
     public static List<string> GroupMembers = new List<string>();
     public static string PlayerNetworkId = string.Empty;
     public static EntityPlayerGameObject? LocalPlayer = null;
-    public static string Party = "Party";
+    public static string Party = "Party Buffs";
 
 
     public static string SetNumberOfRowsCommand = "setdebuffrows";

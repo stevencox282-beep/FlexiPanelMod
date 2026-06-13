@@ -1,6 +1,13 @@
-# EnhancedDebuffTracking
-This Mod is for Pantheon: Rise of the Fallen. It displays the in game debuffs on entitys.
+# FlexiPanel
+This Mod is for Pantheon: Rise of the Fallen. It displays the in game buffs / dbebuffs as defined in the configuration file ExampleConfiguration.xml.
+
 It has added in new commands /showdebuffs and /hidedebuffs to enable / disable the display panel and /setdebuffrows to set the number of rows in the panel
+
+## Buff / Debuff Display Order
+The order they appear in the config file is the order they are displayed on the screen
+
+## Color Availability
+All available colors are defined here https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Color.html
 
 ## Known Limitations
 If a player moves into rendering range of a entity with debuffs previous applied to it then those debuffs will not appear in the panel
