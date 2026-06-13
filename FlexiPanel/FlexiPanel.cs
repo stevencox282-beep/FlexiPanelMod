@@ -407,17 +407,10 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                     List<Transform> textMeshTransformList = textMeshDictionary[panelID];
                     List<Transform> imageTransformList = imageDictionary[panelID];
 
-                    // Update the target information, leave the leading space in
+                    // Update the panel title
                     foreach (Transform targetTransform in targetTransformList)
                     {
-                        if (entityData.targetName.Equals(Globals.Party))
-                        {
-                            targetTransform.GetComponent<TextMeshProUGUI>().text = Globals.Party;
-                        }
-                        else
-                        {
-                            targetTransform.GetComponent<TextMeshProUGUI>().text = $" <b>Target:</b> {entityData.targetName.ToUpperSafe()}({levelDeltaString}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
-                        }
+                        targetTransform.GetComponent<TextMeshProUGUI>().text = panelConfig.panelTitle;
                     }
 
                     // Tracks the row in the panel that is the next to use
