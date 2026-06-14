@@ -436,6 +436,13 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                         for (int i = 0; (i < entityData.debuffData.Count && i < Globals.NumDisplayableDebuffs) ; i++)
                         {
                             DebuffData debuff = entityData.debuffData[i];
+                            // Exclude buffs / debuffs as required
+                            if (debuff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.excludeBuffs == true ||
+                                debuff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.excludeDebuffs == true)
+                            {
+                                continue;
+                            }
+
                             if (debuff.debuffName.Contains(rowConfig.displayText))
                             {
                                 // Found a required buff/debuff, update the panel with this data

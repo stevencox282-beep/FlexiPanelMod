@@ -2,6 +2,7 @@
 using Il2CppServiceStack;
 using MelonLoader;
 using System.Xml;
+using static Il2CppServiceStack.NetStandardPclExport;
 
 namespace FlexiBuffDisplayPanel.ConfigParser
 {
@@ -23,13 +24,22 @@ namespace FlexiBuffDisplayPanel.ConfigParser
             {
                 PanelConfig panelConfig = new PanelConfig();
 
+                MelonLogger.Warning($"ParseConfig() 1");
                 // Current Panel
                 XmlNode panel = panelList[panelIndex];
                 XmlAttributeCollection panelAttributes = panel.Attributes;
                 panelConfig.panelID = panelAttributes["ID"].Value;
                 panelConfig.panelTitle = panelAttributes["Title"].Value;
                 panelConfig.displayTargetInfo = panelAttributes["TargetOrTitle"].Value;
-//                MelonLogger.Warning($"ParseConfig() panelID = {panelConfig.panelID}, panelTitle = {panelConfig.panelTitle}, displayTargetInfo = {panelConfig.displayTargetInfo}");
+                var temp = panelAttributes["ExcludeBuffs"].Value;
+                MelonLogger.Warning($"temp = {temp}");
+                var temp2 = panelAttributes["ExcludeDebuffs"].Value;
+                MelonLogger.Warning($"temp2 = {temp2}");
+                panelConfig.excludeBuffs = bool.Parse(panelAttributes["ExcludeBuffs"].Value);
+                MelonLogger.Warning($"ParseConfig() 2");
+                panelConfig.excludeDebuffs = bool.Parse(panelAttributes["ExcludeDebuffs"].Value);
+                MelonLogger.Warning($"ParseConfig() 3");
+                // MelonLogger.Warning($"ParseConfig() panelID = {panelConfig.panelID}, panelTitle = {panelConfig.panelTitle}, displayTargetInfo = {panelConfig.displayTargetInfo}");
 
                 // Get the Row data for this panel
                 XmlNodeList rowsList = panel.ChildNodes;

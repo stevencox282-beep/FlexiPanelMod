@@ -55,6 +55,8 @@ namespace FlexiBuffDisplayPannel
         public string panelID; // Unique ID used to identify this exact panel
         public string panelTitle;
         public string displayTargetInfo;
+        public bool excludeBuffs;
+        public bool excludeDebuffs;
         public List<RowConfig> rowConfig;
     }
 
