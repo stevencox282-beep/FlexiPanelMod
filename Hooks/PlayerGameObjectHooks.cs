@@ -13,6 +13,7 @@ public class PlayerNetworkStart
         // Fired in character select
         if (__instance.NetworkId.Value == 1)
         {
+            Globals.PlayerIsLoaded = false;
             return;
         }
         
@@ -48,6 +49,7 @@ public class PlayerNetworkStop
         // Fired in character select
         if (__instance.NetworkId.Value == 1)
         {
+            Globals.PlayerIsLoaded = false;
             return;
         }
 

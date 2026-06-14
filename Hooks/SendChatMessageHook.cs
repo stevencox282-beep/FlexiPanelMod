@@ -16,7 +16,7 @@ public class SendChatMessageHook
             {
                 // Sets show debuffs to true then show the debuff panel
                 Globals.ShowDebuffPanel = true;
-                ModMain.ShowDebuffPanel();
+                ModMain.ShowFlexiPanels();
                 return false;
             }
 
@@ -24,7 +24,7 @@ public class SendChatMessageHook
             {
                 // Set show debuffs to false and hide the debuff panel
                 Globals.ShowDebuffPanel = false;
-                ModMain.HideDebuffPanel();
+                ModMain.HideFlexiPanels();
                 return false;
             }
 
@@ -38,29 +38,26 @@ public class SendChatMessageHook
             // Reload the panel configuration
             if (message.Equals($"/reloadflexipanels"))
             {
-                ModMain.ClearPanelLists();
-                ModMain.InitPanels();
-                ModMain.DisplayPanels();
+                ModMain.ClearTransformDictionaries();
+                ModMain.PanelConfig();
+                ModMain.InitialiseFlexiPanels();
                 
                 return false;
             }
 
+            if (message == "/pulling")
+            {
+              // Set show debuffs to false and hide the debuff panel
+              ModMain.ShowPullMessage(__instance);
+              return false;
+            }
 
-            //            if (message == "/pulling")
-            //            {
-            //                // Set show debuffs to false and hide the debuff panel
-            //                Globals.ShowDebuffPanel = false;
-            //                ModMain.ShowPullMessage(__instance);
-            //                return false;
-            //            }
-
-            //            if (message == "/popping")
-            //            {
-            //                // Set show debuffs to false and hide the debuff panel
-            //                Globals.ShowDebuffPanel = false;
-            //                ModMain.ShowPopMessage(__instance);
-            //                return false;
-            //            }
+            if (message == "/popping")
+            {
+              // Set show debuffs to false and hide the debuff panel
+              ModMain.ShowPopMessage(__instance);
+              return false;
+            }
         }
         return true;
     }

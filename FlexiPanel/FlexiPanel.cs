@@ -5,6 +5,7 @@ using Il2CppTMPro;
 using MelonLoader;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
 
 namespace FlexiBuffDisplayPannel.FlexiPanel
@@ -34,7 +35,7 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         private static string popMessage = "";
 
         // Tidy up the alloated resources when we logout / rechange the number of rows in the panel
-        public void ClearPanelLists()
+        public void ClearTransformDictionaries()
         {
             // Static variables can persist and not be garbage collected on zoning, logout or panel reloading so explicitly clear them out, we will rebuild them on loading into a zone
             targetNameTextMeshDictionary.Clear();
@@ -50,7 +51,7 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         }
 
         // Called by the closing of the offensive target window
-        public void HideDebuffPanel()
+        public void HideFlexiPanels()
         {
             foreach (var uiWindowPanel in uiWindowPanelList)
             {
@@ -59,7 +60,7 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         }
 
         // Called by the /debuff command and on offensive target select
-        public void ShowDebuffPanels()
+        public void ShowFlexiPanels()
         {
             // Display the panel if the gloabl is set to allow it
             if (Globals.ShowDebuffPanel == true)
@@ -76,28 +77,38 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
             gPanelConfigDictionary = panelConfigDictionary;
         }
 
-        // Displays panels
-        public void DisplayPanels()
+        private void DestroyWindowPanelList()
         {
-            // This allows us to remake the panel with any number of rows we want without having left over transforms corrupting the display
-            for (int i = uiWindowPanelList.Count - 1; i >= 0; i--)
+            ClearTransformDictionaries();
+            // Free the resources for every panel we have already created, then empty the list
+            for (int i = 0; i <  uiWindowPanelList.Count; i++)
             {
-                if (uiWindowPanelList[i].gameObject != null && uiWindowPanelList[i] != null)
+                if (uiWindowPanelList[i])
                 {
-                    // PROBLEM?  This removes UITotorialPopup from Mid?  If any other mod is using Mid and UITotorialPopup will this ruin their party?
-                    Destroy(uiWindowPanelList[i].gameObject);
-                    Destroy(uiWindowPanelList[i]);
+                    if (uiWindowPanelList[i].gameObject != null)
+                    {
+                        // WARNING.  This removes UITotorialPopup from Mid.  Make sure you have a copy somewhere or stuff breaks
+                        Destroy(uiWindowPanelList[i].gameObject);
+                    }
                 }
             }
-            // Destroy the panels
+
+            // Destroy the window list
             uiWindowPanelList.Clear();
+        }
+
+        // Displays panels
+        public void InitialiseFlexiPanels()
+        {
+            // Destroy the windows and its list
+            DestroyWindowPanelList();
 
             // Create the panels
-            CreatePanels();
+            CreateFlexiPanels();
         }
 
         // Creates the panels to display
-        private void CreatePanels()
+        private void CreateFlexiPanels()
         {
             foreach (KeyValuePair<string, PanelConfig> item in gPanelConfigDictionary)
             {
@@ -134,12 +145,12 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                 SetPanelSize(ref uiWindowPanel);
 
                 // Add in the row data
-                AddPanelRows(ref uiWindowPanel, panelConfig.panelID);
+                AddRowsToPanel(ref uiWindowPanel, panelConfig.panelID);
 
                 // Add the new panel to the list of all panels
                 uiWindowPanelList.Add(uiWindowPanel);
             }
-            ShowDebuffPanels();
+            ShowFlexiPanels();
         }
 
         // Sets the size of the panel based on the number of rows to add
@@ -161,7 +172,7 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         }
 
         // Adds all the images and text meshes to the panel
-        public void AddPanelRows(ref UIWindowPanel uiWindowPanel, string panelID)
+        public void AddRowsToPanel(ref UIWindowPanel uiWindowPanel, string panelID)
         {
             // Get the RectTransform to add the rows too
             GameObject gameObject = uiWindowPanel.gameObject;
@@ -333,17 +344,11 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         }
 
         // Clears the text displayed in the Panel
-        public void ClearPanels()
+        public void ClearPanelsDisplay()
         {
             // This is a terrible way to handle change of character but I can't find a better way, there might be a Hook to use but I can't find one
             // Using Player Network Start causes crashes as it fires before the UI is ready to render the panel, UICompass or similar Hooks dont fire on change of character
-            if (targetNameTextMeshDictionary.Count > 1)
-            {
-                // Quick and dirty re-initialisation on a change of zone
-                ClearPanelLists();
-                DisplayPanels();
-            }
-
+    
             // Try and stop unwanted access to the panel to prevent exceptions
             if (uiWindowPanelList.Count > 0)
             {
@@ -387,7 +392,7 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         }
 
         // Update the text displayed in the Debuff Box
-        public void UpdatePanels(EntityData enemyEntityData, EntityData partyEntityData)
+        public void UpdatePanelsDisplay(EntityData enemyEntityData, EntityData partyEntityData)
         {
             // If we have no buffs or debuffs, exit
             if (enemyEntityData.debuffData.Count == 0 && partyEntityData.debuffData.Count == 0)

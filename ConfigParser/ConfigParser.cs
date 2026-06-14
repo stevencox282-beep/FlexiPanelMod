@@ -24,22 +24,14 @@ namespace FlexiBuffDisplayPanel.ConfigParser
             {
                 PanelConfig panelConfig = new PanelConfig();
 
-                MelonLogger.Warning($"ParseConfig() 1");
                 // Current Panel
                 XmlNode panel = panelList[panelIndex];
                 XmlAttributeCollection panelAttributes = panel.Attributes;
                 panelConfig.panelID = panelAttributes["ID"].Value;
                 panelConfig.panelTitle = panelAttributes["Title"].Value;
                 panelConfig.displayTargetInfo = panelAttributes["TargetOrTitle"].Value;
-                var temp = panelAttributes["ExcludeBuffs"].Value;
-                MelonLogger.Warning($"temp = {temp}");
-                var temp2 = panelAttributes["ExcludeDebuffs"].Value;
-                MelonLogger.Warning($"temp2 = {temp2}");
                 panelConfig.excludeBuffs = bool.Parse(panelAttributes["ExcludeBuffs"].Value);
-                MelonLogger.Warning($"ParseConfig() 2");
                 panelConfig.excludeDebuffs = bool.Parse(panelAttributes["ExcludeDebuffs"].Value);
-                MelonLogger.Warning($"ParseConfig() 3");
-                // MelonLogger.Warning($"ParseConfig() panelID = {panelConfig.panelID}, panelTitle = {panelConfig.panelTitle}, displayTargetInfo = {panelConfig.displayTargetInfo}");
 
                 // Get the Row data for this panel
                 XmlNodeList rowsList = panel.ChildNodes;
@@ -61,14 +53,10 @@ namespace FlexiBuffDisplayPanel.ConfigParser
                     rowConfig.persistant = rowAttributes["Persistant"].Value;
                     rowConfig.showUpTime = rowAttributes["ShowUpTime"].Value;
                     panelConfig.rowConfig.Add(rowConfig);
-
-//                    MelonLogger.Warning($"RowConfig() displayText = {rowConfig.displayText}, color = {rowConfig.color}, persistant = {rowConfig.persistant}, showUpTime = {rowConfig.showUpTime}");
-
                 }
                 // If we have a new panel, add it
                 if (!panelConfig.panelID.IsEmpty())
                 {
-//                    MelonLogger.Warning($"ParseConfig() Adding new Panel to Dictionary with panelConfig.panelID = {panelConfig.panelID}");
                     panelConfigDictionary.Add(panelConfig.panelID, panelConfig);
                 }
             }
