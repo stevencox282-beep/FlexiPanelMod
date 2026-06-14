@@ -3,7 +3,6 @@ using Il2Cpp;
 using Il2CppServiceStack;
 using MelonLoader;
 using UnityEngine;
-using UnityEngine.Rendering.HighDefinition;
 
 // Mod meta data
 [assembly: MelonInfo(typeof(FlexiBuffDisplayPannel.ModMain), "FlexiBuffDisplayPannel", "1.0.0", "Anonymous", null)]
@@ -217,7 +216,8 @@ namespace FlexiBuffDisplayPannel
                 return true;
             }
 
-            if (buff.Caster?.NetworkId.ToString() == Globals.PlayerNetworkId && buff.BuffData.CategoryType == BuffCategoryType.Beneficial)
+            //if (buff.Caster?.NetworkId.ToString() == Globals.PlayerNetworkId && buff.BuffData.CategoryType == BuffCategoryType.Beneficial)
+            if (buff.BuffData.CategoryType == BuffCategoryType.Beneficial)
             {
                 return true;
             }
@@ -270,9 +270,9 @@ namespace FlexiBuffDisplayPannel
                     return;
                 }
 
-                if (buff.Caster?.NetworkId.ToString() == Globals.PlayerNetworkId &&
-                         buff.BuffData.CategoryType == BuffCategoryType.Beneficial &&
-                         (Globals.GroupMembers.Contains(buff.Caster?.NetworkId.ToString()) || buff.Target.NetworkId.ToString() == Globals.PlayerNetworkId.ToString()))
+                //if (buff.Caster?.NetworkId.ToString() == Globals.PlayerNetworkId &&
+                if (buff.BuffData.CategoryType == BuffCategoryType.Beneficial &&
+                   (Globals.GroupMembers.Contains(buff.Caster?.NetworkId.ToString()) || buff.Target.NetworkId.ToString() == Globals.PlayerNetworkId.ToString()))
                 {
 //                    MelonLogger.Warning($"OnAddOrRefreshBuff() PARTY");
                     entityData = partyEntityData;
@@ -326,11 +326,6 @@ namespace FlexiBuffDisplayPannel
                     newDebuff.targetNetworkId = buff.Target.NetworkId.ToString();
                     newDebuff.targetClass = buff.Target.Info.Class.ToString();
                     newDebuff.targetKind = buff.Target.Info.Kind.ToString();
-                    // Il2Cpp has a missing entry for EntityKind, manually deal with it here
-                    if (newDebuff.targetKind.Equals("262144"))
-                    {
-                        newDebuff.targetKind = "Construct";
-                    }
                     newDebuff.debuffName = buff.BuffData.DisplayName.ToString();
                     newDebuff.debuffDuration = (int)Math.Ceiling(buff.EstimatedTotalTime);
                     newDebuff.debuffDurationRemaining = (int)Math.Ceiling(buff.EstimatedTotalTime); // This allows us to deal with debuffs that have diminishign returns like Bind and Mez
@@ -405,14 +400,13 @@ namespace FlexiBuffDisplayPannel
             gCurrentTargetNetworkId = targetLogic.Offensive.NetworkId.ToString();
         }
 
-        // We only process removal of my buffs, specifically for handling of Hurry The Past which causes our mantle to finish early
+
         public static void RemoveBuff(double time, ActiveBuff buff)
         {
             //            MelonLogger.Warning($"RemoveDeBuff() 0a buff.BuffData.DisplayName.ToString() = {buff.BuffData.DisplayName.ToString()}");
             //            MelonLogger.Warning($"RemoveDeBuff() 0b buff.Target?.NetworkId.ToString() = {buff.Target?.NetworkId.ToString()}, buff.Target.Nameplate.nameText.text = {buff.Target?.Nameplate?.nameText.text}, gCurrentTargetNetworkId = {gCurrentTargetNetworkId}");
             //            MelonLogger.Warning($"RemoveDeBuff() 0c buff.Caster?.NetworkId.ToString() = {buff.Caster?.NetworkId.ToString()}, buff.Caster.Nameplate.nameText.text = {buff.Caster?.Nameplate?.nameText.text}, gCurrentTargetNetworkId = {gCurrentTargetNetworkId}");
 
-            // We only handle the consequences of Hurry The Past which causes your mantle to expire, there is no buff "Hurry The Past" to track, the mantle simply expires
             string buffname = buff.BuffData.DisplayName.ToString();
             // Get the list for the current player
             EntityData enemyEntityData = (gCurrentTargetNetworkId.IsEmpty()) ? new EntityData() : EntityManager.EntityManager.GetEntityData(gCurrentTargetNetworkId);
@@ -421,8 +415,10 @@ namespace FlexiBuffDisplayPannel
             for (int i = 0; i < partyEntityData.debuffData.Count; i++)
             {
                 DebuffData buffData = partyEntityData.debuffData[i];
-                // If we are the correct debuff and its the correct target and it is cast by us, set its duration remaining to zero
-                if (buffData.debuffName.ToString() == buff.BuffData.DisplayName.ToString() && buffData.targetNetworkId.ToString() == buff.Target.NetworkId.ToString() && Globals.PlayerNetworkId == buff.Caster.NetworkId.ToString())
+                // If we are the correct debuff and its the correct target and caster
+                if (buffData.debuffName.ToString() == buff.BuffData.DisplayName.ToString() && 
+                    buffData.targetNetworkId.ToString() == buff.Target.NetworkId.ToString() &&
+                    buffData.casterNetworkId.ToString() == buff.Caster.NetworkId.ToString())
                 {
                     buffData.debuffDurationRemaining = 0;
                     buffData.numStacks = buff.StackCount;

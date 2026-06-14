@@ -5,7 +5,6 @@ namespace FlexiBuffDisplayPannel;
 
 public static class Globals
 {
-    public static bool PanelsInitilisized = false;
     public static bool PlayerIsLoaded = false;
     public static int PlayerLevel = 0;
     public static bool ShowDebuffPanel = true;

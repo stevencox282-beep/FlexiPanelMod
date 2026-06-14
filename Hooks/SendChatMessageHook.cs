@@ -12,7 +12,7 @@ public class SendChatMessageHook
     {
         if (Globals.PlayerIsLoaded == true)
         {
-            if (message == "/showpanels")
+            if (message == "/showflexipanels")
             {
                 // Sets show debuffs to true then show the debuff panel
                 Globals.ShowDebuffPanel = true;
@@ -20,7 +20,7 @@ public class SendChatMessageHook
                 return false;
             }
 
-            if (message == "/hidepanels")
+            if (message == "/hideflexipanels")
             {
                 // Set show debuffs to false and hide the debuff panel
                 Globals.ShowDebuffPanel = false;
