@@ -15,7 +15,7 @@ public static class Globals
     public static string Party = "Party Buffs";
 
 
-    public static string SetNumberOfRowsCommand = "setdebuffrows";
+    public static string SetNumberOfRowsCommand = "setpanelrows";
     public static int NumDisplayableDebuffs = 10;
     
     // Panel / TextMesh Constants

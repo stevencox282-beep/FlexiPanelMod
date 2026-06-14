@@ -28,7 +28,7 @@ namespace FlexiBuffDisplayPanel.ConfigParser
                 XmlAttributeCollection panelAttributes = panel.Attributes;
                 panelConfig.panelID = panelAttributes["ID"].Value;
                 panelConfig.panelTitle = panelAttributes["Title"].Value;
-                panelConfig.displayTargetInfo = panelAttributes["DisplayTargetInfo"].Value;
+                panelConfig.displayTargetInfo = panelAttributes["TargetOrTitle"].Value;
 //                MelonLogger.Warning($"ParseConfig() panelID = {panelConfig.panelID}, panelTitle = {panelConfig.panelTitle}, displayTargetInfo = {panelConfig.displayTargetInfo}");
 
                 // Get the Row data for this panel

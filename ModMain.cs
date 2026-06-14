@@ -85,17 +85,8 @@ namespace FlexiBuffDisplayPannel
 
         public override void OnInitializeMelon()
         {
-            try
-            {
-                configParser.ParseConfig(ref panelConfigDictionary);
-            }
-            catch(Exception e)
-            {
-                MelonLogger.Error("ERROR: Unable to parse XML configuration");
-                throw (e);
-            }
-            // Parse out the config to populate the panels and rows
-            gDebuffPanel.SetPanelConfig(ref panelConfigDictionary);
+            // Read the panel config
+            InitPanels();
         }
 
         // Updates the duration timers on the panel
@@ -142,6 +133,21 @@ namespace FlexiBuffDisplayPannel
             }
         }
 
+        public static void InitPanels()
+        {
+            try
+            {
+                configParser.ParseConfig(ref panelConfigDictionary);
+            }
+            catch (Exception e)
+            {
+                MelonLogger.Error("ERROR: Unable to parse XML configuration");
+                throw (e);
+            }
+            // Parse out the config to populate the panels and rows
+            gDebuffPanel.SetPanelConfig(ref panelConfigDictionary);
+
+        }
         // This function adds the new debuff panel to the UI
         public static void AddPanelsToUI()
         {
@@ -156,6 +162,11 @@ namespace FlexiBuffDisplayPannel
         public static void ClearPanelLists()
         {
             gDebuffPanel.ClearPanelLists();
+        }
+
+        public static void DisplayPanels()
+        {
+            gDebuffPanel.DisplayPanels();
         }
 
         // Called to show the debuff panel
@@ -177,9 +188,12 @@ namespace FlexiBuffDisplayPannel
         // This function takes the new number of rows and re-draws the panel with that number of rows
         public static void SetNumDebuffRows(string message)
         {
+            // Paramter List:  numRows, panelID
             string[] result = message.Split(Globals.SetNumberOfRowsCommand);
+            string panelID = string.Empty; 
             int numRows = -1;
-            // If we have something after the command name create that many rows
+            
+            // We must have at least 1 parameters passed in, panelID is optional
             if (result.Length > 1)
             {
                 try
@@ -187,6 +201,10 @@ namespace FlexiBuffDisplayPannel
                     // Minimum number of rows to display is 1
                     numRows = Int32.Parse(result[1]);
                     numRows = FlexiPanel.FlexiPanelUtils.SanitiseNumRows(numRows);
+                    if (result.Length > 2)
+                    {
+                        panelID = result[2];
+                    }
                 }
                 catch (Exception e)
                 {
@@ -196,7 +214,7 @@ namespace FlexiBuffDisplayPannel
                 // Clear out the user visible data
                 gDebuffPanel.ClearPanels();
 
-                // Set the new number of rows to be drawn (dont do this earlier, it can cause problems tearing down the correct number of TextMesh and Image tranforms)
+                // Set the new number of rows to be drawn (dont do this earlier, it can cause problems tearing down the correct number of TextMesh and Image Tranforms)
                 Globals.NumDisplayableDebuffs = numRows;
                 gDebuffPanel.DisplayPanels();
             } // End of IF we have a value to parse
@@ -367,7 +385,6 @@ namespace FlexiBuffDisplayPannel
                     {
                         EntityManager.EntityManager.AddEntityToUniqueDebuffs(buff.Target?.NetworkId.ToString(), newDebuff.debuffName);
                     }
-                    gDebuffPanel.UpdatePanels(enemyEntityData, partyEntityData);
                     gDebuffPanel.UpdatePanels(enemyEntityData, partyEntityData);
                     //                  MelonLogger.Warning($"OnAddOrRefreshBuff() 16");
                 }

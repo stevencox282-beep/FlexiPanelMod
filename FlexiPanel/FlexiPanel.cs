@@ -89,7 +89,7 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                     Destroy(uiWindowPanelList[i]);
                 }
             }
-            // Clear the list
+            // Destroy the panels
             uiWindowPanelList.Clear();
 
             // Create the panels
@@ -389,15 +389,19 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         // Update the text displayed in the Debuff Box
         public void UpdatePanels(EntityData enemyEntityData, EntityData partyEntityData)
         {
-            EntityData entityData = MergeEntityData(enemyEntityData, partyEntityData);
+            // If we have no buffs or debuffs, exit
+            if (enemyEntityData.debuffData.Count == 0 && partyEntityData.debuffData.Count == 0)
+            {
+                return;
+            }
 
-            // Try and stop unwanted access to the panel to prevent exceptions
             if (uiWindowPanelList.Count > 0)
             {
+                // Try and stop unwanted access to the panel to prevent exceptions
+                EntityData entityData = MergeEntityData(enemyEntityData, partyEntityData);
                 // Get the difference in levels between player and entity
                 int levelDelta = entityData.entityLevel - Globals.PlayerLevel;
                 string levelDeltaString = (levelDelta < 0) ? $"{levelDelta}" : $"+{levelDelta}";
-
 
                 // We must now search every panel and find if that panel is tracking this buff/debuff and if it is follow its row rules
                 foreach (UIWindowPanel uiWindowPanel in uiWindowPanelList)
@@ -429,7 +433,7 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                     foreach (RowConfig rowConfig in panelConfig.rowConfig)
                     {
                         // Search every buff for the row that contains the buff in the RowConfig
-                        for (int i = 0; (i < entityData.debuffData.Count && i < Globals.NumDisplayableDebuffs); i++)
+                        for (int i = 0; (i < entityData.debuffData.Count && i < Globals.NumDisplayableDebuffs) ; i++)
                         {
                             DebuffData debuff = entityData.debuffData[i];
                             if (debuff.debuffName.Contains(rowConfig.displayText))
@@ -442,7 +446,7 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                                 {
                                     if (debuff.categoryType == BuffCategoryType.Beneficial.ToString())
                                     {
-                                        timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $"{debuff.debuffDurationRemaining}s";
+                                        timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $"{debuff.debuffDurationRemaining}s (Buff)";
                                     }
                                     else
                                     {
@@ -452,9 +456,10 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                                 }
                                 else
                                 {
+
                                     if (debuff.categoryType == BuffCategoryType.Beneficial.ToString())
                                     {
-                                        timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $"{Math.Floor((decimal)debuff.debuffDurationRemaining / 60)}m{Math.Floor((decimal)debuff.debuffDurationRemaining) % 60}s";
+                                        timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $"{Math.Floor((decimal)debuff.debuffDurationRemaining / 60)}m{Math.Floor((decimal)debuff.debuffDurationRemaining) % 60}s (Buff)";
                                     }
                                     else
                                     {
@@ -465,8 +470,16 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
 
                                 // Now update the progress bar colour and time
                                 Image image = imageTransformList[panelDisplayIndex].transform.GetComponent<Image>();
-                                // Set colour based on the user defined color or spell type
-                                image.color = (Color)typeof(Color).GetProperty(rowConfig.color.ToLowerInvariant()).GetValue(null, null);
+                                // Set colour based on the user defined color or spell type, if the user has given us an invalid colour, default to orange
+                                try
+                                {
+                                    image.color = (Color)typeof(Color).GetProperty(rowConfig.color.ToLowerInvariant()).GetValue(null, null);
+                                }
+                                catch
+                                {
+                                    image.color = Color.orange;
+                                }
+                                
                                 // Set the fill amount 1.0f is full, 0.0f is empty
                                 image.fillAmount = ((1 / debuff.debuffDuration) * debuff.debuffDurationRemaining);
                                 // Move to the next row in the panel
