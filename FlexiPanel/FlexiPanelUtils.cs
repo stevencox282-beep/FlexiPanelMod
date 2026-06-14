@@ -73,10 +73,10 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         }
 
         // returns the offsets for the panel rows based on how many rows we have to render
-        public static void GetOffsetsForPanel(ref float heightOffset, ref float interBarOffset)
+        public static void GetOffsetsForPanel(ref float heightOffset, ref float interBarOffset, int rowsToDisplay)
         {
             // Change the margins and offsets based on how many rows we have
-            switch (Globals.NumDisplayableDebuffs)
+            switch (rowsToDisplay)
             {
                 case 1:
                     heightOffset = 1f - 0.9f;

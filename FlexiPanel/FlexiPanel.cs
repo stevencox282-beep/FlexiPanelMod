@@ -142,10 +142,10 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                 BuildCloseButtonAndBackground(rectTransform, gameObject, uiWindowPanel);
 
                 // Set the panel size based on the number of rows we have to draw
-                SetPanelSize(ref uiWindowPanel);
+                SetPanelSize(ref uiWindowPanel, panelConfig);
 
                 // Add in the row data
-                AddRowsToPanel(ref uiWindowPanel, panelConfig.panelID);
+                AddRowsToPanel(ref uiWindowPanel, panelConfig);
 
                 // Add the new panel to the list of all panels
                 uiWindowPanelList.Add(uiWindowPanel);
@@ -154,7 +154,7 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         }
 
         // Sets the size of the panel based on the number of rows to add
-        public void SetPanelSize(ref UIWindowPanel uiWindowPanel)
+        public void SetPanelSize(ref UIWindowPanel uiWindowPanel, PanelConfig panelConfig)
         {
             // Get the RectTransform to add the rows too
             GameObject gameObject = uiWindowPanel.gameObject;
@@ -162,7 +162,7 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
 
             // The space we need per row 
             int heightPerRow = Globals.NameMeshHeight;
-            int totalHeightNeeded = (heightPerRow + Globals.PixelsToAdd) * Globals.NumDisplayableDebuffs;
+            int totalHeightNeeded = (heightPerRow + Globals.PixelsToAdd) * panelConfig.rowsToDisplay;
             // We can not change the width, just the height
             Vector2 panelSize = new Vector2(Globals.DefaultPanelWidth, totalHeightNeeded);
             rectTransform.pivot = new Vector2(0, 1);
@@ -172,17 +172,17 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         }
 
         // Adds all the images and text meshes to the panel
-        public void AddRowsToPanel(ref UIWindowPanel uiWindowPanel, string panelID)
+        public void AddRowsToPanel(ref UIWindowPanel uiWindowPanel, PanelConfig panelConfig)
         {
             // Get the RectTransform to add the rows too
             GameObject gameObject = uiWindowPanel.gameObject;
             RectTransform rectTransform = gameObject.transform.GetComponent<RectTransform>();
 
             // Add in the images that will be the progress bars
-            BuildImages(rectTransform, panelID);
+            BuildImages(rectTransform, panelConfig);
 
             // Add in Text Meshs that display the data
-            BuildTextMeshs(rectTransform, panelID);
+            BuildTextMeshs(rectTransform, panelConfig);
         }
 
         // Constructs the close button and set the background
@@ -294,44 +294,44 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         }
 
         // Builds all images (progress bars) to be display in the panel 
-        private void BuildImages(RectTransform rectTransform, string panelID) 
+        private void BuildImages(RectTransform rectTransform, PanelConfig panelConfig) 
         {
             float heightOffset = 0.0f;
             float interBarOffset = 0.0f;
-            FlexiPanelUtils.GetOffsetsForPanel(ref heightOffset, ref interBarOffset);
+            FlexiPanelUtils.GetOffsetsForPanel(ref heightOffset, ref interBarOffset, panelConfig.rowsToDisplay);
 
             // Make all the progress bars
             List<Transform> transformList = new List<Transform>();
-            for (int i = 0 ; i < Globals.NumDisplayableDebuffs; i++)
+            for (int i = 0 ; i < panelConfig.rowsToDisplay; i++)
             {
-                string imageName = $"{baseImageName}{i}_{panelID}";
+                string imageName = $"{baseImageName}{i}_{panelConfig.panelID}";
                 BuildImage(rectTransform, imageName, Globals.NameMeshHeight, Globals.NameMeshWidth, heightOffset, Globals.RowLeftMargin);
                 transformList.Add(rectTransform.transform.Find(imageName));
                 heightOffset = heightOffset - interBarOffset;
             }
-            imageDictionary.Add(panelID, transformList);
+            imageDictionary.Add(panelConfig.panelID, transformList);
         }
 
         // Builds all TextMeshes (debuff/time) to be display in the panel
-        private void BuildTextMeshs(RectTransform rectTransform, string panelID)
+        private void BuildTextMeshs(RectTransform rectTransform, PanelConfig panelConfig)
         {
             // Text Mesh for Target Name
             BuildTextMesh(rectTransform, baseTargetName, Globals.NameMeshHeight, Globals.NameMeshWidth, 1.0f, 0.0f);
             List<Transform> transformList = new List<Transform>();
             transformList.Add(rectTransform.Find(baseTargetName));
-            targetNameTextMeshDictionary.Add(panelID, transformList);
+            targetNameTextMeshDictionary.Add(panelConfig.panelID, transformList);
 
             // Build the meshes
             float heightOffset = 0.0f;
             float interBarOffset = 0.0f;
-            FlexiPanelUtils.GetOffsetsForPanel(ref heightOffset, ref interBarOffset);
+            FlexiPanelUtils.GetOffsetsForPanel(ref heightOffset, ref interBarOffset, panelConfig.rowsToDisplay);
 
             List<Transform> textMeshTransformList = new List<Transform>();
             List<Transform> timeTextMeshTransformList = new List<Transform>();
-            for (int i = 0; i < Globals.NumDisplayableDebuffs; i++)
+            for (int i = 0; i < panelConfig.rowsToDisplay; i++)
             {
-                string textName = $"{baseTextName}{i}_{panelID}";
-                string timeTextName = $"{baseTimeTextName}{i}_{panelID}";
+                string textName = $"{baseTextName}{i}_{panelConfig.panelID}";
+                string timeTextName = $"{baseTimeTextName}{i}_{panelConfig.panelID}";
                 BuildTextMesh(rectTransform, textName, Globals.NameMeshHeight, Globals.NameMeshWidth, heightOffset, Globals.RowLeftMargin);
                 BuildTextMesh(rectTransform, timeTextName, Globals.TimeMeshHeight, Globals.TimeMeshWidth, heightOffset, Globals.TimeLeftMargin);
 
@@ -339,8 +339,8 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                 timeTextMeshTransformList.Add(rectTransform.Find(timeTextName));
                 heightOffset = heightOffset - interBarOffset;
             }
-            textMeshDictionary.Add(panelID, textMeshTransformList);
-            timeTextMeshDictionary.Add(panelID, timeTextMeshTransformList);
+            textMeshDictionary.Add(panelConfig.panelID, textMeshTransformList);
+            timeTextMeshDictionary.Add(panelConfig.panelID, timeTextMeshTransformList);
         }
 
         // Clears the text displayed in the Panel
@@ -422,7 +422,7 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                     // Update the panel title
                     foreach (Transform targetTransform in targetTransformList)
                     {
-                        if (panelConfig.displayTargetInfo.Equals("title"))
+                        if (panelConfig.targetOrTitle.Equals("title"))
                         {
                             targetTransform.GetComponent<TextMeshProUGUI>().text = panelConfig.panelTitle;
                         }
@@ -438,7 +438,7 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                     foreach (RowConfig rowConfig in panelConfig.rowConfig)
                     {
                         // Search every buff for the row that contains the buff in the RowConfig
-                        for (int i = 0; (i < entityData.debuffData.Count && i < Globals.NumDisplayableDebuffs) ; i++)
+                        for (int i = 0; (i < entityData.debuffData.Count && i < panelConfig.rowsToDisplay) ; i++)
                         {
                             DebuffData debuff = entityData.debuffData[i];
                             // Exclude buffs / debuffs as required

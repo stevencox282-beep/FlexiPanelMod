@@ -2,7 +2,6 @@
 using Il2CppServiceStack;
 using MelonLoader;
 using System.Xml;
-using static Il2CppServiceStack.NetStandardPclExport;
 
 namespace FlexiBuffDisplayPanel.ConfigParser
 {
@@ -12,6 +11,9 @@ namespace FlexiBuffDisplayPanel.ConfigParser
         // Parses the Panel configuration from the XML file and uses it to setup the panels
         public void ParseConfig(ref Dictionary<string, PanelConfig> panelConfigDictionary)
         {
+            // Ensure the panel config store is clear
+            panelConfigDictionary.Clear();
+
             XmlDocument xmlDoc = new XmlDocument(); // Create an XML document object
             xmlDoc.Load(".\\UserData\\FlexiPanelConfig.xml"); // Load the XML document from the specified file
 
@@ -29,9 +31,10 @@ namespace FlexiBuffDisplayPanel.ConfigParser
                 XmlAttributeCollection panelAttributes = panel.Attributes;
                 panelConfig.panelID = panelAttributes["ID"].Value;
                 panelConfig.panelTitle = panelAttributes["Title"].Value;
-                panelConfig.displayTargetInfo = panelAttributes["TargetOrTitle"].Value;
+                panelConfig.targetOrTitle = panelAttributes["TargetOrTitle"].Value;
                 panelConfig.excludeBuffs = bool.Parse(panelAttributes["ExcludeBuffs"].Value);
                 panelConfig.excludeDebuffs = bool.Parse(panelAttributes["ExcludeDebuffs"].Value);
+                panelConfig.rowsToDisplay = Int32.Parse(panelAttributes["RowsToDisplay"].Value);
 
                 // Get the Row data for this panel
                 XmlNodeList rowsList = panel.ChildNodes;

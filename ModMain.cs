@@ -54,9 +54,10 @@ namespace FlexiBuffDisplayPannel
     {
         public string panelID; // Unique ID used to identify this exact panel
         public string panelTitle;
-        public string displayTargetInfo;
+        public string targetOrTitle;
         public bool excludeBuffs;
         public bool excludeDebuffs;
+        public int rowsToDisplay;
         public List<RowConfig> rowConfig;
     }
 
@@ -155,6 +156,7 @@ namespace FlexiBuffDisplayPannel
             gDebuffPanel.SetPanelConfig(ref panelConfigDictionary);
 
         }
+
         // This function adds the new debuff panel to the UI
         public static void PreserveRequiredTransforms()
         {
@@ -187,42 +189,6 @@ namespace FlexiBuffDisplayPannel
         public static void HideFlexiPanels()
         {
             gDebuffPanel.HideFlexiPanels();
-        }
-
-        // This function takes the new number of rows and re-draws the panel with that number of rows
-        public static void SetNumDebuffRows(string message)
-        {
-            // Paramter List:  numRows, panelID
-            string[] result = message.Split(Globals.SetNumberOfRowsCommand);
-            string panelID = string.Empty; 
-            int numRows = -1;
-            
-            // We must have at least 1 parameters passed in, panelID is optional
-            if (result.Length > 1)
-            {
-                try
-                {
-                    // Minimum number of rows to display is 1
-                    numRows = Int32.Parse(result[1]);
-                    numRows = FlexiPanel.FlexiPanelUtils.SanitiseNumRows(numRows);
-                    if (result.Length > 2)
-                    {
-                        panelID = result[2];
-                    }
-                }
-                catch (Exception e)
-                {
-                    return;
-                }
-
-                // Clear out the user visible data
-                gDebuffPanel.ClearPanelsDisplay();
-                gDebuffPanel.ClearTransformDictionaries();
-
-                // Set the new number of rows to be drawn (dont do this earlier, it can cause problems tearing down the correct number of TextMesh and Image Tranforms)
-                Globals.NumDisplayableDebuffs = numRows;
-                gDebuffPanel.InitialiseFlexiPanels();
-            } // End of IF we have a value to parse
         }
 
         // Determines if the target for a buff is valid for us to track

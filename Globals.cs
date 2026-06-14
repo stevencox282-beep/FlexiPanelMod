@@ -14,10 +14,6 @@ public static class Globals
     public static EntityPlayerGameObject? LocalPlayer = null;
     public static string Party = "Party Buffs";
 
-
-    public static string SetNumberOfRowsCommand = "setpanelrows";
-    public static int NumDisplayableDebuffs = 10;
-    
     // Panel / TextMesh Constants
     public static float RowLeftMargin = 0.05f;
     public static int DefaultPanelHeight = 540; // y-axis

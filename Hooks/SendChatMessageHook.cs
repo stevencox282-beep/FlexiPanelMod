@@ -28,15 +28,8 @@ public class SendChatMessageHook
                 return false;
             }
 
-            // Change the number of rows for a given panel.  /setpanelrows <numRows> <panelID>
-            if (message.Contains($"/{Globals.SetNumberOfRowsCommand}"))
-            {
-                ModMain.SetNumDebuffRows(message);
-                return false;
-            }
-
-            // Reload the panel configuration
-            if (message.Equals($"/reloadflexipanels"))
+            // Reload the current panel configuration
+            if (message.Equals($"/resetflexipanels"))
             {
                 ModMain.ClearTransformDictionaries();
                 ModMain.PanelConfig();
