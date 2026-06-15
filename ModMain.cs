@@ -370,7 +370,7 @@ namespace FlexiBuffDisplayPannel
             {
                 // Either the user has pressed ESC so they are targetting nothing or something has gone wrong somewhere
                 gCurrentTargetNetworkId = "";
-                gDebuffPanel.ClearPanelsDisplay();
+                //gDebuffPanel.ClearPanelsDisplay();
                 return;
             }
 
