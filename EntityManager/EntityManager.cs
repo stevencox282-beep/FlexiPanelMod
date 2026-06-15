@@ -176,20 +176,24 @@ public static class EntityManager
 
         // For any debuff we have ever had for this entity
         var allEntityNetworkIds = uniqueDebuffsDictionary.Keys;
+        var allEntityDebuffIds = gEntityDebuffDictionary.Keys;
         foreach (var entityNetworkId in allEntityNetworkIds)
         {
-            // Incremement this
-            gEntityDebuffDictionary[entityNetworkId].totalEncounterTime++;
+            // If the entity does not exist, it could be a pet or a player, just return
+            if (!allEntityDebuffIds.Contains(entityNetworkId))
+            {
+                return;
+            }
+
+            EntityData entity = gEntityDebuffDictionary[entityNetworkId];
+            entity.totalEncounterTime++;
+            entity.entityNetworkId = entityNetworkId;
 
             var uniqueEntityDebuffList = uniqueDebuffsDictionary[entityNetworkId];
             for (int i = 0; i < uniqueEntityDebuffList.Count; i++)
             {
                 // Find every entity debuff that matches this historic debuff name
                 string currentHistoricDebuffName = uniqueEntityDebuffList[i];
-
-                // Update encounter uptime for this specific debuff in the list of all entity debuffs
-                EntityData entity = gEntityDebuffDictionary[entityNetworkId];
-                entity.entityNetworkId = entityNetworkId;
 
                 // For every debuff on a n entity
                 foreach (DebuffData debuff in entity.debuffData)

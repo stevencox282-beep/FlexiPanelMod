@@ -30,6 +30,7 @@ You can find the full Unity colour list for Unity 6.4 (correct at time of writin
 
 ## Known Limitations
 If a player/entity moves into range with buff/debuffs applied to them when they were out of range then they will not appear in the panels.
+Buffs that already existed on a character before logging in will not show in the panels
 
 ## Installation
 Install MelonLoader, following along with their [installation instructions](https://melonwiki.xyz/#/?id=requirements).

@@ -394,23 +394,24 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         // Update the text displayed in the Debuff Box
         public void UpdatePanelsDisplay(EntityData enemyEntityData, EntityData partyEntityData)
         {
-            // If we have no buffs or debuffs, exit
-            if (enemyEntityData.debuffData.Count == 0 && partyEntityData.debuffData.Count == 0)
-            {
-                return;
-            }
+            // Try and stop unwanted access to the panel to prevent exceptions
+            EntityData entityData = MergeEntityData(enemyEntityData, partyEntityData);
+            string targetName = entityData.targetName.ToString();
+
+//            MelonLogger.Warning($"UpdatePanelsDisplay() 1");
 
             if (uiWindowPanelList.Count > 0)
             {
-                // Try and stop unwanted access to the panel to prevent exceptions
-                EntityData entityData = MergeEntityData(enemyEntityData, partyEntityData);
                 // Get the difference in levels between player and entity
                 int levelDelta = entityData.entityLevel - Globals.PlayerLevel;
                 string levelDeltaString = (levelDelta < 0) ? $"{levelDelta}" : $"+{levelDelta}";
+                pullMessage = $"Pulling {entityData.targetName.ToUpperSafe()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
+                popMessage = $"POP {entityData.targetName.ToUpperSafe()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
 
                 // We must now search every panel and find if that panel is tracking this buff/debuff and if it is follow its row rules
                 foreach (UIWindowPanel uiWindowPanel in uiWindowPanelList)
                 {
+//                    MelonLogger.Warning($"UpdatePanelsDisplay() 2");
                     // Get the panel details for this window
                     string panelID = uiWindowPanel._displayName;
                     PanelConfig panelConfig = gPanelConfigDictionary[panelID];
@@ -422,12 +423,21 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                     // Update the panel title
                     foreach (Transform targetTransform in targetTransformList)
                     {
-                        if (panelConfig.targetOrTitle.Equals("title"))
+//                        MelonLogger.Warning($"UpdatePanelsDisplay() 3 targetName = {targetName}, Globals.Party = {Globals.Party}");
+                        // Display the panel title if the user has selected that, otherwise display a suitable target name
+                        if (panelConfig.targetOrTitle.Equals("title") )
                         {
+//                            MelonLogger.Warning($"UpdatePanelsDisplay() 4");
                             targetTransform.GetComponent<TextMeshProUGUI>().text = panelConfig.panelTitle;
+                        }
+                        else if (targetName.Equals(Globals.Party))
+                        {
+//                            MelonLogger.Warning($"UpdatePanelsDisplay() 5");
+                            targetTransform.GetComponent<TextMeshProUGUI>().text = $" <b>Target:</b> None";
                         }
                         else
                         {
+//                            MelonLogger.Warning($"UpdatePanelsDisplay() 6");
                             targetTransform.GetComponent<TextMeshProUGUI>().text = $" <b>Target:</b> {entityData.targetName.ToUpperSafe()}({levelDeltaString}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
                         }
                     }
@@ -437,8 +447,8 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                     // Parse the list of all viable rows then find a mtach in the buffs list on the current target and update the rows for the panel
                     foreach (RowConfig rowConfig in panelConfig.rowConfig)
                     {
-                        // Search every buff for the row that contains the buff in the RowConfig
-                        for (int i = 0; (i < entityData.debuffData.Count && i < panelConfig.rowsToDisplay) ; i++)
+                        // Search every entity buff for RowConfig.displayText, but dont display more rows than we allocated in the panel
+                        for (int i = 0; (i < entityData.debuffData.Count && panelDisplayIndex < panelConfig.rowsToDisplay) ; i++)
                         {
                             DebuffData debuff = entityData.debuffData[i];
                             // Exclude buffs / debuffs as required

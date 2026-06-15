@@ -16,7 +16,7 @@ public class PlayerNetworkStart
             Globals.PlayerIsLoaded = false;
             return;
         }
-        
+
         if (__instance.NetworkId.Value == EntityPlayerGameObject.LocalPlayerId.Value)
         {
             Globals.LocalPlayer = __instance;
@@ -35,6 +35,8 @@ public class PlayerNetworkStart
                 MelonLogger.Error("Could not convert Local Player level to int, defaulting to player level 0");
                 Globals.PlayerLevel = 0;
             }
+
+            
             return;
         }
     }
