@@ -12,12 +12,11 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
     // Debuff Panel 
     public class FlexiPanel : MonoBehaviour
     {
-        // basis for the names of the transforms we are going to create
+        // Base names of the transforms we are going to create
         private static string baseTargetName = "FBDP_TargetName_FBDP_";
         private static string baseTextName = "FBDP_TextName_FBDP_";
         private static string baseTimeTextName = "FBDP_TimeTextName_FBDP_";
         private static string baseImageName = "FBDP_ImageName_FBDP_";
-        // Returns a Color for the progress bar based on the spellType for that row
         private static string basePanelName = "FBDP_DebuffPanel_FBDP_";
 
         // Setup lists that will hold all our transforms
@@ -63,7 +62,7 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         public void ShowFlexiPanels()
         {
             // Display the panel if the gloabl is set to allow it
-            if (Globals.ShowDebuffPanel == true)
+            if (Globals.ShowPanels == true)
             {
                 foreach (var uiWindowPanel in uiWindowPanelList)
                 {
@@ -434,7 +433,7 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                         for (int i = 0; (i < entityData.buffData.Count && panelDisplayIndex < panelConfig.rowsToDisplay); i++)
                         {
                             BuffData buff = entityData.buffData[i];
-                            // Exclude buffs / debuffs as required
+                            // Exclude buffs/debuffs as required
                             if (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.excludeBuffs == true ||
                                 buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.excludeDebuffs == true)
                             {
@@ -476,7 +475,6 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
         // Get the string that will be in the panel title / target textmesh
         private string GetTargetTransformText(PanelConfig panelConfig, EntityData entityData, string levelDeltaString)
         {
-            //                        MelonLogger.Warning($"UpdatePanelsDisplay() 3 targetName = {targetName}, Globals.Party = {Globals.Party}");
             // Display the panel title if the user has selected that, otherwise display a suitable target name
             if (panelConfig.targetOrTitle.Equals("title"))
             {
@@ -535,17 +533,11 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
 
         private void CopyByValue(EntityData source, ref EntityData destination)
         {
-            if (source == null)
+            if (source == null || destination == null)
             {
-                MelonLogger.Warning($"CopyByValue source = NULL");
                 return;
             }
 
-            if (destination == null)
-            {
-                MelonLogger.Warning($"CopyByValue destination = NULL");
-                return;
-            }
             destination.traits = source.traits;
             destination.isDead = source.isDead;
             destination.encounterStartTime = source.encounterStartTime;
@@ -578,16 +570,20 @@ namespace FlexiBuffDisplayPannel.FlexiPanel
                 destination.buffData.Add(newDebuffdata);
             }
         }
+
+        // Add the pull message to the Group chat
         public void ShowPullMessage(EntityClientMessaging.Logic __instance)
         {
             __instance.SendChatMessage(pullMessage, ChatChannelType.Group);
         }
 
+        // Add the pop message to the Group chat
         public void ShowPopMessage(EntityClientMessaging.Logic __instance)
         {
             __instance.SendChatMessage(popMessage, ChatChannelType.Group);
         }
 
+        // Add the target information to the Group chat
         public void ShowTargetMessage(EntityClientMessaging.Logic __instance)
         {
             __instance.SendChatMessage(targetMessage, ChatChannelType.Group);

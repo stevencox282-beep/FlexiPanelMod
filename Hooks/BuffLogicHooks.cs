@@ -3,7 +3,7 @@ using Il2Cpp;
 
 namespace FlexiBuffDisplayPannel.Hooks;
 
-// This hook fires when any entity in range receives any buff / debuff
+// This hook fires when any entity in range receives any buff/debuff
 [HarmonyPatch(typeof(Buffs.Logic), nameof(Buffs.Logic.Add), typeof(double), typeof(ActiveBuff), typeof(bool), typeof(bool), typeof(bool))]
 public class BuffLogicAdd
 {
@@ -13,7 +13,7 @@ public class BuffLogicAdd
     }
 }
 
-// This hook fires when any entity in range receives any buff / debuff
+// This hook fires when any entity in range receives any buff/debuff
 [HarmonyPatch(typeof(Buffs.Logic), nameof(Buffs.Logic.RemoveMyActiveBuff), typeof(double), typeof(ActiveBuff))]
 public class BuffLogicRemove
 {

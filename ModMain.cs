@@ -25,7 +25,7 @@ namespace FlexiBuffDisplayPannel
         public int entityLevel; // level of the entity
     }
 
-    // This class holds all the buff data to display in the buff panel
+    // Holds all the buff data to display in the panel
     public class BuffData()
     {
         public string buffName; // Base name of the buff
@@ -45,10 +45,11 @@ namespace FlexiBuffDisplayPannel
         public string spellType; // Spell Type (Nature, Corruption)
         public string categoryType; // Beneficial, Detrimental, Both
 
-        public long consolidatedEncounterUptime; // Time the debuff has been up as a % of total encounter time
-        public float consolidatedEncounterUptimePercent; // Time the debuff has been up as a % of total encounter time
+        public long consolidatedEncounterUptime; // Time the buff has been up as a % of total encounter time
+        public float consolidatedEncounterUptimePercent; // Time the buff has been up as a % of total encounter time
     }
 
+    // Holds the data for the panesl to be displayed
     public class PanelConfig()
     {
         public string panelID; // Unique ID used to identify this exact panel
@@ -60,7 +61,7 @@ namespace FlexiBuffDisplayPannel
         public List<RowConfig> rowConfig;
     }
 
-    // Used to determine how each row should be rendered
+    // Holds the data for a row in the panel
     public class RowConfig()
     {
         public string displayText;  // The name of the buff/debuff that this row config will apply too
@@ -85,7 +86,7 @@ namespace FlexiBuffDisplayPannel
         public override void OnInitializeMelon()
         {
             // Read the panel config
-            PanelConfig();
+            ReadPanelConfig();
         }
 
         // Updates the duration timers on the panel
@@ -104,7 +105,7 @@ namespace FlexiBuffDisplayPannel
                     EntityData partyEntityData = EntityManager.EntityManager.GetEntityData(Globals.Party);
                     EntityData enemyEntityData = new EntityData();
 
-                    // If gCurrentTargetNetworkId is not populated there is no debuff information to update
+                    // If gCurrentTargetNetworkId is not populated we still have to process party information
                     if (!gCurrentTargetNetworkId.Equals(""))
                     {
                         enemyEntityData = EntityManager.EntityManager.GetEntityData(gCurrentTargetNetworkId);
@@ -137,7 +138,7 @@ namespace FlexiBuffDisplayPannel
         }
 
         // Parses the panel config and sets up the panels
-        public static void PanelConfig()
+        public static void ReadPanelConfig()
         {
             try
             {
@@ -175,7 +176,7 @@ namespace FlexiBuffDisplayPannel
         public static void ShowFlexiPanels()
         {
             // Display the panel if the gloabl is set to allow it
-            if (Globals.ShowDebuffPanel == true)
+            if (Globals.ShowPanels == true)
             {
                 gFlexiPanels.ShowFlexiPanels();
             }
@@ -257,7 +258,7 @@ namespace FlexiBuffDisplayPannel
                 }
                 else
                 {
-                    // We are a debuff
+                    // We are a buff
                     entityData = enemyEntityData;
                 }
 
@@ -382,7 +383,7 @@ namespace FlexiBuffDisplayPannel
             for (int i = 0; i < partyEntityData.buffData.Count; i++)
             {
                 BuffData buffData = partyEntityData.buffData[i];
-                // If we are the correct debuff and its the correct target and caster
+                // If we are the correct buff and its the correct target and caster
                 if (buffData.buffName.ToString() == activeBuff.BuffData.DisplayName.ToString() &&
                     buffData.targetNetworkId.ToString() == activeBuff.Target.NetworkId.ToString() &&
                     buffData.casterNetworkId.ToString() == activeBuff.Caster.NetworkId.ToString())

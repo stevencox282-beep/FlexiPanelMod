@@ -4,13 +4,14 @@ namespace FlexiBuffDisplayPannel;
 
 public static class Globals
 {
-    public static bool PlayerIsLoaded = false;
-    public static int PlayerLevel = 0;
-    public static bool ShowDebuffPanel = true;
-    public static List<string> GroupMembers = new List<string>();
+    public static bool PlayerIsLoaded = false; // Set true when a character loads/unloads from the game world / changes zones
+    public static int PlayerLevel = 0; // Holds the current player level
     public static string PlayerNetworkId = string.Empty;
     public static EntityPlayerGameObject? LocalPlayer = null;
-    public static string Party = "Party Buffs";
+
+    public static bool ShowPanels = true; // Controls wether or not the panels will be displayed
+    public static List<string> GroupMembers = new List<string>(); // List of all group members (does not include LocalPlayer)
+    public static string Party = "Party Buffs"; // Used to create an EntityData that holds buff/debuff information for the party and local player
 
     // Panel / TextMesh Constants
     public static float RowLeftMargin = 0.05f;

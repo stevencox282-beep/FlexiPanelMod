@@ -14,16 +14,16 @@ public class SendChatMessageHook
         {
             if (message == "/showflexipanels")
             {
-                // Sets show debuffs to true then show the debuff panel
-                Globals.ShowDebuffPanel = true;
+                // Shows all configured panels
+                Globals.ShowPanels = true;
                 ModMain.ShowFlexiPanels();
                 return false;
             }
 
             if (message == "/hideflexipanels")
             {
-                // Set show debuffs to false and hide the debuff panel
-                Globals.ShowDebuffPanel = false;
+                // Hide all configured panels
+                Globals.ShowPanels = false;
                 ModMain.HideFlexiPanels();
                 return false;
             }
@@ -32,29 +32,28 @@ public class SendChatMessageHook
             if (message.Equals($"/resetflexipanels"))
             {
                 ModMain.ClearTransformDictionaries();
-                ModMain.PanelConfig();
+                ModMain.ReadPanelConfig();
                 ModMain.InitialiseFlexiPanels();
-
                 return false;
             }
 
+            // Shows the pulling message in Group chat
             if (message == "/pulling")
             {
-                // Set show debuffs to false and hide the debuff panel
                 ModMain.ShowPullMessage(__instance);
                 return false;
             }
 
+            // Shows the pop message in Group chat
             if (message == "/pop")
             {
-                // Set show debuffs to false and hide the debuff panel
                 ModMain.ShowPopMessage(__instance);
                 return false;
             }
 
+            // Shows the current target information in Group chat
             if (message == "/target")
             {
-                // Set show debuffs to false and hide the debuff panel
                 ModMain.ShowTargetMessage(__instance);
                 return false;
             }

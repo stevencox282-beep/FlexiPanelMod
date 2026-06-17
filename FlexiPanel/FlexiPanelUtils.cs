@@ -1,6 +1,6 @@
 ﻿namespace FlexiBuffDisplayPannel.FlexiPanel
 {
-    // Class that holds utility functions used by the debuff panel
+    // Class that holds utility functions used by the panel
     public static class FlexiPanelUtils
     {
         // returns the offsets for the panel rows based on how many rows we have to render
