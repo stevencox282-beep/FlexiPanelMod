@@ -1,87 +1,24 @@
-﻿using FlexiBuffDisplayPanel.ConfigParser;
-using Il2Cpp;
+﻿using Il2Cpp;
 using Il2CppServiceStack;
 using MelonLoader;
 using UnityEngine;
 
 // Mod meta data
-[assembly: MelonInfo(typeof(FlexiBuffDisplayPannel.ModMain), "FlexiBuffDisplayPannel", "1.0.0", "Anonymous", null)]
+[assembly: MelonInfo(typeof(FlexiPanelMod.ModMain), "FlexiPanelMod", "1.0.0", "Anonymous", null)]
 [assembly: MelonGame("Visionary Realms", "Pantheon")]
 
-namespace FlexiBuffDisplayPannel
+namespace FlexiPanelMod
 {
-    // Holds the data for each entity
-    public class EntityData()
-    {
-        public bool isDead; // The death status for an entity always changes to false when you move out of range, even if it is still dead, so now we track if it has ever been dead
-        public List<BuffData> buffData = new List<BuffData>();
-        public long encounterStartTime; // Total encounter time for this entity
-        public string entityNetworkId; // network id of this entity
-        public long totalEncounterTime; // Time the entity has been engaged
-        public string targetName;
-        public string targetKind;
-        public string targetClass;
-        public string traits; // Concatenated string of all traits to be displayed
-        public int entityLevel; // level of the entity
-    }
-
-    // Holds all the buff data to display in the panel
-    public class BuffData()
-    {
-        public string buffName; // Base name of the buff
-        public float buffDuration; // Buff duration
-        public float buffDurationRemaining; // Used in the panel to keep track of remaining duration
-
-        // Do NOT move these into EntityData, each entity can have multiple characters attacking it and casting spells on it, it has to be per buff
-        public string targetName; // Nameplate name of the target
-        public string targetNetworkId; // Unique ID of the target
-        public string targetKind; // Humanoid, Undead etc.
-        public string targetClass; // Rogue, Wizard etc.
-        public string casterName; // Nameplate name of the caster
-        public string casterNetworkId; // Unique ID of the caster
-
-        public int numStacks; // Number of stacks
-        public int maxStacks; // Max stacks
-        public string spellType; // Spell Type (Nature, Corruption)
-        public string categoryType; // Beneficial, Detrimental, Both
-
-        public long consolidatedEncounterUptime; // Time the buff has been up as a % of total encounter time
-        public float consolidatedEncounterUptimePercent; // Time the buff has been up as a % of total encounter time
-    }
-
-    // Holds the data for the panesl to be displayed
-    public class PanelConfig()
-    {
-        public string panelID; // Unique ID used to identify this exact panel
-        public string panelTitle; // Hold the panel title to be displayed
-        public string targetOrTitle; // Determines if we display the Panel title or Target information
-        public bool excludeBuffs; // Indicates if the panel ignores all buffs
-        public bool excludeDebuffs; // Indicates if the panel ignores all debuffs
-        public int rowsToDisplay; // Number of rows for the panel
-        public List<RowConfig> rowConfig;
-    }
-
-    // Holds the data for a row in the panel
-    public class RowConfig()
-    {
-        public string displayText;  // The name of the buff/debuff that this row config will apply too
-        public string color;
-        public string persistant; // determines if the row will dissapear when timer reaches zero
-        public string showUpTime; // Determines if uptime will be dispalyed for this row
-    };
-
-
     // This Mod collects all buff information about all mobs and the party members that are currently in range
     public class ModMain : MelonMod
     {
         // UI Elements
-        private static FlexiPanel.FlexiPanel gFlexiPanels = new FlexiPanel.FlexiPanel();
+        private static FlexiPanel gFlexiPanels = new FlexiPanel();
         private static string gCurrentTargetNetworkId = ""; // Only update in offensive target select and only use in OnUpdate
         private const float UpdateInterval = 1.0f; // Update interval in seconds
         private static float _timeSinceLastUpdate;
-        // Debuffs we want to ignore
-        private static ConfigParser configParser = new ConfigParser();
-        private static Dictionary<string, PanelConfig> panelConfigDictionary = new Dictionary<string, PanelConfig>();
+        private static ConfigParser configParser = new ConfigParser(); // Parses the mods configuration
+        private static Dictionary<string, PanelConfig> panelConfigDictionary = new Dictionary<string, PanelConfig>(); // All panels
 
         public override void OnInitializeMelon()
         {
@@ -102,23 +39,23 @@ namespace FlexiBuffDisplayPannel
                     // Update this immediatly so we dont flood in here
                     _timeSinceLastUpdate = 0f;
 
-                    EntityData partyEntityData = EntityManager.EntityManager.GetEntityData(Globals.Party);
+                    EntityData partyEntityData = EntityManager.GetEntityData(Globals.Party);
                     EntityData enemyEntityData = new EntityData();
 
                     // If gCurrentTargetNetworkId is not populated we still have to process party information
                     if (!gCurrentTargetNetworkId.Equals(""))
                     {
-                        enemyEntityData = EntityManager.EntityManager.GetEntityData(gCurrentTargetNetworkId);
+                        enemyEntityData = EntityManager.GetEntityData(gCurrentTargetNetworkId);
                         // This will occur If the current entity despawns whilst targetted, dont try and update anything
                         if (enemyEntityData == null)
                         {
                             gCurrentTargetNetworkId = "";
-                            // This is horrible, we are allocated a new entity data twice
+                            // This is horrible as we are allocating a new entity data twice but it works
                             enemyEntityData = new EntityData();
                         }
                         else
                         {
-                            // If the enemy is dead, remove all the debuffs
+                            // If the enemy is dead, remove all the data
                             if (enemyEntityData.isDead == true)
                             {
                                 enemyEntityData.buffData.Clear();
@@ -127,9 +64,9 @@ namespace FlexiBuffDisplayPannel
                     }
 
                     // Update the progress bars
-                    EntityManager.EntityManager.UpdateDurationRemaining();
+                    EntityManager.UpdateDurationRemaining();
                     // Call the entitiy manager and get it to update the uptime timers
-                    EntityManager.EntityManager.UpdateEncounterUpTime();
+                    EntityManager.UpdateEncounterUpTime();
                     // Update panels
                     gFlexiPanels.ClearPanelsDisplay();
                     gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData);
@@ -213,7 +150,7 @@ namespace FlexiBuffDisplayPannel
             //            MelonLogger.Warning($"OnAddOrRefreshBuff() 0b buff.Target?.NetworkId.ToString() = {buff.Target?.NetworkId.ToString()}, buff.Target.Nameplate.nameText.text = {buff.Target?.Nameplate?.nameText.text}, gCurrentTargetNetworkId = {gCurrentTargetNetworkId}");
             //            MelonLogger.Warning($"OnAddOrRefreshBuff() 0c buff.Caster?.NetworkId.ToString() = {buff.Caster?.NetworkId.ToString()}, buff.Caster.Nameplate.nameText.text = {buff.Caster?.Nameplate?.nameText.text}, gCurrentTargetNetworkId = {gCurrentTargetNetworkId}");
 
-            // Make sure we track only buffs on only entitys
+            // Make sure we track only valid entities
             if (IsValidTarget(activeBuff))
             {
                 // Check everything major for null values, sometimes they appear and I dont know why
@@ -224,13 +161,13 @@ namespace FlexiBuffDisplayPannel
 
                 EntityData entityData = new EntityData();
                 EntityData enemyEntityData = new EntityData();
-                EntityData partyEntityData = EntityManager.EntityManager.GetEntityData(Globals.Party);
+                EntityData partyEntityData = EntityManager.GetEntityData(Globals.Party);
 
                 // If this is a buff going onto an Enemy (we do track) or a pet (which dont track)
                 if (activeBuff.Target.Info.AccessLevel.Equals(AccessLevel.None))
                 {
                     // This will set enemyEntityData to NULL if it does not find a match
-                    enemyEntityData = EntityManager.EntityManager.GetEntityData(activeBuff.Target.NetworkId.ToString());
+                    enemyEntityData = EntityManager.GetEntityData(activeBuff.Target.NetworkId.ToString());
                 }
 
                 // HACK - We do not track pets or this is a missing entity (something went wrong somewhere else)
@@ -253,7 +190,7 @@ namespace FlexiBuffDisplayPannel
                     entityData = partyEntityData;
                     if (gCurrentTargetNetworkId != "")
                     {
-                        enemyEntityData = EntityManager.EntityManager.GetEntityData(gCurrentTargetNetworkId);
+                        enemyEntityData = EntityManager.GetEntityData(gCurrentTargetNetworkId);
                     }
                 }
                 else
@@ -262,7 +199,7 @@ namespace FlexiBuffDisplayPannel
                     entityData = enemyEntityData;
                 }
 
-                // If we are a refresh of a buff/debuff that was applied in the past
+                // If we are a refresh of a buff/debuff
                 bool found = HandleRefresh(entityData, activeBuff);
 
                 // This is not a refresh and it is not a previously applied buff that has expired
@@ -274,8 +211,8 @@ namespace FlexiBuffDisplayPannel
                     entityData.buffData.Add(newDebuff);
 
                     // Update the buff list and uptimes
-                    EntityManager.EntityManager.AddEntityToUniqueDebuffs(activeBuff.Target?.NetworkId.ToString(), newDebuff.buffName);
-                    EntityManager.EntityManager.AddConsolidatedUptime(activeBuff.Target.NetworkId.ToString(), newDebuff);
+                    EntityManager.AddEntityToUniqueDebuffs(activeBuff.Target?.NetworkId.ToString(), newDebuff.buffName);
+                    EntityManager.AddConsolidatedUptime(activeBuff.Target.NetworkId.ToString(), newDebuff);
                 }
             }
         }
@@ -347,11 +284,11 @@ namespace FlexiBuffDisplayPannel
             }
 
             // Identify the new target, make sure we have a row in the dictionary for it, this is an explicit handling of a weakness in the detect of new NPC entities
-            EntityData enemyEntityData = EntityManager.EntityManager.GetEntityData(targetLogic.Offensive.NetworkId.ToString());
+            EntityData enemyEntityData = EntityManager.GetEntityData(targetLogic.Offensive.NetworkId.ToString());
             if (enemyEntityData == null)
             {
-                EntityManager.EntityManager.AddEntityIfMissing(targetLogic.Offensive.NetworkId.ToString());
-                enemyEntityData = EntityManager.EntityManager.GetEntityData(targetLogic.Offensive.NetworkId.ToString());
+                EntityManager.AddEntityIfMissing(targetLogic.Offensive.NetworkId.ToString());
+                enemyEntityData = EntityManager.GetEntityData(targetLogic.Offensive.NetworkId.ToString());
             }
 
             // Return if entity is dead
@@ -360,7 +297,7 @@ namespace FlexiBuffDisplayPannel
                 return;
             }
 
-            EntityData partyEntityData = EntityManager.EntityManager.GetEntityData(Globals.Party);
+            EntityData partyEntityData = EntityManager.GetEntityData(Globals.Party);
             // Reset the panel, we must do this to clear the window when somebody switches to a new target
             gFlexiPanels.ClearPanelsDisplay();
             gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData);
@@ -377,8 +314,8 @@ namespace FlexiBuffDisplayPannel
             //            MelonLogger.Warning($"RemoveDeBuff() 0c activeBuff.Caster?.NetworkId.ToString() = {activeBuff.Caster?.NetworkId.ToString()}, activeBuff.Caster.Nameplate.nameText.text = {activeBuff.Caster?.Nameplate?.nameText.text}, gCurrentTargetNetworkId = {gCurrentTargetNetworkId}");
 
             // Get the list for the current player
-            EntityData enemyEntityData = (gCurrentTargetNetworkId.IsEmpty()) ? new EntityData() : EntityManager.EntityManager.GetEntityData(gCurrentTargetNetworkId);
-            EntityData partyEntityData = EntityManager.EntityManager.GetEntityData(Globals.Party);
+            EntityData enemyEntityData = (gCurrentTargetNetworkId.IsEmpty()) ? new EntityData() : EntityManager.GetEntityData(gCurrentTargetNetworkId);
+            EntityData partyEntityData = EntityManager.GetEntityData(Globals.Party);
             // Remove the mantle from the list
             for (int i = 0; i < partyEntityData.buffData.Count; i++)
             {
@@ -390,25 +327,25 @@ namespace FlexiBuffDisplayPannel
                 {
                     buffData.buffDurationRemaining = 0;
                     buffData.numStacks = activeBuff.StackCount;
-                    EntityManager.EntityManager.UpdateDurationRemaining();
+                    EntityManager.UpdateDurationRemaining();
                     return;
                 }
             }
         }
 
-        // Show the enhanced pull message
+        // Show the pull message
         public static void ShowPullMessage(EntityClientMessaging.Logic __instance)
         {
             gFlexiPanels.ShowPullMessage(__instance);
         }
 
-        // Show the enhanced pop message
+        // Show the pop message
         public static void ShowPopMessage(EntityClientMessaging.Logic __instance)
         {
             gFlexiPanels.ShowPopMessage(__instance);
         }
 
-        // Displays in group chat the curent target information
+        // Show curent target information
         public static void ShowTargetMessage(EntityClientMessaging.Logic __instance)
         {
             gFlexiPanels.ShowTargetMessage(__instance);

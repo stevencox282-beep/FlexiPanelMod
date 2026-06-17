@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using Il2Cpp;
 
-namespace FlexiBuffDisplayPannel.Hooks;
+namespace FlexiPanelMod.Hooks;
 
 [HarmonyPatch(typeof(Experience.Logic), nameof(Experience.Logic.SetLevel))]
 public class ExperienceHookSetLevel

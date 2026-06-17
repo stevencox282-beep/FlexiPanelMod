@@ -3,7 +3,7 @@ using Il2CppServiceStack;
 using MelonLoader;
 using Unity.Collections;
 
-namespace FlexiBuffDisplayPannel.EntityManager;
+namespace FlexiPanelMod;
 
 public class ConsolidatedUptime()
 {

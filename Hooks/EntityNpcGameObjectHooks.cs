@@ -2,7 +2,7 @@ using HarmonyLib;
 using Il2Cpp;
 using Il2CppViNL;
 
-namespace FlexiBuffDisplayPannel.Hooks;
+namespace FlexiPanelMod.Hooks;
 
 // This Hook is fired on login (after character selection) and change of zone
 [HarmonyPatch(typeof(EntityNpcGameObject))]
@@ -11,7 +11,7 @@ public class NetworkStart
 {
     private static void Postfix(EntityNpcGameObject __instance, NetworkObject networkObject)
     {
-        EntityManager.EntityManager.OnEntityAdded(__instance);
+        EntityManager.OnEntityAdded(__instance);
     }
 }
 
@@ -22,6 +22,6 @@ public class NetworkStop
 {
     private static void Prefix(EntityNpcGameObject __instance)
     {
-        EntityManager.EntityManager.OnEntityRemoved(__instance);
+        EntityManager.OnEntityRemoved(__instance);
     }
 }

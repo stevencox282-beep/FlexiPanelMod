@@ -2,7 +2,7 @@ using HarmonyLib;
 using Il2Cpp;
 using Il2CppPantheonPersist;
 
-namespace FlexiBuffDisplayPannel.Hooks;
+namespace FlexiPanelMod.Hooks;
 
 // This Hook fires when a message is typed into the chat box
 [HarmonyPatch(typeof(EntityClientMessaging.Logic), nameof(EntityClientMessaging.Logic.SendChatMessage), typeof(string), typeof(ChatChannelType))]

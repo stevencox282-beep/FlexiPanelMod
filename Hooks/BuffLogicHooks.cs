@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using Il2Cpp;
 
-namespace FlexiBuffDisplayPannel.Hooks;
+namespace FlexiPanelMod.Hooks;
 
 // This hook fires when any entity in range receives any buff/debuff
 [HarmonyPatch(typeof(Buffs.Logic), nameof(Buffs.Logic.Add), typeof(double), typeof(ActiveBuff), typeof(bool), typeof(bool), typeof(bool))]

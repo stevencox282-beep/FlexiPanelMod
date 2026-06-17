@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using Il2Cpp;
 
-namespace FlexiBuffDisplayPannel.Hooks;
+namespace FlexiPanelMod.Hooks;
 
 public static class EntityStatusLogicHook
 {
@@ -31,7 +31,7 @@ public static class EntityStatusLogicHook
                 // Perhaps I should not be using this API call but this is the best way to handle death notifications I can find
                 try
                 {
-                    EntityManager.EntityManager.UpdateEnemyDeadStatus(__instance);
+                    EntityManager.UpdateEnemyDeadStatus(__instance);
                 }
                 catch (Exception e) { }
             }

@@ -2,7 +2,7 @@ using HarmonyLib;
 using Il2Cpp;
 using MelonLoader;
 
-namespace FlexiBuffDisplayPannel.Hooks;
+namespace FlexiPanelMod.Hooks;
 
 // This Hook fires when your character enters in the world (after character selection) or change of zone
 [HarmonyPatch(typeof(EntityPlayerGameObject), nameof(EntityPlayerGameObject.NetworkStart))]

@@ -1,7 +1,7 @@
 using HarmonyLib;
 using Il2Cpp;
 
-namespace FlexiBuffDisplayPannel.Hooks;
+namespace FlexiPanelMod.Hooks;
 
 // This Hook fires when teh in game compass loads telling us the UI is ready to render the panels box
 [HarmonyPatch(typeof(UICompass), nameof(UICompass.Start))]

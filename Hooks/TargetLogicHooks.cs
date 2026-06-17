@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using Il2Cpp;
 
-namespace FlexiBuffDisplayPannel.Hooks;
+namespace FlexiPanelMod.Hooks;
 
 // This Hook fires when an offensive target is selected / reselected
 [HarmonyPatch(typeof(Targets.Logic), nameof(Targets.Logic.SetOffensive))]
