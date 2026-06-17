@@ -1,14 +1,13 @@
 ﻿using FlexiBuffDisplayPannel;
+using FlexiBuffDisplayPannel.FlexiPanel;
 using Il2CppServiceStack;
-using MelonLoader;
 using System.Xml;
 
 namespace FlexiBuffDisplayPanel.ConfigParser
 {
     public class ConfigParser()
     {
-
-        // Parses the Panel configuration from the XML file and uses it to setup the panels
+// Parses the Panel configuration from the XML file and uses it to setup the panels
         public void ParseConfig(ref Dictionary<string, PanelConfig> panelConfigDictionary)
         {
             // Ensure the panel config store is clear
@@ -34,7 +33,7 @@ namespace FlexiBuffDisplayPanel.ConfigParser
                 panelConfig.targetOrTitle = panelAttributes["TargetOrTitle"].Value;
                 panelConfig.excludeBuffs = bool.Parse(panelAttributes["ExcludeBuffs"].Value);
                 panelConfig.excludeDebuffs = bool.Parse(panelAttributes["ExcludeDebuffs"].Value);
-                panelConfig.rowsToDisplay = Int32.Parse(panelAttributes["RowsToDisplay"].Value);
+                panelConfig.rowsToDisplay = FlexiPanelUtils.SanitiseNumRows(Int32.Parse(panelAttributes["RowsToDisplay"].Value));
 
                 // Get the Row data for this panel
                 XmlNodeList rowsList = panel.ChildNodes;
@@ -63,8 +62,6 @@ namespace FlexiBuffDisplayPanel.ConfigParser
                     panelConfigDictionary.Add(panelConfig.panelID, panelConfig);
                 }
             }
-
-
         }
     }
 }

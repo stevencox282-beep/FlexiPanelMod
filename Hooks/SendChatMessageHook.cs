@@ -34,22 +34,29 @@ public class SendChatMessageHook
                 ModMain.ClearTransformDictionaries();
                 ModMain.PanelConfig();
                 ModMain.InitialiseFlexiPanels();
-                
+
                 return false;
             }
 
             if (message == "/pulling")
             {
-              // Set show debuffs to false and hide the debuff panel
-              ModMain.ShowPullMessage(__instance);
-              return false;
+                // Set show debuffs to false and hide the debuff panel
+                ModMain.ShowPullMessage(__instance);
+                return false;
             }
 
-            if (message == "/popping")
+            if (message == "/pop")
             {
-              // Set show debuffs to false and hide the debuff panel
-              ModMain.ShowPopMessage(__instance);
-              return false;
+                // Set show debuffs to false and hide the debuff panel
+                ModMain.ShowPopMessage(__instance);
+                return false;
+            }
+
+            if (message == "/target")
+            {
+                // Set show debuffs to false and hide the debuff panel
+                ModMain.ShowTargetMessage(__instance);
+                return false;
             }
         }
         return true;

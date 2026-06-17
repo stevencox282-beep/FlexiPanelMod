@@ -36,7 +36,7 @@ public class PlayerNetworkStart
                 Globals.PlayerLevel = 0;
             }
 
-            
+
             return;
         }
     }

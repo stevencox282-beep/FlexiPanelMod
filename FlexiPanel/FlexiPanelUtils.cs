@@ -1,77 +1,8 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
-
-namespace FlexiBuffDisplayPannel.FlexiPanel
+﻿namespace FlexiBuffDisplayPannel.FlexiPanel
 {
-    // Class that holds utility functiots used by the debuff panel
+    // Class that holds utility functions used by the debuff panel
     public static class FlexiPanelUtils
     {
-        public static Color getBarColours(string spellType)
-        {
-            Color returnColor = Color.black;
-            // List the string values for all MaxDisplayableDebuffs debuffs
-            switch (spellType)
-            {
-                case "Augmentation":
-                    returnColor = Color.darkBlue;
-                    break;
-                case "Fortification":
-                    returnColor = Color.darkGreen;
-                    break;
-                case "Manifestation":
-                    returnColor = Color.purple;
-                    break;
-                case "Conjuration":
-                    returnColor = Color.brown;
-                    break;
-                case "Evocation":
-                    returnColor = Color.red;
-                    break;
-                case "Expulsion":
-                    returnColor = Color.cadetBlue;
-                    break;
-                case "Restoration":
-                    returnColor = Color.green;
-                    break;
-                case "Invocation":
-                    returnColor = Color.indigo;
-                    break;
-                case "Illumination":
-                    returnColor = Color.lavender;
-                    break;
-                case "Enervation":
-                    returnColor = Color.limeGreen;
-                    break;
-                case "Corruption":
-                    returnColor = Color.navyBlue;
-                    break;
-                case "TricksOfTheTrade":
-                    returnColor = Color.oldLace;
-                    break;
-                case "Trapping":
-                    returnColor = Color.azure;
-                    break;
-                case "Naturalism":
-                    returnColor = Color.red;
-                    break;
-                case "FeignDeath":
-                    returnColor = Color.orange;
-                    break;
-                case "Warfare":
-                    returnColor = Color.olive;
-                    break;
-                case "None":
-                    returnColor = Color.yellowGreen;
-                    break;
-                default:
-                    returnColor = Color.black;
-                    break;
-            }
-
-            return returnColor;
-        }
-
         // returns the offsets for the panel rows based on how many rows we have to render
         public static void GetOffsetsForPanel(ref float heightOffset, ref float interBarOffset, int rowsToDisplay)
         {

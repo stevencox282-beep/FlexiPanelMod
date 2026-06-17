@@ -1,6 +1,4 @@
 using Il2Cpp;
-using Il2CppDG.Tweening.Plugins;
-using Il2CppPantheonPersist;
 using Il2CppServiceStack;
 using MelonLoader;
 using Unity.Collections;
@@ -9,7 +7,7 @@ namespace FlexiBuffDisplayPannel.EntityManager;
 
 public class ConsolidatedUptime()
 {
-    public string debuffName;
+    public string buffName;
     public long totalEncounterUptime; // Time the debuff has been up as a % of total encounter time
     public float totalEncounterUptimePercent; // Time the debuff has been up as a % of total encounter time
 }
@@ -21,8 +19,8 @@ public static class EntityManager
     private static Dictionary<string, EntityData> gEntityDebuffDictionary = new Dictionary<string, EntityData>(); // NetworkId, EntityData>
 
     // Holds the data for calculating Uptime for each debuff
-    private static Dictionary<string, List<ConsolidatedUptime>> consolidatedUptimeDictionary = new Dictionary<string, List<ConsolidatedUptime>>(); // networkId, List<debuffName, uptime>
-    private static Dictionary<string, List<string>> uniqueDebuffsDictionary = new Dictionary<string, List<string>>(); // NetworkId, List<debuffName>
+    private static Dictionary<string, List<ConsolidatedUptime>> consolidatedUptimeDictionary = new Dictionary<string, List<ConsolidatedUptime>>(); // networkId, List<buffName, uptime>
+    private static Dictionary<string, List<string>> uniqueDebuffsDictionary = new Dictionary<string, List<string>>(); // NetworkId, List<buffName>
     private static string traitString = "Trait: ";
 
     static EntityManager()
@@ -53,7 +51,7 @@ public static class EntityManager
     }
 
     // Adds entry to calculate consolidated uptime
-    public static void AddConsolidatedUptime(string entityNetworkId, DebuffData debuffData)
+    public static void AddConsolidatedUptime(string entityNetworkId, BuffData buffData)
     {
         // If we do not have this debuff in our uptime dictionary, add it
         if (!consolidatedUptimeDictionary.ContainsKey(entityNetworkId))
@@ -61,7 +59,7 @@ public static class EntityManager
             // Add a new entry with uptime of 0
             List<ConsolidatedUptime> newConsolidatedUptimeList = new List<ConsolidatedUptime>();
             ConsolidatedUptime newConsolidatedUptime = new ConsolidatedUptime();
-            newConsolidatedUptime.debuffName = debuffData.debuffName;
+            newConsolidatedUptime.buffName = buffData.buffName;
             newConsolidatedUptime.totalEncounterUptime = 0;
             newConsolidatedUptime.totalEncounterUptimePercent = 0f;
             newConsolidatedUptimeList.Add(newConsolidatedUptime);
@@ -71,18 +69,18 @@ public static class EntityManager
         {
             // Update the existing row for this debuff
             List<ConsolidatedUptime> consolidatedUptimeList = consolidatedUptimeDictionary[entityNetworkId];
-            foreach(var temp in consolidatedUptimeList)
+            foreach (var temp in consolidatedUptimeList)
             {
-                if (temp.debuffName == debuffData.debuffName)
+                if (temp.buffName == buffData.buffName)
                 {
                     // This debuff already exists, dont add it twice
                     return;
                 }
             }
-            
+
             // Add this additional debuff
             ConsolidatedUptime consolidatedUptime = new ConsolidatedUptime();
-            consolidatedUptime.debuffName = debuffData.debuffName;
+            consolidatedUptime.buffName = buffData.buffName;
             consolidatedUptime.totalEncounterUptime = 0;
             consolidatedUptime.totalEncounterUptimePercent = 0f;
             consolidatedUptimeList.Add(consolidatedUptime);
@@ -90,14 +88,14 @@ public static class EntityManager
     }
 
     // Gets the total consolidated uptime for an entity and debuff
-    public static void IncrementConsolidatedUptime(string entityNetworkId, string debuffName)
+    public static void IncrementConsolidatedUptime(string entityNetworkId, string buffName)
     {
         List<ConsolidatedUptime> consolidatedUptimeList = consolidatedUptimeDictionary[entityNetworkId];
         if (!entityNetworkId.IsEmpty() && consolidatedUptimeList != null && consolidatedUptimeList.Count > 0)
         {
             foreach (var uptimeItem in consolidatedUptimeList)
             {
-                if (uptimeItem.debuffName == debuffName)
+                if (uptimeItem.buffName == buffName)
                 {
                     uptimeItem.totalEncounterUptime++;
                 }
@@ -106,12 +104,12 @@ public static class EntityManager
     }
 
     // Gets the total consolidated uptime for a entity and debuff
-    public static long GetConsolidatedUptime(string entityNetworkId, string debuffName)
+    public static long GetConsolidatedUptime(string entityNetworkId, string buffName)
     {
         List<ConsolidatedUptime> ConsolidatedUptimeList = consolidatedUptimeDictionary[entityNetworkId];
-        foreach(var uptimeItem in ConsolidatedUptimeList)
+        foreach (var uptimeItem in ConsolidatedUptimeList)
         {
-            if (uptimeItem.debuffName == debuffName)
+            if (uptimeItem.buffName == buffName)
             {
                 return uptimeItem.totalEncounterUptime;
             }
@@ -122,7 +120,7 @@ public static class EntityManager
 
 
     // Adds a debuff to the list of unique entity debuffs, creates a new entity row if needed
-    public static void AddEntityToUniqueDebuffs(string entityNetworkId, string debuffName)
+    public static void AddEntityToUniqueDebuffs(string entityNetworkId, string buffName)
     {
         // Add a new entity to the list if this is the first time we are putting debuffs on it
         if (!uniqueDebuffsDictionary.ContainsKey(entityNetworkId))
@@ -132,16 +130,17 @@ public static class EntityManager
 
         // Add a new debuff to the list of debuffs if it does not already exist
         List<string> uniqueDebuffs = uniqueDebuffsDictionary[entityNetworkId];
-        if (!uniqueDebuffs.Contains(debuffName))
+        if (!uniqueDebuffs.Contains(buffName))
         {
-            uniqueDebuffs.Add(debuffName);
+            uniqueDebuffs.Add(buffName);
         }
     }
 
     // This removes a entity from the list of entities with unique debuffs
     public static void RemoveEntityFromUniqueBuffs(string entityNetworkId)
     {
-        if (uniqueDebuffsDictionary.ContainsKey(entityNetworkId)) {
+        if (uniqueDebuffsDictionary.ContainsKey(entityNetworkId))
+        {
             uniqueDebuffsDictionary.Remove(entityNetworkId);
         }
     }
@@ -152,16 +151,16 @@ public static class EntityManager
         for (int i = 0; i < gEntityDebuffDictionary.Count; i++)
         {
             EntityData entityData = gEntityDebuffDictionary.ElementAt(i).Value;
-            List<DebuffData> debuffData = entityData.debuffData;
+            List<BuffData> buffData = entityData.buffData;
 
-            for (int j = debuffData.Count -1; j >= 0; j--)
+            for (int j = buffData.Count - 1; j >= 0; j--)
             {
-                DebuffData debuff = debuffData.ElementAt(j);
+                BuffData debuff = buffData.ElementAt(j);
                 // Update the time remaining and the size of the progress bar, stop at zero seconds
-                debuff.debuffDurationRemaining = (debuff.debuffDurationRemaining == 0) ? 0 : debuff.debuffDurationRemaining - 1;
-                if (debuff.debuffDurationRemaining <= 0 && removal == true)
+                debuff.buffDurationRemaining = (debuff.buffDurationRemaining == 0) ? 0 : debuff.buffDurationRemaining - 1;
+                if (debuff.buffDurationRemaining <= 0 && removal == true)
                 {
-                    debuffData.RemoveAt(j);
+                    buffData.RemoveAt(j);
                 }
             } // End of FOR all debuffs
         } // End of FOR all entities
@@ -196,18 +195,18 @@ public static class EntityManager
                 string currentHistoricDebuffName = uniqueEntityDebuffList[i];
 
                 // For every debuff on a n entity
-                foreach (DebuffData debuff in entity.debuffData)
+                foreach (BuffData debuff in entity.buffData)
                 {
                     // If the debuff on the entity is the debuff we are looking for
-                    if (debuff.debuffName == currentHistoricDebuffName)
+                    if (debuff.buffName == currentHistoricDebuffName)
                     {
                         // Match found, increase the encounter uptime only if the current duration remaining on the buff is > 0
-                        if (debuff.debuffDurationRemaining > 0)
+                        if (debuff.buffDurationRemaining > 0)
                         {
-                            EntityManager.IncrementConsolidatedUptime(entity.entityNetworkId, debuff.debuffName);
-                            debuff.consolidatedEncounterUptime = EntityManager.GetConsolidatedUptime(entity.entityNetworkId, debuff.debuffName);
+                            EntityManager.IncrementConsolidatedUptime(entity.entityNetworkId, debuff.buffName);
+                            debuff.consolidatedEncounterUptime = EntityManager.GetConsolidatedUptime(entity.entityNetworkId, debuff.buffName);
                         }
-                        
+
                         // OnUpdate will certainly run before we can target and engage an entity in range, prevent a possible DIV0
                         if (entity.encounterStartTime == 0L)
                         {
@@ -238,14 +237,14 @@ public static class EntityManager
     // This function checks is there is an entry in the dictionary for casterNetworkId and if not makes one
     public static void AddEntityIfMissing(string targetNetworkId)
     {
-        EntityData entityData = EntityManager.GetEntityData(targetNetworkId);        
+        EntityData entityData = EntityManager.GetEntityData(targetNetworkId);
         // Make a new entity if one does not exist
         if (entityData == null)
         {
             EntityData newMonster = new EntityData();
             newMonster.entityNetworkId = targetNetworkId;
             newMonster.isDead = false;
-            newMonster.debuffData = new List<DebuffData>();
+            newMonster.buffData = new List<BuffData>();
             newMonster.targetName = (targetNetworkId == Globals.Party) ? Globals.Party : string.Empty; // Set to PARTY if we are creating the party entity
             gEntityDebuffDictionary.Add(targetNetworkId, newMonster);
         }
@@ -271,7 +270,7 @@ public static class EntityManager
     }
 
     // Add a entity that has come into render range, including when changing zones and login
-    public static void OnNpcAdded(EntityNpcGameObject entityNpcGameObject)
+    public static void OnEntityAdded(EntityNpcGameObject entityNpcGameObject)
     {
         var npcName = entityNpcGameObject.Nameplate.nameText.text;
 
@@ -332,7 +331,7 @@ public static class EntityManager
                             newEntity.traits = newEntity.traits + ", " + result[1];
                         }
                     }
-                }                
+                }
             }
             // Set the remaining common data
             newEntity.targetClass = entityNpcGameObject.Info.Class.ToString();
@@ -343,7 +342,7 @@ public static class EntityManager
     }
 
     // Removes an emey from the list, on zone, moving out of range or logging out
-    public static void OnNpcRemoved(EntityNpcGameObject entityNpcGameObject)
+    public static void OnEntityRemoved(EntityNpcGameObject entityNpcGameObject)
     {
         //  Remove an entry from the dictionary based on the network id
         try
@@ -355,6 +354,6 @@ public static class EntityManager
         {
             MelonLogger.Error($"OnNpcRemoved() Entry {entityNpcGameObject.NetworkId.ToString()} does not exist");
         }
-        
+
     }
 }

@@ -1,5 +1,4 @@
 using Il2Cpp;
-using UnityEngine;
 
 namespace FlexiBuffDisplayPannel;
 
@@ -21,13 +20,13 @@ public static class Globals
     public static int NameMeshWidth = 250;
     public static int NameMeshHeight = 12;
     public static float TimeLeftMargin = 0.75f; // The Time mesh must start after the name text mesh ends and the progress bars end
-    public static int   TimeMeshHeight = NameMeshHeight;
+    public static int TimeMeshHeight = NameMeshHeight;
     public static int TimeMeshWidth = 75;
     public static int FontSize = 10;
     public static int PixelsToAdd = 6; // Number of pixels to add create enough height for a row to be separate from the one above and below
 
     // Progress Bar Display Co-ordinates
-    public static float TopMargin         = 0.04f;
-    public static float InterBarOffset    = 0.028f;
+    public static float TopMargin = 0.04f;
+    public static float InterBarOffset = 0.028f;
 }
 

@@ -1,6 +1,5 @@
 using HarmonyLib;
 using Il2Cpp;
-using MelonLoader;
 
 namespace FlexiBuffDisplayPannel.Hooks;
 
@@ -14,4 +13,4 @@ public class UICompassHooks
         ModMain.PreserveRequiredTransforms();
         ModMain.InitialiseFlexiPanels();
     }
-} 
+}

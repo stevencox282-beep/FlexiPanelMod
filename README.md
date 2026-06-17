@@ -6,7 +6,8 @@ It has added in following new commands have been added.
 /hideflexipanels - Hides all configured panels
 /resetflexipanels - Resets the panels and reloads the configuration
 /pulling - A pull notiifcation with additional information is displayed in Group chat
-/popping - A pop notification with additional information is displayed in Group chat
+/pop - A pop notification with additional information is displayed in Group chat
+/target - Show the current Target information in Group chat
 
 ## Maximum Number Of Panels
 All panels MUST finish all of their work in less than one second to ensure the times displayed update properly.  
@@ -31,6 +32,7 @@ You can find the full Unity colour list for Unity 6.4 (correct at time of writin
 ## Known Limitations
 If a player/entity moves into range with buff/debuffs applied to them when they were out of range then they will not appear in the panels.
 Buffs that already existed on a character before logging in will not show in the panels
+Buffs always remain in the panel on change of zone even if they are lost
 
 ## Installation
 Install MelonLoader, following along with their [installation instructions](https://melonwiki.xyz/#/?id=requirements).

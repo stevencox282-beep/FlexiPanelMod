@@ -1,7 +1,6 @@
 using HarmonyLib;
 using Il2Cpp;
 using Il2CppViNL;
-using MelonLoader;
 
 namespace FlexiBuffDisplayPannel.Hooks;
 
@@ -12,7 +11,7 @@ public class NetworkStart
 {
     private static void Postfix(EntityNpcGameObject __instance, NetworkObject networkObject)
     {
-        EntityManager.EntityManager.OnNpcAdded(__instance);
+        EntityManager.EntityManager.OnEntityAdded(__instance);
     }
 }
 
@@ -23,6 +22,6 @@ public class NetworkStop
 {
     private static void Prefix(EntityNpcGameObject __instance)
     {
-        EntityManager.EntityManager.OnNpcRemoved(__instance);
+        EntityManager.EntityManager.OnEntityRemoved(__instance);
     }
 }
