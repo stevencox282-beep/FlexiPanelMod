@@ -1,4 +1,5 @@
 ﻿using Il2Cpp;
+using Il2CppPantheonPersist;
 using Il2CppServiceStack;
 using MelonLoader;
 using UnityEngine;
@@ -104,6 +105,7 @@ namespace FlexiPanelMod
             gFlexiPanels.ClearTransformDictionaries();
         }
 
+        // Create panels
         public static void InitialiseFlexiPanels()
         {
             gFlexiPanels.InitialiseFlexiPanels();
@@ -135,7 +137,7 @@ namespace FlexiPanelMod
             }
 
             // Track buffs onto yourself or group members
-            if (Globals.GroupMembers.Contains(activeBuff.Target.NetworkId.ToString()) || activeBuff.Target.NetworkId.ToString() == Globals.PlayerNetworkId.ToString())
+            if (Globals.GroupMemberNetworkIds.Contains(activeBuff.Target.NetworkId.ToString()) || activeBuff.Target.NetworkId.ToString() == Globals.PlayerNetworkId.ToString())
             {
                 return true;
             }
@@ -143,7 +145,7 @@ namespace FlexiPanelMod
             return false;
         }
 
-        // Adds a new buff or refreshes a buff to the list of all buffs and updates the UI only if the entity reciveing the buff is the active offensive target entity
+        // Adds a new buff or refreshes a buff to the entities list of all buffs
         public static void OnAddOrRefreshBuff(double time, ActiveBuff activeBuff, bool inBackground, bool isRefresh, bool isItemBuff)
         {
             //            MelonLogger.Warning($"OnAddOrRefreshBuff() 0a buff.BuffData.DisplayName.ToString() = {buff.BuffData.DisplayName.ToString()}, isRefresh = {isRefresh}, inBackground = {inBackground}, isItemBuff = {isItemBuff}");
@@ -184,7 +186,7 @@ namespace FlexiPanelMod
 
                 // If this is a buff going onto a member of the party or the local player
                 if (activeBuff.BuffData.CategoryType == BuffCategoryType.Beneficial &&
-                   (Globals.GroupMembers.Contains(activeBuff.Caster?.NetworkId.ToString()) || activeBuff.Target.NetworkId.ToString() == Globals.PlayerNetworkId.ToString()))
+                   (Globals.GroupMemberNetworkIds.Contains(activeBuff.Caster?.NetworkId.ToString()) || activeBuff.Target.NetworkId.ToString() == Globals.PlayerNetworkId.ToString()))
                 {
                     // We are a buff
                     entityData = partyEntityData;
@@ -206,13 +208,12 @@ namespace FlexiPanelMod
                 if (found != true)
                 {
                     // We do not have a buff of this type in the list, make a new one
-                    BuffData newDebuff = new BuffData();
-                    CreateNewBuff(entityData, activeBuff, ref newDebuff);
-                    entityData.buffData.Add(newDebuff);
-
+                    BuffData buffData = new BuffData();
+                    CreateNewBuff(entityData, activeBuff, ref buffData);
+                    entityData.buffData.Add(buffData);
                     // Update the buff list and uptimes
-                    EntityManager.AddEntityToUniqueDebuffs(activeBuff.Target?.NetworkId.ToString(), newDebuff.buffName);
-                    EntityManager.AddConsolidatedUptime(activeBuff.Target.NetworkId.ToString(), newDebuff);
+                    EntityManager.AddEntityToUniqueDebuffs(activeBuff.Target?.NetworkId.ToString(), buffData.buffName);
+                    EntityManager.AddConsolidatedUptime(activeBuff.Target.NetworkId.ToString(), buffData);                    
                 }
             }
         }
@@ -307,6 +308,7 @@ namespace FlexiPanelMod
         }
 
 
+        // Removes a specific buff from an entity buff list
         public static void RemoveBuff(double time, ActiveBuff activeBuff)
         {
             //            MelonLogger.Warning($"RemoveDeBuff() 0a activeBuff.BuffData.DisplayName.ToString() = {activeBuff.BuffData.DisplayName.ToString()}");
@@ -328,7 +330,6 @@ namespace FlexiPanelMod
                     buffData.buffDurationRemaining = 0;
                     buffData.numStacks = activeBuff.StackCount;
                     EntityManager.UpdateDurationRemaining();
-                    return;
                 }
             }
         }

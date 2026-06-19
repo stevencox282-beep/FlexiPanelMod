@@ -308,7 +308,7 @@ public static class EntityManager
             AddEntityIfMissing(targetNetworkId);
             EntityData newEntity = GetEntityData(targetNetworkId);
             newEntity.entityLevel = entityNpcGameObject.Experience.Level;
-
+            
             // Pick up any traits if they exist
             bool isFirst = true;
             foreach (ActiveBuff activeBuff in entityNpcGameObject.Buffs.myActiveBuffs)

@@ -1,6 +1,8 @@
 using HarmonyLib;
 using Il2Cpp;
 using Il2CppPantheonPersist;
+using Il2CppViNL;
+using MelonLoader;
 
 namespace FlexiPanelMod.Hooks;
 
@@ -29,7 +31,7 @@ public class SendChatMessageHook
             }
 
             // Reload the current panel configuration
-            if (message.Equals($"/resetflexipanels"))
+            if (message.Equals($"/configflexipanels"))
             {
                 ModMain.ClearTransformDictionaries();
                 ModMain.ReadPanelConfig();

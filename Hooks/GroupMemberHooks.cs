@@ -12,10 +12,12 @@ public class GroupUpdateGroupMembersHook
     private static void Postfix(Group.Logic __instance, Il2CppReferenceArray<GroupMember> members, Il2CppStructArray<NetworkId> membersPetIds)
     {
         // Clear the list, then update it with the new list of members
-        Globals.GroupMembers.Clear();
+        Globals.GroupMemberNetworkIds.Clear();
+        Globals.GroupMemberNames.Clear();
         foreach (var item in members)
         {
-            Globals.GroupMembers.Add(item.EntityNetworkId.ToString());
+            Globals.GroupMemberNetworkIds.Add(item.EntityNetworkId.ToString());
+            Globals.GroupMemberNames.Add(item.Name.ToString());
         }
     }
 }
@@ -27,6 +29,7 @@ public class GroupLeftGroupMembersHook
 {
     private static void Postfix(Group.Logic __instance, bool forceLeaveAllMembers = false)
     {
-        Globals.GroupMembers.Clear();
+        Globals.GroupMemberNetworkIds.Clear();
+        Globals.GroupMemberNames.Clear();
     }
 }

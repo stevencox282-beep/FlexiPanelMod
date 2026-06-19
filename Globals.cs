@@ -11,7 +11,8 @@ public static class Globals
     public static EntityPlayerGameObject? LocalPlayer = null;
 
     // Group Members
-    public static List<string> GroupMembers = new List<string>(); // List of all group members (does not include LocalPlayer)
+    public static List<string> GroupMemberNetworkIds = new List<string>(); // List of all group members (does not include LocalPlayer)
+    public static List<string> GroupMemberNames = new List<string>(); // List of all group members (does not include LocalPlayer)
     public static string Party = "Party Buffs"; // Used to create an EntityData that holds buff/debuff information for the party and local player
 
     // Panel/TextMeshs
@@ -87,7 +88,6 @@ public class PanelConfig()
 public class RowConfig()
 {
     public string displayText;  // The name of the buff/debuff that this row config will apply too
-    public string color;
-    public string persistant; // determines if the row will dissapear when timer reaches zero
-    public string showUpTime; // Determines if uptime will be dispalyed for this row
+    public string color; // Colour of the bar
+    public string filter; // Filter on who we track this buff for.  Valid filter are  Me/Party/or a comma seperated list David,Sharon,Peter
 };

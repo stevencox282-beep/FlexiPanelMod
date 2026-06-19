@@ -3,9 +3,12 @@ using Il2CppPantheonPersist;
 using Il2CppServiceStack;
 using Il2CppTMPro;
 using MelonLoader;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using static Il2CppServiceStack.NetStandardPclExport;
+using static MelonLoader.MelonLogger;
 
 namespace FlexiPanelMod;
 
@@ -403,9 +406,12 @@ public class FlexiPanel : MonoBehaviour
             // Get the difference in levels between player and entity
             int levelDelta = entityData.entityLevel - Globals.PlayerLevel;
             string levelDeltaString = (levelDelta < 0) ? $"{levelDelta}" : $"+{levelDelta}";
-            pullMessage = $"Pulling: {entityData.targetName.ToUpperSafe()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
-            popMessage = $"POP: {entityData.targetName.ToUpperSafe()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
-            targetMessage = $"Target: {entityData.targetName.ToUpperSafe()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
+            string baseMessage = (entityData.traits.IsEmpty()) ?
+                $"{entityData.targetName.ToUpperSafe()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}" :
+                $"{entityData.targetName.ToUpperSafe()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
+            pullMessage = $"Pulling: {baseMessage}";
+            popMessage = $"POP: {baseMessage}";
+            targetMessage = $"Target: {baseMessage}";
 
             // We must now search every panel and find if that panel is tracking this buff and if it is follow its row rules
             foreach (UIWindowPanel uiWindowPanel in uiWindowPanelList)
@@ -432,7 +438,16 @@ public class FlexiPanel : MonoBehaviour
                     // Search every entity buff for RowConfig.displayText, but dont display more rows than we allocated in the panel
                     for (int i = 0; (i < entityData.buffData.Count && panelDisplayIndex < panelConfig.rowsToDisplay); i++)
                     {
+                        // Get the next buff in the list of all buff
                         BuffData buff = entityData.buffData[i];
+
+                        // Do not display this buff if a valid filtered has been provided
+                        if (!rowConfig.filter.IsEmpty() && true == FilterOutCurrentBuff(rowConfig, buff))
+                        {
+                            // Move to next buff, we have been told to filter this out
+                            continue;
+                        }
+
                         // Exclude buffs/debuffs as required
                         if (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.excludeBuffs == true ||
                             buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.excludeDebuffs == true)
@@ -444,8 +459,16 @@ public class FlexiPanel : MonoBehaviour
                         if (buff.buffName.ToUpperSafe().Contains(rowConfig.displayText.ToUpperSafe()))
                         {
                             // Found a required buff/debuff, update the panel with this data
-                            textMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $" {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.casterName})";
+                            if (buff.categoryType == BuffCategoryType.Beneficial.ToString())
+                            {
+                                textMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $" {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.targetName})";
+                            }
+                            else
+                            {
+                                textMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $" {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.casterName})";
+                            }
 
+                            // Set the time value for the row
                             timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = GetTimeTextMeshsText(buff);
 
                             // Now update the progress bar colour and time
@@ -472,6 +495,64 @@ public class FlexiPanel : MonoBehaviour
         }
     }
 
+    // Returns a boolean indicating if e should filter out the current buff
+    private static bool FilterOutCurrentBuff(RowConfig rowConfig, BuffData buff)
+    {
+        string filterCriteria = rowConfig.filter;
+        string targetNetworkId = buff.targetNetworkId.ToString();
+        string casterNetworkId = buff.casterNetworkId.ToString();
+        string targetName = buff.targetName.ToString();
+        string casterName = buff.casterName.ToString();
+        string localPlayerName = Globals.LocalPlayer.Nameplate.nameText.text.ToString();
+
+        if (filterCriteria.ToUpperSafe().Equals("[ME]"))
+        {
+            // If this is not for the local player, we filter it
+            if (!(targetNetworkId.Equals(Globals.PlayerNetworkId) || casterNetworkId.Equals(Globals.PlayerNetworkId)))
+            {
+                return true;
+            }
+
+        }
+        // If this is not the local player or a member of the party, we filter it out
+        else if (filterCriteria.ToUpperSafe().Equals("[PARTY]"))
+        {
+            if (!(targetNetworkId.Equals(Globals.PlayerNetworkId) || casterNetworkId.Equals(Globals.PlayerNetworkId) || Globals.GroupMemberNetworkIds.Contains(targetNetworkId) || Globals.GroupMemberNetworkIds.Contains(casterNetworkId)))
+            {
+                return true;
+            }
+        }
+        // If this is not a player specifically added to track, we filter it out
+        else if (filterCriteria.ToUpperSafe().Contains(","))
+        {
+            bool found = false;
+            // Split the comma separated list into names
+            string[] playerNameArray = filterCriteria.Split(',');
+            // for every player in the list of player names provided in the config file
+            for (int fi = 0; fi < playerNameArray.Length; fi++)
+            {
+                // Only display this row if the caster or the target for this buff is in the list, or you are the person who cast this buff (so healers can track their own buffs on specific players)
+                if (targetName.Equals(playerNameArray[fi]) || 
+                    casterName.Equals(playerNameArray[fi]) || 
+                    localPlayerName.Equals(playerNameArray[fi]) && targetName.Equals(playerNameArray[fi]) || 
+                    (localPlayerName.Equals(casterName) && !localPlayerName.Equals(targetName)))
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            // If we did not find the name in the list, we should not display this row, we filter it out
+            if (found == false)
+            {
+                return true;
+            }
+        }
+
+        // Default to do not filter out
+        return false;
+    }
+
     // Get the string that will be in the panel title / target textmesh
     private string GetTargetTransformText(PanelConfig panelConfig, EntityData entityData, string levelDeltaString)
     {
@@ -483,6 +564,10 @@ public class FlexiPanel : MonoBehaviour
         else if (entityData.targetName.Equals(Globals.Party))
         {
             return $" <b>Target:</b> None";
+        }
+        else if (entityData.traits.IsEmpty())
+        {
+            return $" <b>Target:</b> {entityData.targetName.ToUpperSafe()}({levelDeltaString}), {entityData.targetClass}, {entityData.targetKind}";
         }
         else
         {

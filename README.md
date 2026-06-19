@@ -1,32 +1,28 @@
-# FlexiPanel
+# FlexiPanelMod
 This Mod is for Pantheon: Rise of the Fallen. It displays the in game buffs / dbebuffs as defined in the configuration file FlexiPanelConfig.xml.
 
 It has added in following new commands have been added.
 /showflexipanels - Shows all configured panels
 /hideflexipanels - Hides all configured panels
-/resetflexipanels - Resets the panels and reloads the configuration
+/configflexipanels - Reloads the configuration
 /pulling - A pull notiifcation with additional information is displayed in Group chat
 /pop - A pop notification with additional information is displayed in Group chat
 /target - Show the current Target information in Group chat
 
-## Maximum Number Of Panels
+## Maximum Number Of Panels Vs Performance
 All panels MUST finish all of their work in less than one second to ensure the times displayed update properly.  
-If your machine is lightning fast it may handle 20 panels, if it is very slow it may only handle 2.
+If your machine is fast it may handle 10 panels, if it is very slow it may only handle 2.
 The mod sets no upper limit on the number of panels.  Choose the number of panels you want wisely.
 
 ## Config File Location
 The file FlexiPanelConfig.xml must be placed in the <GamePath>/UserData/ directory.
 
-## Panel Configuration
-The config file properties are CASE SENSITIVE, even the buff/debuff names.
-Double and Tripple check you have no changed the case on anything or the mod will fail to start properly.
-
-## Buff / Debuff Display Order
+## Buff/Debuff Display Order
 The order buffs/debuffs appear in the config file is the order they are displayed on the screen.
 
 ## Color Availability
-All available colors are defined by UNITY, at the time of writing this mod this was Unity 6.4.
-If the user provides a color that unity does not support it will default to orange.
+All available colors are defined by Unity, at the time of writing this mod this was Unity v6.4.
+If the user provides a color that Unity does not support it will default to orange.
 You can find the full Unity colour list for Unity 6.4 (correct at time of writing) available at https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Color.html.
 
 ## Known Limitations

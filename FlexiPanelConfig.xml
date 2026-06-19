@@ -2,38 +2,44 @@
 <Panels>
 	<Panel ID="1" Title="Enemy Debuffs1" TargetOrTitle="target" ExcludeBuffs="false" ExcludeDebuffs="true" RowsToDisplay="10">
 		<Rows>
-			<Row DisplayText="Corrosive Brew"      Color="blue"/>
-			<Row DisplayText="Tormenting Phantoms" Color="burlyWood"/>
-			<Row DisplayText="Provoking Phantoms"  Color="darkOliveGreen"/>
-			<Row DisplayText="Devour Dexterity"    Color="cadetBlue"/>
-			<Row DisplayText="Verdanfire Seed"     Color="gold"/>
-			<Row DisplayText="Thorncoat"           Color="purple"/>
-			<Row DisplayText="Umbravines"          Color="pink"/>
-			<Row DisplayText="Stinging Swarm"      Color="darkOrchid"/>
-			<Row DisplayText="Divine Weakening"    Color="orange"/>
-			<Row DisplayText="Shining Barrier"     Color="red"/>
-			<Row DisplayText="Divine Favor"        Color="lavender"/>
-			<Row DisplayText="Synthetic Toxin"     Color="crimson"/>
-			<Row DisplayText="Shield of Spinning Splinters" Color="darkBlue"/>
-			<Row DisplayText="Spirit Of the Wolf"  Color="green"/>
+			<Row DisplayText="Corrosive Brew"               Color="blue"              />
+			<Row DisplayText="Tormenting Phantoms"          Color="burlyWood"         />
+			<Row DisplayText="Provoking Phantoms"           Color="darkOliveGreen"    />
+			<Row DisplayText="Devour Dexterity"             Color="cadetBlue"         />
+			<Row DisplayText="Verdanfire Seed"              Color="gold"              Filter="[Me]"/>
+			<Row DisplayText="Thorncoat"                    Color="purple"            Filter="[Party]"/>
+			<Row DisplayText="Umbravines"                   Color="pink"              />
+			<Row DisplayText="Stinging Swarm"               Color="darkOrchid"        />
+			<Row DisplayText="Divine Weakening"             Color="orange"            />
+			<Row DisplayText="Shining Barrier"              Color="red"               Filter="Name1,Duxdl"/>
+			<Row DisplayText="Divine Favor"                 Color="lavender"          Filter="[Party]"/>
+			<Row DisplayText="Synthetic Toxin"              Color="crimson"           />
+			<Row DisplayText="Spinning Splinters"           Color="darkBlue"          Filter="[Me]"/>
+			<Row DisplayText="Spirit Of the Wolf"           Color="green"             />
+			<Row DisplayText="Smoke Trick"                  Color="lightBlue"         />
+			<Row DisplayText="Mantle"                       Color="lightBlue"         />
+			<Row DisplayText="Mezmerize"                    Color="lightBlue"         />
 		</Rows>
 	</Panel>
 	<Panel ID="2" Title="Debuffs" TargetOrTitle="title" ExcludeBuffs="true" ExcludeDebuffs="false" RowsToDisplay="10">
 		<Rows>
-			<Row DisplayText="Corrosive Brew"      Color="blue"/>
-			<Row DisplayText="Tormenting Phantoms" Color="burlyWood"/>
-			<Row DisplayText="Provoking Phantoms"  Color="darkOliveGreen"/>
-			<Row DisplayText="Devour Dexterity"    Color="cadetBlue"/>
-			<Row DisplayText="Verdanfire Seed"     Color="gold"/>
-			<Row DisplayText="Thorncoat"           Color="purple"/>
-			<Row DisplayText="Umbravines"          Color="pink"/>
-			<Row DisplayText="Stinging Swarm"      Color="darkOrchid"/>
-			<Row DisplayText="Divine Weakening"    Color="orange"/>
-			<Row DisplayText="Shining Barrier"     Color="red"/>
-			<Row DisplayText="Divine Favor"        Color="lavender"/>
-			<Row DisplayText="Synthetic Toxin"     Color="crimson"/>
-			<Row DisplayText="Shield of Spinning Splinters" Color="darkBlue"/>
-			<Row DisplayText="Spirit Of the Wolf"  Color="green"/>
+			<Row DisplayText="Corrosive Brew"               Color="blue"              />
+			<Row DisplayText="Tormenting Phantoms"          Color="burlyWood"         />
+			<Row DisplayText="Provoking Phantoms"           Color="darkOliveGreen"    />
+			<Row DisplayText="Devour Dexterity"             Color="cadetBlue"         />
+			<Row DisplayText="Verdanfire Seed"              Color="gold"              Filter="[Me]"/>
+			<Row DisplayText="Thorncoat"                    Color="purple"            Filter="[Party]" />
+			<Row DisplayText="Umbravines"                   Color="pink"              />
+			<Row DisplayText="Stinging Swarm"               Color="darkOrchid"        />
+			<Row DisplayText="Divine Weakening"             Color="orange"            />
+			<Row DisplayText="Shining Barrier"              Color="red"               Filter="Name1,Duxdl"/>
+			<Row DisplayText="Divine Favor"                 Color="lavender"          Filter="[Party]"/>
+			<Row DisplayText="Synthetic Toxin"              Color="crimson"           />
+			<Row DisplayText="Spinning Splinters"           Color="darkBlue"          Filter="[Me]"/>
+			<Row DisplayText="Spirit Of the Wolf"           Color="green"             />
+			<Row DisplayText="Smoke Trick"                  Color="lightBlue"         />
+			<Row DisplayText="Mantle"                       Color="lightBlue"         />
+			<Row DisplayText="Mezmerize"                    Color="lightBlue"         />
 		</Rows>
 	</Panel>
 </Panels>

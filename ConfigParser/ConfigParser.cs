@@ -1,4 +1,6 @@
 ﻿using Il2CppServiceStack;
+using Il2CppSystem.Data;
+using System.Drawing;
 using System.Xml;
 
 namespace FlexiPanelMod;
@@ -26,12 +28,12 @@ public class ConfigParser()
             // Current Panel
             XmlNode panel = panelList[panelIndex];
             XmlAttributeCollection panelAttributes = panel.Attributes;
-            panelConfig.panelID = panelAttributes["ID"].Value;
-            panelConfig.panelTitle = panelAttributes["Title"].Value;
-            panelConfig.targetOrTitle = panelAttributes["TargetOrTitle"].Value;
-            panelConfig.excludeBuffs = bool.Parse(panelAttributes["ExcludeBuffs"].Value);
-            panelConfig.excludeDebuffs = bool.Parse(panelAttributes["ExcludeDebuffs"].Value);
-            panelConfig.rowsToDisplay = FlexiPanelUtils.SanitiseNumRows(Int32.Parse(panelAttributes["RowsToDisplay"].Value));
+            panelConfig.panelID = panelAttributes["ID"].Value; // This is mandatory, if it is not provided we cant fill it in, exception and force everything to stop
+            panelConfig.panelTitle = panelAttributes["Title"].Value; // This is mandatory, if it is not provided we cant fill it in, exception and force everything to stop
+            panelConfig.targetOrTitle = panelAttributes["TargetOrTitle"].Value; // This is mandatory, if it is not provided we cant fill it in, exception and force everything to stop
+            panelConfig.excludeBuffs = (panelAttributes["ExcludeBuffs"] != null) ? bool.Parse(panelAttributes["ExcludeBuffs"].Value) : false;
+            panelConfig.excludeDebuffs = (panelAttributes["ExcludeDebuffs"] != null) ? bool.Parse(panelAttributes["ExcludeDebuffs"].Value) : false;
+            panelConfig.rowsToDisplay = (panelAttributes["RowsToDisplay"] != null) ? FlexiPanelUtils.SanitiseNumRows(Int32.Parse(panelAttributes["RowsToDisplay"].Value)) : 10;
 
             // Get the Row data for this panel
             XmlNodeList rowsList = panel.ChildNodes;
@@ -48,10 +50,9 @@ public class ConfigParser()
 
                 // Store in PanelConfig
                 RowConfig rowConfig = new RowConfig();
-                rowConfig.displayText = rowAttributes["DisplayText"].Value;
-                rowConfig.color = rowAttributes["Color"].Value;
-                rowConfig.persistant = rowAttributes["Persistant"].Value;
-                rowConfig.showUpTime = rowAttributes["ShowUpTime"].Value;
+                rowConfig.displayText = (rowAttributes["Color"] != null)  ? rowAttributes["DisplayText"].Value : string.Empty;
+                rowConfig.color = (rowAttributes["Color"] != null) ? rowAttributes["Color"].Value : "orange";
+                rowConfig.filter = (rowAttributes["Filter"] != null) ? rowAttributes["Filter"].Value : string.Empty;
                 panelConfig.rowConfig.Add(rowConfig);
             }
             // If we have a new panel, add it
