@@ -78,8 +78,10 @@ public class PanelConfig()
     public string panelID; // Unique ID used to identify this exact panel
     public string panelTitle; // Hold the panel title to be displayed
     public string targetOrTitle; // Determines if we display the Panel title or Target information
-    public bool excludeBuffs; // Indicates if the panel ignores all buffs
-    public bool excludeDebuffs; // Indicates if the panel ignores all debuffs
+    public bool excludeAllBuffs; // Indicates if the panel ignores all buffs (has priority over includeAllBuffs)
+    public bool excludeAllDebuffs; // Indicates if the panel ignores all debuffs (has priority over includeAllBuffs)
+    public bool includeAllBuffs; // Indicates if the panel ignores all buffs
+    public bool includeAllDebuffs; // Indicates if the panel ignores all debuffs
     public int rowsToDisplay; // Number of rows for the panel
     public List<RowConfig> rowConfig;
 }
@@ -89,5 +91,5 @@ public class RowConfig()
 {
     public string displayText;  // The name of the buff/debuff that this row config will apply too
     public string color; // Colour of the bar
-    public string filter; // Filter on who we track this buff for.  Valid filter are  Me/Party/or a comma seperated list David,Sharon,Peter
+    public string include; // Include who we track this buff/debuff for.  Valid includes are:  [Me]/[Party]/David,Sharon,Peter
 };

@@ -11,24 +11,32 @@ It has added in following new commands have been added.
 
 ## Maximum Number Of Panels Vs Performance
 All panels MUST finish all of their work in less than one second to ensure the times displayed update properly.  
-If your machine is fast it may handle 10 panels, if it is very slow it may only handle 2.
-The mod sets no upper limit on the number of panels.  Choose the number of panels you want wisely.
+The mod sets no upper limit on the number of panels.  If your machine is fast it may handle many panels, if it is very slow it may only handle a few. Choose the number of panels you want wisely.
 
 ## Config File Location
 The file FlexiPanelConfig.xml must be placed in the <GamePath>/UserData/ directory.
 
-## Buff/Debuff Display Order
-The order buffs/debuffs appear in the config file is the order they are displayed on the screen.
+## How Buffs/Debuffs are displayed
+The order of rows in the config file is the order they are displayed on the screen.
+Configured buffs/debuffs Names are not case sensitive.
+Configured buffs/debuffs are selected if a buff CONTAINS the configured buff/debuff name. 
+  This allows you to put "Mantle" as a single row and it will apply to all tiers of Mantle.
+  This means if you put Rip (Bleed debuff) as a row it will also include Grip Of Stone (Shaman Buff) as Grip contains Rip and name is not case-sensitive.
 
 ## Color Availability
-All available colors are defined by Unity, at the time of writing this mod this was Unity v6.4.
+All available colors are defined by Unity. You can find the full Unity colour list for Unity 6.1 (correct at time of writing) available at [Unity Color List](https://docs.unity3d.com/6000.1/Documentation/ScriptReference/Color.html).
 If the user provides a color that Unity does not support it will default to orange.
-You can find the full Unity colour list for Unity 6.4 (correct at time of writing) available at https://docs.unity3d.com/6000.4/Documentation/ScriptReference/Color.html.
+
+## ExcludeAllBuffs / ExcludeAllDebuffs Overrides
+ExcludeAllBuffs and ExcludeAllDebuffs take priority over IncludeAllBuffs/IncludeAllDebuffs
+
+## IncludeAllBuffs / IncludeAllDebuffs Overrides
+When set to true the color of the bars will be based on the Spell Type NOT the user defined row colors.
 
 ## Known Limitations
-If a player/entity moves into range with buff/debuffs applied to them when they were out of range then they will not appear in the panels.
-Buffs that already existed on a character before logging in will not show in the panels
+If a new player/entity moves into range with buff/debuffs already applied to them they will not appear in the panel (this includes buffs when logging in)
 Buffs always remain in the panel on change of zone even if they are lost
+BUffs that can only be applied once to an entity I.E. "Corrosive Brew" will still show up in the panel even if it has been over-riden
 
 ## Installation
 Install MelonLoader, following along with their [installation instructions](https://melonwiki.xyz/#/?id=requirements).

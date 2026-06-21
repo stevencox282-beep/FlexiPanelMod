@@ -1,45 +1,57 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Panels>
-	<Panel ID="1" Title="Enemy Debuffs1" TargetOrTitle="target" ExcludeBuffs="false" ExcludeDebuffs="true" RowsToDisplay="10">
+	<Panel ID="1" Title="Buffs" TargetOrTitle="target" ExcludeAllBuffs="false" ExcludeAllDebuffs="true" IncludeAllBuffs="false" IncludeAllDebuffs="false" RowsToDisplay="10">
 		<Rows>
-			<Row DisplayText="Corrosive Brew"               Color="blue"              />
-			<Row DisplayText="Tormenting Phantoms"          Color="burlyWood"         />
-			<Row DisplayText="Provoking Phantoms"           Color="darkOliveGreen"    />
-			<Row DisplayText="Devour Dexterity"             Color="cadetBlue"         />
-			<Row DisplayText="Verdanfire Seed"              Color="gold"              Filter="[Me]"/>
-			<Row DisplayText="Thorncoat"                    Color="purple"            Filter="[Party]"/>
-			<Row DisplayText="Umbravines"                   Color="pink"              />
-			<Row DisplayText="Stinging Swarm"               Color="darkOrchid"        />
-			<Row DisplayText="Divine Weakening"             Color="orange"            />
-			<Row DisplayText="Shining Barrier"              Color="red"               Filter="Name1,Duxdl"/>
-			<Row DisplayText="Divine Favor"                 Color="lavender"          Filter="[Party]"/>
-			<Row DisplayText="Synthetic Toxin"              Color="crimson"           />
-			<Row DisplayText="Spinning Splinters"           Color="darkBlue"          Filter="[Me]"/>
-			<Row DisplayText="Spirit Of the Wolf"           Color="green"             />
-			<Row DisplayText="Smoke Trick"                  Color="lightBlue"         />
-			<Row DisplayText="Mantle"                       Color="lightBlue"         />
-			<Row DisplayText="Mezmerize"                    Color="lightBlue"         />
+			<Row Name="Corrosive Brew"               Color="blue"              />
+			<Row Name="Tormenting Phantoms"          Color="burlyWood"         />
+			<Row Name="Provoking Phantoms"           Color="darkOliveGreen"    />
+			<Row Name="Devour Dexterity"             Color="cadetBlue"         />
+			<Row Name="Verdanfire Seed"              Color="gold"              Include="[Party]"/>
+			<Row Name="Thorncoat"                    Color="purple"            Include="[Party]"/>
+			<Row Name="Umbravines"                   Color="pink"              />
+			<Row Name="Stinging Swarm"               Color="darkOrchid"        />
+			<Row Name="Divine Weakening"             Color="orange"            />
+			<Row Name="Shining Barrier"              Color="red"               Include="Duxdl,Duxclr"/>
+			<Row Name="Divine Favor"                 Color="lavender"          Include="[Party]"/>
+			<Row Name="Synthetic Toxin"              Color="crimson"           />
+			<Row Name="Spinning Splinters"           Color="darkBlue"          Include="[Me]"/>
+			<Row Name="Spirit Of the Wolf"           Color="green"             Include="[Me]"/>
+			<Row Name="Smoke Trick"                  Color="gray"              />
+			<Row Name="Mantle"                       Color="lightSteelBlue"    />
+			<Row Name="Mezmerize"                    Color="mediumPurple"      />
+			<Row Name="Rip"                          Color="indigo"            Include="[Me]"/>
 		</Rows>
 	</Panel>
-	<Panel ID="2" Title="Debuffs" TargetOrTitle="title" ExcludeBuffs="true" ExcludeDebuffs="false" RowsToDisplay="10">
+	<Panel ID="2" Title="Debuffs" TargetOrTitle="title" ExcludeAllBuffs="true" ExcludeAllDebuffs="false" IncludeAllBuffs="false" IncludeAllDebuffs="false" RowsToDisplay="10">
 		<Rows>
-			<Row DisplayText="Corrosive Brew"               Color="blue"              />
-			<Row DisplayText="Tormenting Phantoms"          Color="burlyWood"         />
-			<Row DisplayText="Provoking Phantoms"           Color="darkOliveGreen"    />
-			<Row DisplayText="Devour Dexterity"             Color="cadetBlue"         />
-			<Row DisplayText="Verdanfire Seed"              Color="gold"              Filter="[Me]"/>
-			<Row DisplayText="Thorncoat"                    Color="purple"            Filter="[Party]" />
-			<Row DisplayText="Umbravines"                   Color="pink"              />
-			<Row DisplayText="Stinging Swarm"               Color="darkOrchid"        />
-			<Row DisplayText="Divine Weakening"             Color="orange"            />
-			<Row DisplayText="Shining Barrier"              Color="red"               Filter="Name1,Duxdl"/>
-			<Row DisplayText="Divine Favor"                 Color="lavender"          Filter="[Party]"/>
-			<Row DisplayText="Synthetic Toxin"              Color="crimson"           />
-			<Row DisplayText="Spinning Splinters"           Color="darkBlue"          Filter="[Me]"/>
-			<Row DisplayText="Spirit Of the Wolf"           Color="green"             />
-			<Row DisplayText="Smoke Trick"                  Color="lightBlue"         />
-			<Row DisplayText="Mantle"                       Color="lightBlue"         />
-			<Row DisplayText="Mezmerize"                    Color="lightBlue"         />
+			<Row Name="Corrosive Brew"               Color="blue"              />
+			<Row Name="Tormenting Phantoms"          Color="burlyWood"         />
+			<Row Name="Provoking Phantoms"           Color="darkOliveGreen"    />
+			<Row Name="Devour Dexterity"             Color="cadetBlue"         />
+			<Row Name="Verdanfire Seed"              Color="gold"              Include="[Party]"/>
+			<Row Name="Thorncoat"                    Color="purple"            Include="[Party]" />
+			<Row Name="Umbravines"                   Color="pink"              />
+			<Row Name="Stinging Swarm"               Color="darkOrchid"        />
+			<Row Name="Divine Weakening"             Color="orange"            />
+			<Row Name="Shining Barrier"              Color="red"               Include="Duxdl, Duxclr"/>
+			<Row Name="Divine Favor"                 Color="lavender"          Include="[Party]"/>
+			<Row Name="Synthetic Toxin"              Color="crimson"           />
+			<Row Name="Spinning Splinters"           Color="darkBlue"          Include="[Me]"/>
+			<Row Name="Spirit Of the Wolf"           Color="green"             Include="[Me]"/>
+			<Row Name="Smoke Trick"                  Color="gray"              />
+			<Row Name="Mantle"                       Color="lightSteelBlue"    />
+			<Row Name="Mezmerize"                    Color="mediumPurple"      />
+			<Row Name="Rip"                          Color="indigo"            Include="[Me]"/>
+		</Rows>
+	</Panel>
+	<Panel ID="3" Title="AllBuffs" TargetOrTitle="title" ExcludeAllBuffs="false" ExcludeAllDebuffs="true" IncludeAllBuffs="true" IncludeAllDebuffs="false" RowsToDisplay="20">
+		<Rows>
+			<Row Name="MustHaveOneRow"               Color="blue"              />
+		</Rows>
+	</Panel>
+	<Panel ID="4" Title="AllDebuffs" TargetOrTitle="title" ExcludeAllBuffs="true" ExcludeAllDebuffs="false" IncludeAllBuffs="false" IncludeAllDebuffs="true" RowsToDisplay="20">
+		<Rows>
+			<Row Name="MustHaveOneRow"               Color="blue"              />
 		</Rows>
 	</Panel>
 </Panels>

@@ -145,12 +145,13 @@ namespace FlexiPanelMod
             return false;
         }
 
-        // Adds a new buff or refreshes a buff to the entities list of all buffs
+        // Adds a new buff or refreshes a buff
         public static void OnAddOrRefreshBuff(double time, ActiveBuff activeBuff, bool inBackground, bool isRefresh, bool isItemBuff)
         {
-            //            MelonLogger.Warning($"OnAddOrRefreshBuff() 0a buff.BuffData.DisplayName.ToString() = {buff.BuffData.DisplayName.ToString()}, isRefresh = {isRefresh}, inBackground = {inBackground}, isItemBuff = {isItemBuff}");
-            //            MelonLogger.Warning($"OnAddOrRefreshBuff() 0b buff.Target?.NetworkId.ToString() = {buff.Target?.NetworkId.ToString()}, buff.Target.Nameplate.nameText.text = {buff.Target?.Nameplate?.nameText.text}, gCurrentTargetNetworkId = {gCurrentTargetNetworkId}");
-            //            MelonLogger.Warning($"OnAddOrRefreshBuff() 0c buff.Caster?.NetworkId.ToString() = {buff.Caster?.NetworkId.ToString()}, buff.Caster.Nameplate.nameText.text = {buff.Caster?.Nameplate?.nameText.text}, gCurrentTargetNetworkId = {gCurrentTargetNetworkId}");
+//            if (activeBuff.Target?.NetworkId.ToString() == Globals.PlayerNetworkId)
+//            {
+//                MelonLogger.Warning($"OnAddOrRefreshBuff() 0a activeBuff.BuffData.DisplayName.ToString() = {activeBuff.BuffData.DisplayName.ToString()} activeBuff.Target?.NetworkId.ToString() = {activeBuff.Target?.NetworkId.ToString()}");
+//            }
 
             // Make sure we track only valid entities
             if (IsValidTarget(activeBuff))
@@ -161,43 +162,27 @@ namespace FlexiPanelMod
                     return;
                 }
 
-                EntityData entityData = new EntityData();
+                // Default to player data
+                EntityData entityData = EntityManager.GetEntityData(Globals.Party);
                 EntityData enemyEntityData = new EntityData();
-                EntityData partyEntityData = EntityManager.GetEntityData(Globals.Party);
 
                 // If this is a buff going onto an Enemy (we do track) or a pet (which dont track)
                 if (activeBuff.Target.Info.AccessLevel.Equals(AccessLevel.None))
                 {
                     // This will set enemyEntityData to NULL if it does not find a match
                     enemyEntityData = EntityManager.GetEntityData(activeBuff.Target.NetworkId.ToString());
-                }
 
-                // HACK - We do not track pets or this is a missing entity (something went wrong somewhere else)
-                if (enemyEntityData == null || enemyEntityData.buffData == null)
-                {
-                    return;
-                }
-
-                // Get the number of seconds since EPOCH from when the very first buff lands
-                if (enemyEntityData.encounterStartTime == 0L)
-                {
-                    enemyEntityData.encounterStartTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                }
-
-                // If this is a buff going onto a member of the party or the local player
-                if (activeBuff.BuffData.CategoryType == BuffCategoryType.Beneficial &&
-                   (Globals.GroupMemberNetworkIds.Contains(activeBuff.Caster?.NetworkId.ToString()) || activeBuff.Target.NetworkId.ToString() == Globals.PlayerNetworkId.ToString()))
-                {
-                    // We are a buff
-                    entityData = partyEntityData;
-                    if (gCurrentTargetNetworkId != "")
+                    // HACK - We do not track pets or this is a missing entity (something went wrong somewhere else)
+                    if (enemyEntityData == null || enemyEntityData.buffData == null)
                     {
-                        enemyEntityData = EntityManager.GetEntityData(gCurrentTargetNetworkId);
+                        return;
                     }
-                }
-                else
-                {
-                    // We are a buff
+
+                    // Get the number of seconds since EPOCH from when the very first buff lands
+                    if (enemyEntityData.encounterStartTime == 0L)
+                    {
+                        enemyEntityData.encounterStartTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                    }
                     entityData = enemyEntityData;
                 }
 
@@ -311,9 +296,7 @@ namespace FlexiPanelMod
         // Removes a specific buff from an entity buff list
         public static void RemoveBuff(double time, ActiveBuff activeBuff)
         {
-            //            MelonLogger.Warning($"RemoveDeBuff() 0a activeBuff.BuffData.DisplayName.ToString() = {activeBuff.BuffData.DisplayName.ToString()}");
-            //            MelonLogger.Warning($"RemoveDeBuff() 0b activeBuff.Target?.NetworkId.ToString() = {activeBuff.Target?.NetworkId.ToString()}, activeBuff.Target.Nameplate.nameText.text = {activeBuff.Target?.Nameplate?.nameText.text}, gCurrentTargetNetworkId = {gCurrentTargetNetworkId}");
-            //            MelonLogger.Warning($"RemoveDeBuff() 0c activeBuff.Caster?.NetworkId.ToString() = {activeBuff.Caster?.NetworkId.ToString()}, activeBuff.Caster.Nameplate.nameText.text = {activeBuff.Caster?.Nameplate?.nameText.text}, gCurrentTargetNetworkId = {gCurrentTargetNetworkId}");
+            //MelonLogger.Warning($"RemoveDeBuff() 0a activeBuff.BuffData.DisplayName.ToString() = {activeBuff.BuffData.DisplayName.ToString()}");
 
             // Get the list for the current player
             EntityData enemyEntityData = (gCurrentTargetNetworkId.IsEmpty()) ? new EntityData() : EntityManager.GetEntityData(gCurrentTargetNetworkId);

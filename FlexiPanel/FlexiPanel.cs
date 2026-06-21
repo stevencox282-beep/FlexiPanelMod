@@ -3,12 +3,9 @@ using Il2CppPantheonPersist;
 using Il2CppServiceStack;
 using Il2CppTMPro;
 using MelonLoader;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using static Il2CppServiceStack.NetStandardPclExport;
-using static MelonLoader.MelonLogger;
 
 namespace FlexiPanelMod;
 
@@ -435,59 +432,59 @@ public class FlexiPanel : MonoBehaviour
                 // Parse the list of all viable rows then find a mtach in the buffs list on the current target and update the rows for the panel
                 foreach (RowConfig rowConfig in panelConfig.rowConfig)
                 {
-                    // Search every entity buff for RowConfig.displayText, but dont display more rows than we allocated in the panel
+                    // Search every buff for RowConfig.displayText, but dont display more rows than we allocated in the panel
                     for (int i = 0; (i < entityData.buffData.Count && panelDisplayIndex < panelConfig.rowsToDisplay); i++)
                     {
                         // Get the next buff in the list of all buff
                         BuffData buff = entityData.buffData[i];
-
-                        // Do not display this buff if a valid filtered has been provided
-                        if (!rowConfig.filter.IsEmpty() && true == FilterOutCurrentBuff(rowConfig, buff))
+                        
+                        // Display this buff based on the includes and any overide flags
+                        if (IncludeCurrentBuff(panelConfig, rowConfig, buff))
                         {
-                            // Move to next buff, we have been told to filter this out
-                            continue;
-                        }
-
-                        // Exclude buffs/debuffs as required
-                        if (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.excludeBuffs == true ||
-                            buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.excludeDebuffs == true)
-                        {
-                            continue;
-                        }
-
-                        // Convert buff name to upper case to alleviate case sensitivity issues but only for buff name
-                        if (buff.buffName.ToUpperSafe().Contains(rowConfig.displayText.ToUpperSafe()))
-                        {
-                            // Found a required buff/debuff, update the panel with this data
-                            if (buff.categoryType == BuffCategoryType.Beneficial.ToString())
+                            // Convert buff name to upper case to alleviate case sensitivity issues
+                            if (buff.buffName.ToUpperSafe().Contains(rowConfig.displayText) ||
+                                buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.includeAllBuffs == true ||
+                                buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.includeAllDebuffs == true)
                             {
-                                textMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $" {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.targetName})";
-                            }
-                            else
-                            {
-                                textMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $" {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.casterName})";
-                            }
+                                // Found a required buff/debuff, update the panel with this data
+                                if (buff.categoryType == BuffCategoryType.Beneficial.ToString())
+                                {
+                                    textMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $"  {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.targetName})";
+                                }
+                                else
+                                {
+                                    textMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $"  {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.casterName})";
+                                }
 
-                            // Set the time value for the row
-                            timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = GetTimeTextMeshsText(buff);
+                                // Set the time value for the row
+                                timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = GetTimeTextMeshsText(buff);
 
-                            // Now update the progress bar colour and time
-                            Image image = imageTransformList[panelDisplayIndex].GetComponent<Image>();
+                                // Now update the progress bar color and time
+                                Image image = imageTransformList[panelDisplayIndex].GetComponent<Image>();
 
-                            // Set colour based on the user defined color or spell type, if the user has given us an invalid colour, default to orange
-                            try
-                            {
-                                image.color = (Color)typeof(Color).GetProperty(rowConfig.color.ToLowerInvariant()).GetValue(null, null);
+                                if (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.includeAllBuffs == true ||
+                                    buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.includeAllDebuffs == true)
+                                {
+                                    image.color = FlexiPanelUtils.getBarColours(buff.spellType);
+                                }
+                                else
+                                {
+                                    // Set color based on the user defined color, if the user has given us an invalid colour, default to orange
+                                    try
+                                    {
+                                        image.color = (Color)typeof(Color).GetProperty(rowConfig.color.ToLowerInvariant()).GetValue(null, null);
+                                    }
+                                    catch
+                                    {
+                                        image.color = Color.orange;
+                                    }
+                                }
+
+                                // Set the fill amount 1.0f is full, 0.0f is empty
+                                image.fillAmount = ((1 / buff.buffDuration) * buff.buffDurationRemaining);
+                                // Move to the next row in the panel
+                                panelDisplayIndex++;
                             }
-                            catch
-                            {
-                                image.color = Color.orange;
-                            }
-
-                            // Set the fill amount 1.0f is full, 0.0f is empty
-                            image.fillAmount = ((1 / buff.buffDuration) * buff.buffDurationRemaining);
-                            // Move to the next row in the panel
-                            panelDisplayIndex++;
                         }
                     }
                 }
@@ -495,61 +492,70 @@ public class FlexiPanel : MonoBehaviour
         }
     }
 
-    // Returns a boolean indicating if e should filter out the current buff
-    private static bool FilterOutCurrentBuff(RowConfig rowConfig, BuffData buff)
+    // Returns a boolean indicating if we should filter out the current buff
+    private static bool IncludeCurrentBuff(PanelConfig panelConfig, RowConfig rowConfig, BuffData buff)
     {
-        string filterCriteria = rowConfig.filter;
+        string includeCriteria = rowConfig.include;
         string targetNetworkId = buff.targetNetworkId.ToString();
         string casterNetworkId = buff.casterNetworkId.ToString();
         string targetName = buff.targetName.ToString();
         string casterName = buff.casterName.ToString();
         string localPlayerName = Globals.LocalPlayer.Nameplate.nameText.text.ToString();
 
-        if (filterCriteria.ToUpperSafe().Equals("[ME]"))
+//        MelonLogger.Warning($"IncludeCurrentBuff() 1 buff.buffName = {buff.buffName}, buff.categoryType = {buff.categoryType}, panelConfig.excludeAllBuffs = {panelConfig.excludeAllBuffs}, panelConfig.excludeAllDebuffs = {panelConfig.excludeAllDebuffs}");
+        // Global include of buffs (do this before include)
+        if (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.excludeAllBuffs == true ||
+            buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.excludeAllDebuffs == true )
         {
-            // If this is not for the local player, we filter it
-            if (!(targetNetworkId.Equals(Globals.PlayerNetworkId) || casterNetworkId.Equals(Globals.PlayerNetworkId)))
-            {
-                return true;
-            }
+            return false;
+        }
 
-        }
-        // If this is not the local player or a member of the party, we filter it out
-        else if (filterCriteria.ToUpperSafe().Equals("[PARTY]"))
+        // Global Include of debuffs
+        if (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.includeAllBuffs == true ||
+            buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.includeAllDebuffs == true)
         {
-            if (!(targetNetworkId.Equals(Globals.PlayerNetworkId) || casterNetworkId.Equals(Globals.PlayerNetworkId) || Globals.GroupMemberNetworkIds.Contains(targetNetworkId) || Globals.GroupMemberNetworkIds.Contains(casterNetworkId)))
+            return true;
+        }
+
+        // If no include is provided and we do not have blanket instructions to accept/deny the deny by default
+        if (includeCriteria.IsEmpty())
+        {
+            return false;
+        }
+        else if (includeCriteria.ToUpperSafe().Equals("[ME]"))
+        {
+            // If this is for the local player
+            if ((targetNetworkId.Equals(Globals.PlayerNetworkId) || casterNetworkId.Equals(Globals.PlayerNetworkId)))
             {
                 return true;
             }
         }
-        // If this is not a player specifically added to track, we filter it out
-        else if (filterCriteria.ToUpperSafe().Contains(","))
+        else if (includeCriteria.ToUpperSafe().Contains(","))  // If this is not a player specifically added to track, we filter it out
         {
-            bool found = false;
+            bool inList = false;
             // Split the comma separated list into names
-            string[] playerNameArray = filterCriteria.Split(',');
+            string[] playerNameArray = includeCriteria.Split(',');
             // for every player in the list of player names provided in the config file
             for (int fi = 0; fi < playerNameArray.Length; fi++)
             {
                 // Only display this row if the caster or the target for this buff is in the list, or you are the person who cast this buff (so healers can track their own buffs on specific players)
-                if (targetName.Equals(playerNameArray[fi]) || 
-                    casterName.Equals(playerNameArray[fi]) || 
-                    localPlayerName.Equals(playerNameArray[fi]) && targetName.Equals(playerNameArray[fi]) || 
-                    (localPlayerName.Equals(casterName) && !localPlayerName.Equals(targetName)))
+                if (targetName.Equals(playerNameArray[fi].Trim()))
                 {
-                    found = true;
+                    inList = true;
                     break;
                 }
             }
-
-            // If we did not find the name in the list, we should not display this row, we filter it out
-            if (found == false)
+            return inList;
+        }
+        else if (includeCriteria.ToUpperSafe().Contains("[PARTY]"))
+        {
+            if (targetNetworkId.Equals(Globals.PlayerNetworkId) || casterNetworkId.Equals(Globals.PlayerNetworkId) || Globals.GroupMemberNetworkIds.Contains(targetNetworkId) || Globals.GroupMemberNetworkIds.Contains(casterNetworkId))
             {
                 return true;
             }
         }
 
-        // Default to do not filter out
+        // Default to not display
         return false;
     }
 
