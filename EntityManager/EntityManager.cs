@@ -16,7 +16,7 @@ public static class EntityManager
 {
     private static readonly string[] NPCBlacklist = { "Banner of Arms", "Banner of Onslaught", "Challenger's Banner", "Rallying Banner", "Shieldman's Banner", "ghostly riddler" };
     // Global to hold the list of all Entities
-    private static Dictionary<string, EntityData> gEntityBuffDictionary = new Dictionary<string, EntityData>();
+    private static Dictionary<string, EntityData> entityBuffDictionary = new Dictionary<string, EntityData>();
 
     // Holds the data for calculating Uptime for each buff
     private static Dictionary<string, List<ConsolidatedUptime>> consolidatedUptimeDictionary = new Dictionary<string, List<ConsolidatedUptime>>();
@@ -27,6 +27,13 @@ public static class EntityManager
     {
         // We add an entity that will contain all party buffs/debuffs
         AddEntityIfMissing(Globals.Party);
+    }
+
+    public static void ClearEntityDatabase()
+    {
+        entityBuffDictionary.Clear();
+        consolidatedUptimeDictionary.Clear();
+        uniqueDebuffsDictionary.Clear();
     }
 
     // This funciton returns the entity data for a given network ID
@@ -40,9 +47,9 @@ public static class EntityManager
 
         // EntityManager will remove entities from the Dictionary on entity death, not on entity despawn, so for now we just have to ignore all failures to find an enemy in the database
         // Not ideal as this will mask genuine problems but there is nothing we can do about it, it is how the Hook for managing NPC entities works
-        if (gEntityBuffDictionary.ContainsKey(targetNetworkId))
+        if (entityBuffDictionary.ContainsKey(targetNetworkId))
         {
-            return gEntityBuffDictionary[targetNetworkId];
+            return entityBuffDictionary[targetNetworkId];
         }
         else
         {
@@ -148,9 +155,9 @@ public static class EntityManager
     // This function updates the duration remaining for all the progress bars
     public static void UpdateDurationRemaining(bool removal = true)
     {
-        for (int i = 0; i < gEntityBuffDictionary.Count; i++)
+        for (int i = 0; i < entityBuffDictionary.Count; i++)
         {
-            EntityData entityData = gEntityBuffDictionary.ElementAt(i).Value;
+            EntityData entityData = entityBuffDictionary.ElementAt(i).Value;
             List<BuffData> buffData = entityData.buffData;
 
             for (int j = buffData.Count - 1; j >= 0; j--)
@@ -175,7 +182,7 @@ public static class EntityManager
 
         // For any buff we have ever had for this entity
         var allEntityNetworkIds = uniqueDebuffsDictionary.Keys;
-        var allEntityDebuffIds = gEntityBuffDictionary.Keys;
+        var allEntityDebuffIds = entityBuffDictionary.Keys;
         foreach (var entityNetworkId in allEntityNetworkIds)
         {
             // If the entity does not exist, it could be a pet or a player, just return
@@ -184,7 +191,7 @@ public static class EntityManager
                 return;
             }
 
-            EntityData entity = gEntityBuffDictionary[entityNetworkId];
+            EntityData entity = entityBuffDictionary[entityNetworkId];
             entity.totalEncounterTime++;
             entity.entityNetworkId = entityNetworkId;
 
@@ -246,7 +253,7 @@ public static class EntityManager
             newMonster.isDead = false;
             newMonster.buffData = new List<BuffData>();
             newMonster.targetName = (targetNetworkId == Globals.Party) ? Globals.Party : string.Empty; // Set to PARTY if we are creating the party entity
-            gEntityBuffDictionary.Add(targetNetworkId, newMonster);
+            entityBuffDictionary.Add(targetNetworkId, newMonster);
         }
     }
 
@@ -259,12 +266,12 @@ public static class EntityManager
         string networkId = entityStatusLogic.Entity.NetworkId.ToString();
         bool isDead = entityStatusLogic.Entity.Nameplate.isDead;
 
-        if (gEntityBuffDictionary.ContainsKey(networkId.ToString()))
+        if (entityBuffDictionary.ContainsKey(networkId.ToString()))
         {
             // The API used reports dead enemies as alive when you move out of range, never go back from dead to not dead
-            if (isDead == true && gEntityBuffDictionary[networkId].isDead == false)
+            if (isDead == true && entityBuffDictionary[networkId].isDead == false)
             {
-                gEntityBuffDictionary[networkId].isDead = true; // Once set to true can NEVER be set to false
+                entityBuffDictionary[networkId].isDead = true; // Once set to true can NEVER be set to false
             }
         }
     }
@@ -297,7 +304,7 @@ public static class EntityManager
 
             // Add this entity to the list of all entites
             string targetNetworkId = entityNpcGameObject.NetworkId.ToString();
-            if (gEntityBuffDictionary.ContainsKey(entityNpcGameObject.NetworkId.ToString()))
+            if (entityBuffDictionary.ContainsKey(entityNpcGameObject.NetworkId.ToString()))
             {
                 // We can't do anything about this, but we should log it anyway and return, we do not want dupliicate entries in our dictionary
                 MelonLogger.Error($"OnNpcAdded() Entry {entityNpcGameObject.NetworkId.ToString()} already exists in the dictionary, this should never happen");
@@ -348,7 +355,7 @@ public static class EntityManager
         try
         {
             RemoveEntityFromUniqueBuffs(entityNpcGameObject.NetworkId.ToString());
-            gEntityBuffDictionary.Remove(entityNpcGameObject.NetworkId.ToString());
+            entityBuffDictionary.Remove(entityNpcGameObject.NetworkId.ToString());
         }
         catch (Exception e)
         {

@@ -20,10 +20,11 @@ public class PlayerNetworkStart
         if (__instance.NetworkId.Value == EntityPlayerGameObject.LocalPlayerId.Value)
         {
             Globals.LocalPlayer = __instance;
-            Globals.PlayerIsLoaded = true;
             if (Globals.PlayerNetworkId.Equals(string.Empty))
             {
                 Globals.PlayerNetworkId = EntityPlayerGameObject.LocalPlayerId.ToString();
+                // We add an entity that will contain all party buffs/debuffs
+                EntityManager.AddEntityIfMissing(Globals.Party);
             }
 
             try
@@ -35,8 +36,7 @@ public class PlayerNetworkStart
                 MelonLogger.Error("Could not convert Local Player level to int, defaulting to player level 0");
                 Globals.PlayerLevel = 0;
             }
-
-
+            Globals.PlayerIsLoaded = true;
             return;
         }
     }
@@ -57,8 +57,10 @@ public class PlayerNetworkStop
 
         if (__instance.NetworkId.Value == EntityPlayerGameObject.LocalPlayerId.Value)
         {
-            Globals.LocalPlayer = null;
+            // We have logged out / changed zones.  Clear the screen as we cant reliably tell what buffs have / have not been preserved during zone transition or between logout and login
             Globals.PlayerIsLoaded = false;
+            EntityManager.ClearEntityDatabase();
+            Globals.LocalPlayer = null;
             Globals.PlayerNetworkId = string.Empty;
             Globals.PlayerLevel = 0;
             return;
