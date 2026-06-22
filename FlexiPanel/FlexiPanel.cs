@@ -6,6 +6,7 @@ using MelonLoader;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using static Il2CppServiceStack.NetStandardPclExport;
 
 namespace FlexiPanelMod;
 
@@ -410,7 +411,7 @@ public class FlexiPanel : MonoBehaviour
                 $"{entityData.targetName.ToUpperSafe()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}" :
                 $"{entityData.targetName.ToUpperSafe()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
             pullMessage = $"Pulling: {baseMessage}";
-            popMessage = $"POP: {baseMessage}";
+            popMessage = $"Pop: {baseMessage}";
             targetMessage = $"Target: {baseMessage}";
 
             // We must now search every panel and find if that panel is tracking this buff and if it is follow its row rules
@@ -440,33 +441,25 @@ public class FlexiPanel : MonoBehaviour
                     {
                         // Get the next buff in the list of all buff
                         BuffData buff = entityData.buffData[i];
-                        
-                        // Display this buff based on the includes and any overide flags
-                        if (IncludeCurrentBuff(panelConfig, rowConfig, buff))
-                        {
-                            // Convert buff name to upper case to alleviate case sensitivity issues
-                            if (buff.buffName.ToUpperSafe().Contains(rowConfig.displayText) ||
-                                (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.includeAllBuffs == true && false == BuffInBlacklist(includeAllBuffsBlacklist, buff)) ||
-                                buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.includeAllDebuffs == true)
-                            {
-                                // Found a required buff/debuff, update the panel with this data
-                                if (buff.categoryType == BuffCategoryType.Beneficial.ToString())
-                                {
-                                    textMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $" {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.targetName})";
-                                }
-                                else
-                                {
-                                    textMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $" {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.casterName})";
-                                }
+                        string buffNameUpperCase = buff.buffName.ToUpperSafe();
 
+                        // Check the include criteria
+                        if (HandleIncludeCriteria(panelConfig, rowConfig, buff))
+                        {
+                            // If the buff is valid or we have a valid override
+                            if ( true == IsValidBuff(panelConfig, rowConfig, buff, buffNameUpperCase) || true == HasValidOverride(panelConfig, buff, buffNameUpperCase, includeAllBuffsBlacklist))
+                            {
+                                bool includeThisBuff = (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.includeAllBuffs == true) ? true : false;
+                                bool includThisDebuff = (buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.includeAllDebuffs == true) ? true : false;
+
+                                // Found a required buff/debuff, update the panel with this data
+                                textMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $" {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.targetName})";
                                 // Set the time value for the row
                                 timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = GetTimeTextMeshsText(buff);
 
                                 // Now update the progress bar color and time
                                 Image image = imageTransformList[panelDisplayIndex].GetComponent<Image>();
-
-                                if (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.includeAllBuffs == true ||
-                                    buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.includeAllDebuffs == true)
+                                if (includeThisBuff == true || includThisDebuff == true)
                                 {
                                     image.color = FlexiPanelUtils.getBarColours(buff.spellType);
                                 }
@@ -495,13 +488,67 @@ public class FlexiPanel : MonoBehaviour
         }
     }
 
+
+    // This is a valid buff if the name matches the name for the current row and it is a valid type for this panel
+    private static bool IsValidBuff(PanelConfig panelConfig, RowConfig rowConfig, BuffData buff, string buffNameUpperCase)
+    {
+        // Check the name and the buff type are valid
+        if (buffNameUpperCase.Contains(rowConfig.displayText))
+        {
+            if (panelConfig.excludeAllBuffs == true && buff.categoryType == BuffCategoryType.Beneficial.ToString())
+            {
+                return false;
+            }
+            else if (panelConfig.excludeAllDebuffs == true && buff.categoryType == BuffCategoryType.Harmful.ToString())
+            {
+                return false;
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    // Returns true if we have a valid overide
+    private static bool HasValidOverride(PanelConfig panelConfig, BuffData buff, string buffNameUpperCase, List<string> includeAllBuffsBlacklist)
+    {
+        // true means we do not include this
+        bool excludeThisBuff = (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.excludeAllBuffs == true) ? true : false;
+        // true means we do not include this
+        bool excludeThisDebuff = (buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.excludeAllDebuffs == true) ? true : false;
+
+        // true means we do include this
+        bool includeThisBuff = (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.includeAllBuffs == true) ? true : false;
+        // true means we do include this
+        bool includThisDebuff = (buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.includeAllDebuffs == true) ? true : false;
+
+        // Process the excludes first, we want to keep the panel as clear as possible
+        if (excludeThisBuff == true)
+        {
+            return false;
+        }
+        else if (excludeThisDebuff == true)
+        {
+            return false;
+        }
+        else if (includeThisBuff == true && false == BuffInBlacklist(includeAllBuffsBlacklist, buffNameUpperCase))
+        {
+            return true;
+        }
+        else if (includThisDebuff == true)
+        {
+            return true;
+        }
+
+        return false;
+    }
     // Determines is the provided buff exists in the provided blacklist
-    private static bool BuffInBlacklist(List<string> includeAllBuffsBlacklist, BuffData buff)
+    private static bool BuffInBlacklist(List<string> includeAllBuffsBlacklist, string buffNameUpperCase)
     {
         // buff contains the full buff name, includeAllBuffsBlacklist may contain the full buiff name or partial buff name
         foreach (string blacklistName in includeAllBuffsBlacklist)
         {
-            if (buff.buffName.ToUpperSafe().Contains(blacklistName))
+            if (buffNameUpperCase.Contains(blacklistName))
             {
                 return true;
             }
@@ -509,8 +556,8 @@ public class FlexiPanel : MonoBehaviour
         return false;
     }
 
-    // Returns a boolean indicating if we should filter out the current buff
-    private static bool IncludeCurrentBuff(PanelConfig panelConfig, RowConfig rowConfig, BuffData buff)
+    // Returns a boolean indicating if we should process the current buff further based on who the buff/debuff is applied to and any over-rides
+    private static bool HandleIncludeCriteria(PanelConfig panelConfig, RowConfig rowConfig, BuffData buff)
     {
         string includeCriteria = rowConfig.include;
         string targetNetworkId = buff.targetNetworkId.ToString();
@@ -519,22 +566,7 @@ public class FlexiPanel : MonoBehaviour
         string casterName = buff.casterName.ToString();
         string localPlayerName = Globals.LocalPlayer.Nameplate.nameText.text.ToString();
 
-//        MelonLogger.Warning($"IncludeCurrentBuff() 1 buff.buffName = {buff.buffName}, buff.categoryType = {buff.categoryType}, panelConfig.excludeAllBuffs = {panelConfig.excludeAllBuffs}, panelConfig.excludeAllDebuffs = {panelConfig.excludeAllDebuffs}");
-        // Global include of buffs (do this before include)
-        if (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.excludeAllBuffs == true ||
-            buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.excludeAllDebuffs == true )
-        {
-            return false;
-        }
-
-        // Global Include of debuffs
-        if (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.includeAllBuffs == true ||
-            buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.includeAllDebuffs == true)
-        {
-            return true;
-        }
-
-        // If no include is provided and we do not have blanket instructions to accept/deny the deny by default
+        // If no include is provided deny by default
         if (includeCriteria.IsEmpty())
         {
             return false;

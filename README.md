@@ -1,5 +1,5 @@
 # FlexiPanelMod
-This Mod is for Pantheon: Rise of the Fallen. It displays the in game buffs / dbebuffs as defined in the configuration file FlexiPanelConfig.xml.
+This Mod is for Pantheon: Rise of the Fallen. It displays buffs / dbebuffs as defined in the configuration file FlexiPanelConfig.xml.
 
 It has added in following new commands have been added.
 /showflexipanels - Shows all configured panels
@@ -19,7 +19,7 @@ The file FlexiPanelConfig.xml must be placed in the <GamePath>/UserData/ directo
 
 ## Resizing Panels
 You can resize each panels number of rows to display in the combinations of:  5,10,15,20,25,30,35.
-You can change the width of the panels (in pixels) but no limits are placed on this so if you insert stupid numbers you win stupid prizes.
+You can change the width of the panels (in pixels) but very few limits are placed on this so if you insert stupid numbers you win stupid prizes.
 
 ## How Buffs/Debuffs are displayed
 The order of rows in the config file is the order they are displayed on the screen.
@@ -38,17 +38,14 @@ You can change how opaque each panel is by setting the panels PanelOpacity attri
 ## ExcludeAll(De)Buffs / IncludeAll(De)buffs Overrides
 ExcludeAllBuffs and ExcludeAllDebuffs take priority over IncludeAllBuffs/IncludeAllDebuffs
 When IncludeAllBuffs is set to true the color of the bars will be based on the Spell Type NOT the user defined row colors for performance reasons
-When IncludeAllBuffs is set to true the blacklist IncludeAllBuffsBlackList is used to prevent filling up the panel with unwanted buffs,
-  without this the panels size explodes to 40+ rows easily making the panel unusable
+When IncludeAllBuffs is set to true the blacklist IncludeAllBuffsBlackList is used to prevent filling up the panel with common buffs
 
 ## Known Limitations
-Boxes are not dynamically resizable, this requires much more understanding of how Unity works than I have.
-If a new player/entity moves into range with buff/debuffs already applied to them they will not appear in the panel (this includes buffs when logging in/zoning)
+Panels are not dynamically resizable
+If a new entity moves into range with buff/debuffs already applied they will not appear in the panel (this includes logging in/zoning)
 Buffs are removed on change of zone due to problems tracking buffs across zones / logins
-Buffs that can only be applied once to an entity I.E. "Corrosive Brew" will still show up in the panel once per caster even if it has been over-riden
-Some buffs can not be tracked such as "Exhausted" and ALL Stances such as Rogues "Shadow Walk" or DireLords "Nightmarish" or Paladins "Hallowed Ground" as 
-  they have durations of one second which immediatly expire.  Additionally no notification of expiry is given when they actually expire so there would be 
-  no way to known when to remove them from the panel even if they were to be added
+For debuffs that can only be applied once to an entity E.G. "Corrosive Brew", all casts of this debuff will still show up in the panel even if it has been over-written
+Some buffs can not be tracked such as "Exhausted" and ALL Stances such as Rogues "Shadow Walk" or DireLords "Nightmarish"
 
 ## Installation
 Install MelonLoader, following along with their [installation instructions](https://melonwiki.xyz/#/?id=requirements).

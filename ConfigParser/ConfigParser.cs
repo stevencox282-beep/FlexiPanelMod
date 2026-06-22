@@ -37,6 +37,7 @@ public class ConfigParser()
             panelConfig.excludeAllDebuffs = (panelAttributes["ExcludeAllDebuffs"] != null) ? bool.Parse(panelAttributes["ExcludeAllDebuffs"].Value) : false;
             panelConfig.includeAllBuffs = (panelAttributes["IncludeAllBuffs"] != null) ? bool.Parse(panelAttributes["IncludeAllBuffs"].Value) : false;
             panelConfig.includeAllDebuffs = (panelAttributes["IncludeAllDebuffs"] != null) ? bool.Parse(panelAttributes["IncludeAllDebuffs"].Value) : false;
+            MelonLogger.Warning($"ParseConfig() 1 panelConfig.includeAllDebuffs = {panelConfig.includeAllDebuffs}");
             panelConfig.rowsToDisplay = (panelAttributes["RowsToDisplay"] != null) ? FlexiPanelUtils.SanitiseNumRows(Int32.Parse(panelAttributes["RowsToDisplay"].Value)) : 10;
             panelConfig.panelOpacity = (panelAttributes["PanelOpacity"] != null) ? (float.Parse(panelAttributes["PanelOpacity"].Value) / 100) : 1.0f;
             panelConfig.panelWidth = (panelAttributes["PanelWidthPx"] != null) ? (Int32.Parse(panelAttributes["PanelWidthPx"].Value)) : Globals.DefaultPanelWidth;

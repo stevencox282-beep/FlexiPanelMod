@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Panels>
-	<Panel ID="1" Title="Buffs" TargetOrTitle="target" PanelOpacity="100" RowsToDisplay="10" RowNameWidthPx="225" ExcludeAllBuffs="false" ExcludeAllDebuffs="true" IncludeAllBuffs="false" IncludeAllDebuffs="false" >
+	<Panel ID="1" Title="Buffs" TargetOrTitle="target" PanelOpacity="90" RowsToDisplay="10" RowNameWidthPx="225" ExcludeAllBuffs="false" ExcludeAllDebuffs="true" IncludeAllBuffs="false" IncludeAllDebuffs="false" >
 		<Rows>
 			<Row Name="Corrosive Brew"               Color="blue"              />
 			<Row Name="Tormenting Phantoms"          Color="burlyWood"         />
@@ -22,7 +22,7 @@
 			<Row Name="Rip"                          Color="indigo"            Include="[Me]"/>
 		</Rows>
 	</Panel>
-	<Panel ID="2" Title="Debuffs" TargetOrTitle="title" PanelOpacity="50" RowsToDisplay="10" RowWidthPx="300" ExcludeAllBuffs="true" ExcludeAllDebuffs="false" IncludeAllBuffs="false" IncludeAllDebuffs="false">
+	<Panel ID="2" Title="Debuffs" TargetOrTitle="title" PanelOpacity="90" RowsToDisplay="10" RowWidthPx="300" ExcludeAllBuffs="true" ExcludeAllDebuffs="false" IncludeAllBuffs="false" IncludeAllDebuffs="false">
 		<Rows>
 			<Row Name="Corrosive Brew"               Color="blue"              />
 			<Row Name="Tormenting Phantoms"          Color="burlyWood"         />
@@ -44,18 +44,18 @@
 			<Row Name="Rip"                          Color="indigo"            Include="[Me]"/>
 		</Rows>
 	</Panel>
-	<Panel ID="3" Title="AllBuffs" TargetOrTitle="title" PanelOpacity="25" RowsToDisplay="20" RowWidthPx="300" ExcludeAllBuffs="false" ExcludeAllDebuffs="true" IncludeAllBuffs="true" IncludeAllDebuffs="false">
+	<Panel ID="3" Title="AllBuffs" TargetOrTitle="title" PanelOpacity="90" RowsToDisplay="20" RowWidthPx="300" ExcludeAllBuffs="false" ExcludeAllDebuffs="true" IncludeAllBuffs="true" IncludeAllDebuffs="false">
 		<Rows>
-			<Row Name="MustHaveOneRow"               Color="blue"              />
+			<Row Name="AllBuffsMandatoryRow"               Color="blue"     Include="[Party]"/>
 		</Rows>
 	</Panel>
-	<Panel ID="4" Title="AllDebuffs" TargetOrTitle="title" PanelOpacity="0" RowsToDisplay="20" RowWidthPx="300" ExcludeAllBuffs="true" ExcludeAllDebuffs="false" IncludeAllBuffs="false" IncludeAllDebuffs="true">
+	<Panel ID="4" Title="AllDebuffs" TargetOrTitle="title" PanelOpacity="90" RowsToDisplay="20" RowWidthPx="300" ExcludeAllBuffs="true" ExcludeAllDebuffs="false" IncludeAllBuffs="false" IncludeAllDebuffs="true">
 		<Rows>
-			<Row Name="MustHaveOneRow"               Color="blue"              />
+			<Row Name="AllDebuffsMandatoryRow"               Color="blue"     Include="[Party]"/>
 		</Rows>
 	</Panel>
 
-	<!-- In order to prevent the IncludeAllBuffs Panel from being flooded with irrelevant buffs add here the buffs you do NOT want to see with IncludeAllBuffs -->
+	<!-- In order to prevent the IncludeAllBuffs Panel from being flooded with common buffs, add the buffs you do NOT want to see with IncludeAllBuffs -->
 	<IncludeAllBuffsBlackList>
 		<Entry Name="Mark Of The Fireclaw"/>
 		<Entry Name="Grip Of Stone"/>
