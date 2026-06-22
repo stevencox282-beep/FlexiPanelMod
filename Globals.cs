@@ -20,6 +20,7 @@ public static class Globals
     public static int DefaultPanelHeight = 540; // y-axis
     public static int DefaultPanelWidth = 300; // x-axis
     public static int DefaultNameMeshWidth = 250;
+    public static int MinimumRowWidth = 200; // Anything less than this just makes no sense, you wont be able to see anything at all
     public static int PixelsNeededForUptime = 75; // Number of pixel required to display the uptime part
     public static float RowLeftMargin = 0.05f;
     public static int NameMeshHeight = 12;

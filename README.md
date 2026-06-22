@@ -11,10 +11,15 @@ It has added in following new commands have been added.
 
 ## Maximum Number Of Panels Vs Performance
 All panels MUST finish all of their work in less than one second to ensure the times displayed update properly.  
-The mod sets no upper limit on the number of panels.  If your machine is fast it may handle many panels, if it is very slow it may only handle a few. Choose the number of panels you want wisely.
+The mod sets no upper limit on the number of panels.  If your machine is fast it may handle many panels, if it is very slow it may only handle a few.
+Choose the number of panels you want wisely.
 
 ## Config File Location
 The file FlexiPanelConfig.xml must be placed in the <GamePath>/UserData/ directory.
+
+## Resizing Panels
+You can resize each panels number of rows to display in the combinations of:  5,10,15,20,25,30,35.
+You can change the width of the panels (in pixels) but no limits are placed on this so if you insert stupid numbers you win stupid prizes.
 
 ## How Buffs/Debuffs are displayed
 The order of rows in the config file is the order they are displayed on the screen.
@@ -24,25 +29,26 @@ Configured buffs/debuffs are selected if a buff CONTAINS the configured buff/deb
   This means if you put Rip (Bleed debuff) as a row it will also include Grip Of Stone (Shaman Buff) as Grip contains Rip and name is not case-sensitive.
 
 ## Color Availability
-All available colors are defined by Unity. You can find the full Unity colour list for Unity 6.1 (correct at time of writing) available at [Unity Color List](https://docs.unity3d.com/6000.1/Documentation/ScriptReference/Color.html).
+All available colors are defined by Unity. You can find the full Unity colour list for Unity 6.3 (correct at time of writing) available at [Unity Color List](https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Color.html).
 If the user provides a color that Unity does not support it will default to orange.
 
-## ExcludeAllBuffs / ExcludeAllDebuffs Overrides
+## Panel Opacity
+You can change how opaque each panel is by setting the panels PanelOpacity attribute in the configuration.  100 = fully opaque, 0 = fully transparent
+
+## ExcludeAll(De)Buffs / IncludeAll(De)buffs Overrides
 ExcludeAllBuffs and ExcludeAllDebuffs take priority over IncludeAllBuffs/IncludeAllDebuffs
-
-## IncludeAllBuffs / IncludeAllDebuffs Overrides
-When set to true the color of the bars will be based on the Spell Type NOT the user defined row colors.
-
-## Resizing Panels
-You can resize each panels number of rows to display in the combinations of:  5,6,7,8,9,10,15,20,25,30,35.
-You can change the width of the panels (in pixels) but no limits are placed on this so if you insert stupid numbers you win stupid prizes.
+When IncludeAllBuffs is set to true the color of the bars will be based on the Spell Type NOT the user defined row colors for performance reasons
+When IncludeAllBuffs is set to true the blacklist IncludeAllBuffsBlackList is used to prevent filling up the panel with unwanted buffs,
+  without this the panels size explodes to 40+ rows easily making the panel unusable
 
 ## Known Limitations
 Boxes are not dynamically resizable, this requires much more understanding of how Unity works than I have.
 If a new player/entity moves into range with buff/debuffs already applied to them they will not appear in the panel (this includes buffs when logging in/zoning)
 Buffs are removed on change of zone due to problems tracking buffs across zones / logins
 Buffs that can only be applied once to an entity I.E. "Corrosive Brew" will still show up in the panel once per caster even if it has been over-riden
-Some buffs can not be tracked such as "Exhausted" or "Shadow Walk" as they have durations of one second which immediatly expire and no notification of expiry is given when they actually expire
+Some buffs can not be tracked such as "Exhausted" and ALL Stances such as Rogues "Shadow Walk" or DireLords "Nightmarish" or Paladins "Hallowed Ground" as 
+  they have durations of one second which immediatly expire.  Additionally no notification of expiry is given when they actually expire so there would be 
+  no way to known when to remove them from the panel even if they were to be added
 
 ## Installation
 Install MelonLoader, following along with their [installation instructions](https://melonwiki.xyz/#/?id=requirements).

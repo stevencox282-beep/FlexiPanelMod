@@ -69,5 +69,7 @@
 		<Entry Name="Nocturnal Eyes"/>
 		<Entry Name="Awaken Courage"/>
 		<Entry Name="Symbol Of"/>
+		<Entry Name="Armor Of Faith"/>
+		<Entry Name="Hymn Of"/>
 	</IncludeAllBuffsBlackList>
 </Panels>

@@ -11,40 +11,9 @@ public static class FlexiPanelUtils
         // Change the margins and offsets based on how many rows we have
         switch (rowsToDisplay)
         {
-            case 1:
-                heightOffset = 1f - 0.9f;
-                break;
-            case 2:
-                heightOffset = 1f - 0.45f;
-                interBarOffset = 0.45f;
-                break;
-            case 3:
-                heightOffset = 1f - 0.35f;
-                interBarOffset = 0.30f;
-                break;
-            case 4:
-                heightOffset = 1f - 0.30f;
-                interBarOffset = 0.20f;
-                break;
             case 5:
                 heightOffset = 1f - 0.245f;
                 interBarOffset = 0.175f;
-                break;
-            case 6:
-                heightOffset = 1f - 0.20f;
-                interBarOffset = 0.15f;
-                break;
-            case 7:
-                heightOffset = 1f - 0.17f;
-                interBarOffset = 0.13f;
-                break;
-            case 8:
-                heightOffset = 1f - 0.14f;
-                interBarOffset = 0.115f;
-                break;
-            case 9:
-                heightOffset = 1f - 0.13f;
-                interBarOffset = 0.105f;
                 break;
             case 10:
                 heightOffset = 1f - 0.13f;
@@ -67,10 +36,9 @@ public static class FlexiPanelUtils
                 interBarOffset = 0.032f;
                 break;
             case 35:
-                interBarOffset = 0.028f; // Globals.InterBarOffset
-                heightOffset = 1f - 0.04f; // Globals.TopMargin
+                interBarOffset = 0.028f; 
+                heightOffset = 1f - 0.04f;
                 break;
-
         }
     }
 
@@ -78,33 +46,38 @@ public static class FlexiPanelUtils
     // We support the following.  5..10,15,20,25,30,35
     public static int SanitiseNumRows(int numRows)
     {
-        // Ensure we have at least 1 row
-        if (numRows < 5)
+        // Ensure we have at least 5 row
+        if (numRows < 6)
         {
             return 5;
         }
 
-        if (numRows > 10 && numRows < 15)
+        if (numRows > 5 && numRows < 11)
+        {
+            return 10;
+        }
+
+        if (numRows > 10 && numRows < 16)
         {
             return 15;
         }
 
-        if (numRows > 15 && numRows < 20)
+        if (numRows > 15 && numRows < 21)
         {
             return 20;
         }
 
-        if (numRows > 20 && numRows < 20)
+        if (numRows > 20 && numRows < 21)
         {
             return 25;
         }
 
-        if (numRows > 25 && numRows < 30)
+        if (numRows > 25 && numRows < 31)
         {
             return 30;
         }
 
-        if (numRows > 30 && numRows < 35)
+        if (numRows > 30 && numRows < 36)
         {
             return 35;
         }

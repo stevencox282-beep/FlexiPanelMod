@@ -1,4 +1,5 @@
 ﻿using Il2CppServiceStack;
+using Il2Cpp뤗;
 using MelonLoader;
 using System.Xml;
 
@@ -37,25 +38,12 @@ public class ConfigParser()
             panelConfig.includeAllBuffs = (panelAttributes["IncludeAllBuffs"] != null) ? bool.Parse(panelAttributes["IncludeAllBuffs"].Value) : false;
             panelConfig.includeAllDebuffs = (panelAttributes["IncludeAllDebuffs"] != null) ? bool.Parse(panelAttributes["IncludeAllDebuffs"].Value) : false;
             panelConfig.rowsToDisplay = (panelAttributes["RowsToDisplay"] != null) ? FlexiPanelUtils.SanitiseNumRows(Int32.Parse(panelAttributes["RowsToDisplay"].Value)) : 10;
-            // Configure globals used to draw the panels
+            panelConfig.panelOpacity = (panelAttributes["PanelOpacity"] != null) ? (float.Parse(panelAttributes["PanelOpacity"].Value) / 100) : 1.0f;
             panelConfig.panelWidth = (panelAttributes["PanelWidthPx"] != null) ? (Int32.Parse(panelAttributes["PanelWidthPx"].Value)) : Globals.DefaultPanelWidth;
             panelConfig.rowNameWidth = panelConfig.panelWidth - Globals.PixelsNeededForUptime;
-            panelConfig.panelOpacity = (panelAttributes["PanelOpacity"] != null) ? (float.Parse(panelAttributes["PanelOpacity"].Value) / 100) : 1.0f;
-
 
             // VERY basic XML validation to prevent obviously contradictory configurations
-
-            // Exclude takes priority over include
-            if (panelConfig.excludeAllBuffs == true)
-            {
-                panelConfig.includeAllBuffs = false;
-            }
-
-            // Exclude takes priority over include
-            if (panelConfig.excludeAllDebuffs == true)
-            {
-                panelConfig.includeAllDebuffs = false;
-            }
+            RangeCheckXMLParams(panelConfig);
 
             // Get the Row data for this panel
             XmlNodeList rowsList = panel.ChildNodes;
@@ -110,7 +98,39 @@ public class ConfigParser()
                     includeAllBuffsBlacklist.Add(name);
                 }
             }
+        }
+    }
 
+    // Performs basic range checking on the input parameters to prevent obvious bad configuration from ruining everything
+    private void RangeCheckXMLParams(PanelConfig panelConfig)
+    {
+        // The panel width must be at least the with of the time text mesh, in reality is pro
+        if (panelConfig.panelWidth < Globals.MinimumRowWidth)
+        {
+            panelConfig.panelWidth = Globals.DefaultPanelWidth;
+            panelConfig.rowNameWidth = panelConfig.panelWidth - Globals.PixelsNeededForUptime;
+        }
+
+        // Opacity cant be more than 1.0f or less than 0.0f
+        if (panelConfig.panelOpacity > 1.0f)
+        {
+            panelConfig.panelOpacity = 1.0f;
+        }
+        else if (panelConfig.panelOpacity < 0.0f)
+        {
+            panelConfig.panelOpacity = 0.0f;
+        }
+
+        // Exclude takes priority over include
+        if (panelConfig.excludeAllBuffs == true)
+        {
+            panelConfig.includeAllBuffs = false;
+        }
+
+        // Exclude takes priority over include
+        if (panelConfig.excludeAllDebuffs == true)
+        {
+            panelConfig.includeAllDebuffs = false;
         }
     }
 }
