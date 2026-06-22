@@ -140,7 +140,7 @@ public class FlexiPanel : MonoBehaviour
             uiWindowPanel._displayName = item.Key;
 
             // Add the MANDATORY elements to a panel, the compilor will not error if you don't do this but nothing will work
-            BuildCloseButtonAndBackground(rectTransform, gameObject, uiWindowPanel);
+            BuildCloseButtonAndBackground(rectTransform, gameObject, uiWindowPanel, panelConfig);
 
             // Set the panel size based on the number of rows we have to draw
             SetPanelSize(ref uiWindowPanel, panelConfig);
@@ -165,7 +165,7 @@ public class FlexiPanel : MonoBehaviour
         int heightPerRow = Globals.NameMeshHeight;
         int totalHeightNeeded = (heightPerRow + Globals.PixelsToAdd) * panelConfig.rowsToDisplay;
         // We can not change the width, just the height
-        Vector2 panelSize = new Vector2(Globals.DefaultPanelWidth, totalHeightNeeded);
+        Vector2 panelSize = new Vector2(panelConfig.panelWidth, totalHeightNeeded);
         rectTransform.pivot = new Vector2(0, 1);
         rectTransform.anchoredPosition = new Vector2(-(panelSize.x / 2), panelSize.y / 2);
         rectTransform.localScale = new Vector3(1, 1, 1);
@@ -187,7 +187,7 @@ public class FlexiPanel : MonoBehaviour
     }
 
     // Constructs the close button and set the background
-    private void BuildCloseButtonAndBackground(Transform parentPanel, GameObject gameObject, UIWindowPanel uiWindowPanel)
+    private void BuildCloseButtonAndBackground(Transform parentPanel, GameObject gameObject, UIWindowPanel uiWindowPanel, PanelConfig panelConfig)
     {
         // Source for copying button and backgrounds            
         Transform tutorialButton = gTutorialPopup.transform.GetChild(0);
@@ -197,6 +197,9 @@ public class FlexiPanel : MonoBehaviour
         var image = gameObject.AddComponent<Image>();
         image.type = Image.Type.Sliced;
         image.sprite = imageToCopy.sprite;
+        Color newColor = image.color;
+        newColor.a = panelConfig.panelOpacity;
+        image.color = newColor;
 
         // Initialise the close button of the panel (MANDATORY)
         var closeButton = GameObject.Instantiate(tutorialButton, tutorialButton.transform.position, tutorialButton.transform.rotation, uiWindowPanel.transform);
@@ -279,7 +282,7 @@ public class FlexiPanel : MonoBehaviour
     {
         // Make a solid colour sprite for use in the bar
         Texture2D tex = new Texture2D(1, 1);
-        // NEVER set this to black, it stops the progress bar from displaying prperly for reasoons that are not obvious to me.
+        // NEVER set this to black or clear, it stops the progress bar from changing color for reasoons that are not obvious
         tex.SetPixel(0, 0, Color.pink);
         tex.Apply();
         Sprite sprite = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
@@ -290,7 +293,7 @@ public class FlexiPanel : MonoBehaviour
         image.type = Image.Type.Filled;
         image.fillMethod = Image.FillMethod.Horizontal;
         image.color = Color.black;
-        image.fillAmount = 0.5f; // 1.0f is full 0.0f is empty
+        image.fillAmount = 0.0f; // 1.0f is full 0.0f is empty
         return image;
     }
 
@@ -306,7 +309,7 @@ public class FlexiPanel : MonoBehaviour
         for (int i = 0; i < panelConfig.rowsToDisplay; i++)
         {
             string imageName = $"{baseImageName}{i}_{panelConfig.panelID}";
-            BuildImage(rectTransform, imageName, Globals.NameMeshHeight, Globals.NameMeshWidth, heightOffset, Globals.RowLeftMargin);
+            BuildImage(rectTransform, imageName, Globals.NameMeshHeight, panelConfig.rowNameWidth, heightOffset, Globals.RowLeftMargin);
             transformList.Add(rectTransform.transform.Find(imageName));
             heightOffset = heightOffset - interBarOffset;
         }
@@ -317,7 +320,7 @@ public class FlexiPanel : MonoBehaviour
     private void BuildTextMeshs(RectTransform rectTransform, PanelConfig panelConfig)
     {
         // Text Mesh for Target Name
-        BuildTextMesh(rectTransform, baseTargetName, Globals.NameMeshHeight, Globals.NameMeshWidth, 1.0f, 0.0f);
+        BuildTextMesh(rectTransform, baseTargetName, Globals.NameMeshHeight, panelConfig.rowNameWidth, 1.0f, 0.0f);
         List<Transform> transformList = new List<Transform>();
         transformList.Add(rectTransform.Find(baseTargetName));
         targetNameTextMeshDictionary.Add(panelConfig.panelID, transformList);
@@ -333,7 +336,7 @@ public class FlexiPanel : MonoBehaviour
         {
             string textName = $"{baseTextName}{i}_{panelConfig.panelID}";
             string timeTextName = $"{baseTimeTextName}{i}_{panelConfig.panelID}";
-            BuildTextMesh(rectTransform, textName, Globals.NameMeshHeight, Globals.NameMeshWidth, heightOffset, Globals.RowLeftMargin);
+            BuildTextMesh(rectTransform, textName, Globals.NameMeshHeight, panelConfig.rowNameWidth, heightOffset, Globals.RowLeftMargin);
             BuildTextMesh(rectTransform, timeTextName, Globals.TimeMeshHeight, Globals.TimeMeshWidth, heightOffset, Globals.TimeLeftMargin);
 
             textMeshTransformList.Add(rectTransform.Find(textName));
@@ -386,14 +389,14 @@ public class FlexiPanel : MonoBehaviour
                     Image image = imageTransform.transform.GetComponent<Image>();
                     // Set colour to black on reset
                     image.color = Color.black;
-                    image.fillAmount = 0.5f;
+                    image.fillAmount = 0.0f;
                 }
             }
         }
     }
 
     // Update the text displayed in the Debuff Box
-    public void UpdatePanelsDisplay(EntityData enemyEntityData, EntityData partyEntityData)
+    public void UpdatePanelsDisplay(EntityData enemyEntityData, EntityData partyEntityData, List<string> includeAllBuffsBlacklist)
     {
         // Try and stop unwanted access to the panel to prevent exceptions
         EntityData entityData = MergeEntityData(enemyEntityData, partyEntityData);
@@ -443,17 +446,17 @@ public class FlexiPanel : MonoBehaviour
                         {
                             // Convert buff name to upper case to alleviate case sensitivity issues
                             if (buff.buffName.ToUpperSafe().Contains(rowConfig.displayText) ||
-                                buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.includeAllBuffs == true ||
+                                (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.includeAllBuffs == true && false == BuffInBlacklist(includeAllBuffsBlacklist, buff)) ||
                                 buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.includeAllDebuffs == true)
                             {
                                 // Found a required buff/debuff, update the panel with this data
                                 if (buff.categoryType == BuffCategoryType.Beneficial.ToString())
                                 {
-                                    textMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $"  {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.targetName})";
+                                    textMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $" {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.targetName})";
                                 }
                                 else
                                 {
-                                    textMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $"  {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.casterName})";
+                                    textMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $" {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.casterName})";
                                 }
 
                                 // Set the time value for the row
@@ -490,6 +493,20 @@ public class FlexiPanel : MonoBehaviour
                 }
             }
         }
+    }
+
+    // Determines is the provided buff exists in the provided blacklist
+    private static bool BuffInBlacklist(List<string> includeAllBuffsBlacklist, BuffData buff)
+    {
+        // buff contains the full buff name, includeAllBuffsBlacklist may contain the full buiff name or partial buff name
+        foreach (string blacklistName in includeAllBuffsBlacklist)
+        {
+            if (buff.buffName.ToUpperSafe().Contains(blacklistName))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Returns a boolean indicating if we should filter out the current buff
@@ -565,19 +582,19 @@ public class FlexiPanel : MonoBehaviour
         // Display the panel title if the user has selected that, otherwise display a suitable target name
         if (panelConfig.targetOrTitle.Equals("title"))
         {
-            return panelConfig.panelTitle;
+            return $" {panelConfig.panelTitle}";
         }
         else if (entityData.targetName.Equals(Globals.Party))
         {
-            return $" <b>Target:</b> None";
+            return $"  <b>Target:</b> None";
         }
         else if (entityData.traits.IsEmpty())
         {
-            return $" <b>Target:</b> {entityData.targetName.ToUpperSafe()}({levelDeltaString}), {entityData.targetClass}, {entityData.targetKind}";
+            return $"  <b>Target:</b> {entityData.targetName.ToUpperSafe()}({levelDeltaString}), {entityData.targetClass}, {entityData.targetKind}";
         }
         else
         {
-            return $" <b>Target:</b> {entityData.targetName.ToUpperSafe()}({levelDeltaString}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
+            return $"  <b>Target:</b> {entityData.targetName.ToUpperSafe()}({levelDeltaString}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
         }
     }
 

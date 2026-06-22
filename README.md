@@ -18,7 +18,7 @@ The file FlexiPanelConfig.xml must be placed in the <GamePath>/UserData/ directo
 
 ## How Buffs/Debuffs are displayed
 The order of rows in the config file is the order they are displayed on the screen.
-Configured buffs/debuffs Names are not case sensitive.
+Configured buffs/debuffs Names (and only names) are not case sensitive.
 Configured buffs/debuffs are selected if a buff CONTAINS the configured buff/debuff name. 
   This allows you to put "Mantle" as a single row and it will apply to all tiers of Mantle.
   This means if you put Rip (Bleed debuff) as a row it will also include Grip Of Stone (Shaman Buff) as Grip contains Rip and name is not case-sensitive.
@@ -33,10 +33,16 @@ ExcludeAllBuffs and ExcludeAllDebuffs take priority over IncludeAllBuffs/Include
 ## IncludeAllBuffs / IncludeAllDebuffs Overrides
 When set to true the color of the bars will be based on the Spell Type NOT the user defined row colors.
 
+## Resizing Panels
+You can resize each panels number of rows to display in the combinations of:  5,6,7,8,9,10,15,20,25,30,35.
+You can change the width of the panels (in pixels) but no limits are placed on this so if you insert stupid numbers you win stupid prizes.
+
 ## Known Limitations
-If a new player/entity moves into range with buff/debuffs already applied to them they will not appear in the panel (this includes buffs when logging in)
-Buffs always remain in the panel on change of zone even if they are lost
-BUffs that can only be applied once to an entity I.E. "Corrosive Brew" will still show up in the panel even if it has been over-riden
+Boxes are not dynamically resizable, this requires much more understanding of how Unity works than I have.
+If a new player/entity moves into range with buff/debuffs already applied to them they will not appear in the panel (this includes buffs when logging in/zoning)
+Buffs are removed on change of zone due to problems tracking buffs across zones / logins
+Buffs that can only be applied once to an entity I.E. "Corrosive Brew" will still show up in the panel once per caster even if it has been over-riden
+Some buffs can not be tracked such as "Exhausted" or "Shadow Walk" as they have durations of one second which immediatly expire and no notification of expiry is given when they actually expire
 
 ## Installation
 Install MelonLoader, following along with their [installation instructions](https://melonwiki.xyz/#/?id=requirements).

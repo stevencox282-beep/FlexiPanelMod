@@ -20,6 +20,7 @@ namespace FlexiPanelMod
         private static float _timeSinceLastUpdate;
         private static ConfigParser configParser = new ConfigParser(); // Parses the mods configuration
         private static Dictionary<string, PanelConfig> panelConfigDictionary = new Dictionary<string, PanelConfig>(); // All panels
+        private static List<string> includeAllBuffsBlacklist = new List<string>(); // Holds the blacklist for 
 
         public override void OnInitializeMelon()
         {
@@ -70,7 +71,7 @@ namespace FlexiPanelMod
                     EntityManager.UpdateEncounterUpTime();
                     // Update panels
                     gFlexiPanels.ClearPanelsDisplay();
-                    gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData);
+                    gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist);
                 }
             }
         }
@@ -80,7 +81,7 @@ namespace FlexiPanelMod
         {
             try
             {
-                configParser.ParseConfig(ref panelConfigDictionary);
+                configParser.ParseConfig(ref panelConfigDictionary, ref includeAllBuffsBlacklist);
             }
             catch (Exception e)
             {
@@ -286,7 +287,7 @@ namespace FlexiPanelMod
             EntityData partyEntityData = EntityManager.GetEntityData(Globals.Party);
             // Reset the panel, we must do this to clear the window when somebody switches to a new target
             gFlexiPanels.ClearPanelsDisplay();
-            gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData);
+            gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist);
 
             // Store this for use in OnUpdate()
             gCurrentTargetNetworkId = targetLogic.Offensive.NetworkId.ToString();

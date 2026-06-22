@@ -17,10 +17,11 @@ public static class Globals
 
     // Panel/TextMeshs
     public static bool ShowPanels = true; // Controls wether or not the panels will be displayed
-    public static float RowLeftMargin = 0.05f;
     public static int DefaultPanelHeight = 540; // y-axis
     public static int DefaultPanelWidth = 300; // x-axis
-    public static int NameMeshWidth = 250;
+    public static int DefaultNameMeshWidth = 250;
+    public static int PixelsNeededForUptime = 75; // Number of pixel required to display the uptime part
+    public static float RowLeftMargin = 0.05f;
     public static int NameMeshHeight = 12;
     public static float TimeLeftMargin = 0.75f; // The Time mesh must start after the name text mesh ends and the progress bars end
     public static int TimeMeshHeight = NameMeshHeight;
@@ -78,6 +79,9 @@ public class PanelConfig()
     public string panelID; // Unique ID used to identify this exact panel
     public string panelTitle; // Hold the panel title to be displayed
     public string targetOrTitle; // Determines if we display the Panel title or Target information
+    public int panelWidth; // Width of the panel in pixels
+    public int rowNameWidth; // Width of the name portion of a row in pixels
+    public float panelOpacity; // Integer from 0 to 100 to be converted to a float 0.0 to 1.0f for setting alpha value of background image
     public bool excludeAllBuffs; // Indicates if the panel ignores all buffs (has priority over includeAllBuffs)
     public bool excludeAllDebuffs; // Indicates if the panel ignores all debuffs (has priority over includeAllBuffs)
     public bool includeAllBuffs; // Indicates if the panel ignores all buffs

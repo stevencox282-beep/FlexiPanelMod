@@ -1,7 +1,5 @@
 ﻿using Il2CppServiceStack;
-using Il2CppSystem.Data;
 using MelonLoader;
-using System.Drawing;
 using System.Xml;
 
 namespace FlexiPanelMod;
@@ -9,10 +7,11 @@ namespace FlexiPanelMod;
 public class ConfigParser()
 {
     // Parses the Panel configuration from the XML file and uses it to setup the panels
-    public void ParseConfig(ref Dictionary<string, PanelConfig> panelConfigDictionary)
+    public void ParseConfig(ref Dictionary<string, PanelConfig> panelConfigDictionary, ref List<string> includeAllBuffsBlacklist)
     {
-        // Ensure the panel config store is clear
+        // Ensure the panel config store and the blacklist is clear 
         panelConfigDictionary.Clear();
+        includeAllBuffsBlacklist.Clear();
 
         XmlDocument xmlDoc = new XmlDocument(); // Create an XML document object
         xmlDoc.Load(".\\UserData\\FlexiPanelConfig.xml"); // Load the XML document from the specified file
@@ -20,6 +19,7 @@ public class ConfigParser()
         // Get elements
         XmlNodeList panelsList = xmlDoc.GetElementsByTagName("Panels");
         XmlNodeList panelList = xmlDoc.GetElementsByTagName("Panel");
+        XmlNodeList blacklist = xmlDoc.GetElementsByTagName("IncludeAllBuffsBlackList");
 
         // Process all Panels
         for (int panelIndex = 0; panelIndex < panelList.Count; panelIndex++)
@@ -37,8 +37,12 @@ public class ConfigParser()
             panelConfig.includeAllBuffs = (panelAttributes["IncludeAllBuffs"] != null) ? bool.Parse(panelAttributes["IncludeAllBuffs"].Value) : false;
             panelConfig.includeAllDebuffs = (panelAttributes["IncludeAllDebuffs"] != null) ? bool.Parse(panelAttributes["IncludeAllDebuffs"].Value) : false;
             panelConfig.rowsToDisplay = (panelAttributes["RowsToDisplay"] != null) ? FlexiPanelUtils.SanitiseNumRows(Int32.Parse(panelAttributes["RowsToDisplay"].Value)) : 10;
+            // Configure globals used to draw the panels
+            panelConfig.panelWidth = (panelAttributes["PanelWidthPx"] != null) ? (Int32.Parse(panelAttributes["PanelWidthPx"].Value)) : Globals.DefaultPanelWidth;
+            panelConfig.rowNameWidth = panelConfig.panelWidth - Globals.PixelsNeededForUptime;
+            panelConfig.panelOpacity = (panelAttributes["PanelOpacity"] != null) ? (float.Parse(panelAttributes["PanelOpacity"].Value) / 100) : 1.0f;
 
-            MelonLogger.Warning($"ParseConfig() panelConfig.excludeAllBuffs = {panelConfig.excludeAllBuffs}, panelConfig.excludeAllDebuffs = {panelConfig.excludeAllDebuffs}, panelConfig.includeAllBuffs = {panelConfig.includeAllBuffs}, panelConfig.includeAllDebuffs = {panelConfig.includeAllDebuffs}");
+
             // VERY basic XML validation to prevent obviously contradictory configurations
 
             // Exclude takes priority over include
@@ -68,11 +72,12 @@ public class ConfigParser()
 
                 // Store in PanelConfig
                 RowConfig rowConfig = new RowConfig();
-                rowConfig.displayText = (rowAttributes["Name"] != null)  ? rowAttributes["Name"].Value.ToUpperSafe() : string.Empty;
+                rowConfig.displayText = (rowAttributes["Name"] != null) ? rowAttributes["Name"].Value.ToUpperSafe() : string.Empty;
                 rowConfig.color = (rowAttributes["Color"] != null) ? rowAttributes["Color"].Value : "orange";
                 rowConfig.include = (rowAttributes["Include"] != null) ? rowAttributes["Include"].Value : string.Empty;
                 panelConfig.rowConfig.Add(rowConfig);
             }
+
             // If we have a new panel, add it
             if (!panelConfig.panelID.IsEmpty())
             {
@@ -87,6 +92,25 @@ public class ConfigParser()
                     throw;
                 }
             }
+        }
+
+        // Process blacklist information if available
+        if (blacklist.Count == 1)
+        {
+            XmlNodeList entryList = blacklist[0].ChildNodes;
+
+            // Process the blacklist for IncludeAllBuffsBlackList
+            for (int entryIndex = 0; entryIndex < entryList.Count; entryIndex++)
+            {
+                XmlNode entryNode = entryList[entryIndex];
+                XmlAttributeCollection entryAttributess = entryNode.Attributes;
+                string name = (entryAttributess["Name"] != null) ? entryAttributess["Name"].Value.ToUpperSafe() : string.Empty;
+                if (!name.IsEmpty())
+                {
+                    includeAllBuffsBlacklist.Add(name);
+                }
+            }
+
         }
     }
 }
