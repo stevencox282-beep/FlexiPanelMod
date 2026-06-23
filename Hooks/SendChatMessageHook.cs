@@ -14,7 +14,7 @@ public class SendChatMessageHook
     {
         if (Globals.PlayerIsLoaded == true)
         {
-            if (message == "/showfp")
+            if (message == "/fpshow")
             {
                 // Shows all configured panels
                 Globals.ShowPanels = true;
@@ -22,7 +22,7 @@ public class SendChatMessageHook
                 return false;
             }
 
-            if (message == "/hidefp")
+            if (message == "/fphide")
             {
                 // Hide all configured panels
                 Globals.ShowPanels = false;
@@ -31,7 +31,7 @@ public class SendChatMessageHook
             }
 
             // Reload the current panel configuration
-            if (message.Equals($"/configfp"))
+            if (message.Equals($"/fpreload"))
             {
                 ModMain.ClearTransformDictionaries();
                 ModMain.ReadPanelConfig();
@@ -40,28 +40,28 @@ public class SendChatMessageHook
             }
 
             // Shows the pulling message in Group chat
-            if (message == "/pull")
+            if (message == "/fppull")
             {
                 ModMain.ShowPullMessage(__instance);
                 return false;
             }
 
             // Shows the pop message in Group chat
-            if (message == "/pop")
+            if (message == "/fppop")
             {
                 ModMain.ShowPopMessage(__instance);
                 return false;
             }
 
             // Shows the current target information in Group chat
-            if (message == "/target")
+            if (message == "/fptarget")
             {
                 ModMain.ShowTargetMessage(__instance);
                 return false;
             }
 
             // Shows the current target information in Group chat
-            if (message == "/add")
+            if (message == "/fpadd")
             {
                 ModMain.ShowAddMessage(__instance);
                 return false;
