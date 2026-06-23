@@ -21,6 +21,7 @@ namespace FlexiPanelMod
         private static ConfigParser configParser = new ConfigParser(); // Parses the mods configuration
         private static Dictionary<string, PanelConfig> panelConfigDictionary = new Dictionary<string, PanelConfig>(); // All panels
         private static List<string> includeAllBuffsBlacklist = new List<string>(); // Holds the blacklist for 
+        private static List<string> includeAllDebuffsBlacklist = new List<string>(); // Holds the blacklist for 
 
         public override void OnInitializeMelon()
         {
@@ -71,7 +72,7 @@ namespace FlexiPanelMod
                     EntityManager.UpdateEncounterUpTime();
                     // Update panels
                     gFlexiPanels.ClearPanelsDisplay();
-                    gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist);
+                    gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist);
                 }
             }
         }
@@ -81,7 +82,7 @@ namespace FlexiPanelMod
         {
             try
             {
-                configParser.ParseConfig(ref panelConfigDictionary, ref includeAllBuffsBlacklist);
+                configParser.ParseConfig(ref panelConfigDictionary, ref includeAllBuffsBlacklist, ref includeAllDebuffsBlacklist);
             }
             catch (Exception e)
             {
@@ -287,7 +288,7 @@ namespace FlexiPanelMod
             EntityData partyEntityData = EntityManager.GetEntityData(Globals.Party);
             // Reset the panel, we must do this to clear the window when somebody switches to a new target
             gFlexiPanels.ClearPanelsDisplay();
-            gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist);
+            gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist);
 
             // Store this for use in OnUpdate()
             gCurrentTargetNetworkId = targetLogic.Offensive.NetworkId.ToString();

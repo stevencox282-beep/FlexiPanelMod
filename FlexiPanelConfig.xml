@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Panels>
-	<Panel ID="1" Title="Buffs" TargetOrTitle="target" PanelOpacity="90" RowsToDisplay="10" RowNameWidthPx="225" ExcludeAllBuffs="false" ExcludeAllDebuffs="true" IncludeAllBuffs="false" IncludeAllDebuffs="false" >
+	<Panel ID="1" Title="Buffs" TargetOrTitle="target" PanelOpacity="90" RowsToDisplay="10" RowNameWidthPx="300" ExcludeAllBuffs="false" ExcludeAllDebuffs="true" IncludeAllBuffs="false" IncludeAllDebuffs="false" >
 		<Rows>
 			<Row Name="Corrosive Brew"               Color="blue"              />
 			<Row Name="Tormenting Phantoms"          Color="burlyWood"         />
@@ -20,6 +20,7 @@
 			<Row Name="Mantle"                       Color="lightSteelBlue"    />
 			<Row Name="Mezmerize"                    Color="mediumPurple"      />
 			<Row Name="Rip"                          Color="indigo"            Include="[Me]"/>
+			<Row Name="Mark Of The Fireclaw"         Color="indigo"            Include="[Me]"/>
 		</Rows>
 	</Panel>
 	<Panel ID="2" Title="Debuffs" TargetOrTitle="title" PanelOpacity="90" RowsToDisplay="10" RowWidthPx="300" ExcludeAllBuffs="true" ExcludeAllDebuffs="false" IncludeAllBuffs="false" IncludeAllDebuffs="false">
@@ -42,6 +43,7 @@
 			<Row Name="Mantle"                       Color="lightSteelBlue"    />
 			<Row Name="Mezmerize"                    Color="mediumPurple"      />
 			<Row Name="Rip"                          Color="indigo"            Include="[Me]"/>
+			<Row Name="Mark Of The Fireclaw"         Color="indigo"            Include="[Me]"/>
 		</Rows>
 	</Panel>
 	<Panel ID="3" Title="AllBuffs" TargetOrTitle="title" PanelOpacity="90" RowsToDisplay="20" RowWidthPx="300" ExcludeAllBuffs="false" ExcludeAllDebuffs="true" IncludeAllBuffs="true" IncludeAllDebuffs="false">
@@ -55,7 +57,7 @@
 		</Rows>
 	</Panel>
 
-	<!-- In order to prevent the IncludeAllBuffs Panel from being flooded with common buffs, add the buffs you do NOT want to see with IncludeAllBuffs -->
+	<!-- Prevent the IncludeAllBuffs Panel from being flooded with common buffs -->
 	<IncludeAllBuffsBlackList>
 		<Entry Name="Mark Of The Fireclaw"/>
 		<Entry Name="Grip Of Stone"/>
@@ -67,9 +69,20 @@
 		<Entry Name="Treeform"/>
 		<Entry Name="Swiftgill's Finn"/>
 		<Entry Name="Nocturnal Eyes"/>
-		<Entry Name="Awaken Courage"/>
+		<Entry Name="Awakened "/>
 		<Entry Name="Symbol Of"/>
 		<Entry Name="Armor Of Faith"/>
 		<Entry Name="Hymn Of"/>
+		<Entry Name="Erudite Mind"/>
+		<Entry Name="Whisper Of"/>
+		<Entry Name="Illusion Graft"/>
+		<Entry Name="Winding Down"/>
+		<Entry Name="Lyrith's Grace"/>
+		<Entry Name="Devour "/>
 	</IncludeAllBuffsBlackList>
+
+	<!-- Prevent IncludeAllDebuffs Panel from being flooded with common debuffs  -->
+	<IncludeAllDebuffsBlackList>
+		<Entry Name="Devour "/>
+	</IncludeAllDebuffsBlackList>
 </Panels>

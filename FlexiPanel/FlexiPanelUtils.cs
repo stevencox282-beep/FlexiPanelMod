@@ -94,35 +94,41 @@ public static class FlexiPanelUtils
             case "Augmentation":
                 returnColor = Color.darkBlue;
                 break;
-            case "Fortification":
-                returnColor = Color.darkGreen;
-                break;
-            case "Manifestation":
-                returnColor = Color.purple;
+            case "Corruption":
+                returnColor = Color.darkGoldenRod;
                 break;
             case "Conjuration":
                 returnColor = Color.brown;
+                break;
+            case "Enervation":
+                returnColor = Color.green;
                 break;
             case "Evocation":
                 returnColor = Color.red;
                 break;
             case "Expulsion":
-                returnColor = Color.cadetBlue;
+                returnColor = Color.purple;
                 break;
-            case "Restoration":
-                returnColor = Color.green;
+            case "FeignDeath":
+                returnColor = Color.indianRed;
+                break;
+            case "Fortification":
+                returnColor = Color.brown;
                 break;
             case "Invocation":
                 returnColor = Color.indigo;
                 break;
             case "Illumination":
-                returnColor = Color.lavender;
+                returnColor = Color.lightPink;
                 break;
-            case "Enervation":
-                returnColor = Color.limeGreen;
+            case "Manifestation":
+                returnColor = Color.indigo;
                 break;
-            case "Corruption":
-                returnColor = Color.navyBlue;
+            case "Naturalism":
+                returnColor = Color.red;
+                break;
+            case "Restoration":
+                returnColor = Color.steelBlue;
                 break;
             case "TricksOfTheTrade":
                 returnColor = Color.oldLace;
@@ -130,20 +136,14 @@ public static class FlexiPanelUtils
             case "Trapping":
                 returnColor = Color.azure;
                 break;
-            case "Naturalism":
-                returnColor = Color.red;
-                break;
-            case "FeignDeath":
-                returnColor = Color.orange;
-                break;
             case "Warfare":
                 returnColor = Color.olive;
                 break;
             case "None":
-                returnColor = Color.yellowGreen;
+                returnColor = Color.blueViolet;
                 break;
             default:
-                returnColor = Color.orange;
+                returnColor = Color.darkOrange;
                 break;
         }
 

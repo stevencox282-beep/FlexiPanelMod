@@ -8,11 +8,12 @@ namespace FlexiPanelMod;
 public class ConfigParser()
 {
     // Parses the Panel configuration from the XML file and uses it to setup the panels
-    public void ParseConfig(ref Dictionary<string, PanelConfig> panelConfigDictionary, ref List<string> includeAllBuffsBlacklist)
+    public void ParseConfig(ref Dictionary<string, PanelConfig> panelConfigDictionary, ref List<string> includeAllBuffsBlacklist, ref List<string> includeAllDebuffsBlacklist)
     {
         // Ensure the panel config store and the blacklist is clear 
         panelConfigDictionary.Clear();
         includeAllBuffsBlacklist.Clear();
+        includeAllDebuffsBlacklist.Clear();
 
         XmlDocument xmlDoc = new XmlDocument(); // Create an XML document object
         xmlDoc.Load(".\\UserData\\FlexiPanelConfig.xml"); // Load the XML document from the specified file
@@ -20,7 +21,8 @@ public class ConfigParser()
         // Get elements
         XmlNodeList panelsList = xmlDoc.GetElementsByTagName("Panels");
         XmlNodeList panelList = xmlDoc.GetElementsByTagName("Panel");
-        XmlNodeList blacklist = xmlDoc.GetElementsByTagName("IncludeAllBuffsBlackList");
+        XmlNodeList allBuffBlacklist = xmlDoc.GetElementsByTagName("IncludeAllBuffsBlackList");
+        XmlNodeList allDebuffBlacklist = xmlDoc.GetElementsByTagName("IncludeAllDebuffsBlackList");
 
         // Process all Panels
         for (int panelIndex = 0; panelIndex < panelList.Count; panelIndex++)
@@ -37,7 +39,6 @@ public class ConfigParser()
             panelConfig.excludeAllDebuffs = (panelAttributes["ExcludeAllDebuffs"] != null) ? bool.Parse(panelAttributes["ExcludeAllDebuffs"].Value) : false;
             panelConfig.includeAllBuffs = (panelAttributes["IncludeAllBuffs"] != null) ? bool.Parse(panelAttributes["IncludeAllBuffs"].Value) : false;
             panelConfig.includeAllDebuffs = (panelAttributes["IncludeAllDebuffs"] != null) ? bool.Parse(panelAttributes["IncludeAllDebuffs"].Value) : false;
-            MelonLogger.Warning($"ParseConfig() 1 panelConfig.includeAllDebuffs = {panelConfig.includeAllDebuffs}");
             panelConfig.rowsToDisplay = (panelAttributes["RowsToDisplay"] != null) ? FlexiPanelUtils.SanitiseNumRows(Int32.Parse(panelAttributes["RowsToDisplay"].Value)) : 10;
             panelConfig.panelOpacity = (panelAttributes["PanelOpacity"] != null) ? (float.Parse(panelAttributes["PanelOpacity"].Value) / 100) : 1.0f;
             panelConfig.panelWidth = (panelAttributes["PanelWidthPx"] != null) ? (Int32.Parse(panelAttributes["PanelWidthPx"].Value)) : Globals.DefaultPanelWidth;
@@ -83,10 +84,10 @@ public class ConfigParser()
             }
         }
 
-        // Process blacklist information if available
-        if (blacklist.Count == 1)
+        // Process IncludeAll blacklist information if available
+        if (allBuffBlacklist.Count == 1)
         {
-            XmlNodeList entryList = blacklist[0].ChildNodes;
+            XmlNodeList entryList = allBuffBlacklist[0].ChildNodes;
 
             // Process the blacklist for IncludeAllBuffsBlackList
             for (int entryIndex = 0; entryIndex < entryList.Count; entryIndex++)
@@ -97,6 +98,24 @@ public class ConfigParser()
                 if (!name.IsEmpty())
                 {
                     includeAllBuffsBlacklist.Add(name);
+                }
+            }
+        }
+
+        // Process IncludeAllBuffs blacklist information if available
+        if (allDebuffBlacklist.Count == 1)
+        {
+            XmlNodeList entryList = allDebuffBlacklist[0].ChildNodes;
+
+            // Process the blacklist for IncludeAllBuffsBlackList
+            for (int entryIndex = 0; entryIndex < entryList.Count; entryIndex++)
+            {
+                XmlNode entryNode = entryList[entryIndex];
+                XmlAttributeCollection entryAttributess = entryNode.Attributes;
+                string name = (entryAttributess["Name"] != null) ? entryAttributess["Name"].Value.ToUpperSafe() : string.Empty;
+                if (!name.IsEmpty())
+                {
+                    includeAllDebuffsBlacklist.Add(name);
                 }
             }
         }

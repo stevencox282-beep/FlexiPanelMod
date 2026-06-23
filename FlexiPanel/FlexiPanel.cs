@@ -397,7 +397,7 @@ public class FlexiPanel : MonoBehaviour
     }
 
     // Update the text displayed in the Debuff Box
-    public void UpdatePanelsDisplay(EntityData enemyEntityData, EntityData partyEntityData, List<string> includeAllBuffsBlacklist)
+    public void UpdatePanelsDisplay(EntityData enemyEntityData, EntityData partyEntityData, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist)
     {
         // Try and stop unwanted access to the panel to prevent exceptions
         EntityData entityData = MergeEntityData(enemyEntityData, partyEntityData);
@@ -447,7 +447,7 @@ public class FlexiPanel : MonoBehaviour
                         if (HandleIncludeCriteria(panelConfig, rowConfig, buff))
                         {
                             // If the buff is valid or we have a valid override
-                            if ( true == IsValidBuff(panelConfig, rowConfig, buff, buffNameUpperCase) || true == HasValidOverride(panelConfig, buff, buffNameUpperCase, includeAllBuffsBlacklist))
+                            if ( true == IsValidBuff(panelConfig, rowConfig, buff, buffNameUpperCase) || true == HasValidOverride(panelConfig, buff, buffNameUpperCase, includeAllBuffsBlacklist, includeAllDebuffsBlacklist))
                             {
                                 bool includeThisBuff = (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.includeAllBuffs == true) ? true : false;
                                 bool includThisDebuff = (buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.includeAllDebuffs == true) ? true : false;
@@ -510,7 +510,7 @@ public class FlexiPanel : MonoBehaviour
     }
 
     // Returns true if we have a valid overide
-    private static bool HasValidOverride(PanelConfig panelConfig, BuffData buff, string buffNameUpperCase, List<string> includeAllBuffsBlacklist)
+    private static bool HasValidOverride(PanelConfig panelConfig, BuffData buff, string buffNameUpperCase, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist)
     {
         // true means we do not include this
         bool excludeThisBuff = (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.excludeAllBuffs == true) ? true : false;
@@ -535,7 +535,7 @@ public class FlexiPanel : MonoBehaviour
         {
             return true;
         }
-        else if (includThisDebuff == true)
+        else if (includThisDebuff == true && false == BuffInBlacklist(includeAllDebuffsBlacklist, buffNameUpperCase))
         {
             return true;
         }
@@ -543,10 +543,10 @@ public class FlexiPanel : MonoBehaviour
         return false;
     }
     // Determines is the provided buff exists in the provided blacklist
-    private static bool BuffInBlacklist(List<string> includeAllBuffsBlacklist, string buffNameUpperCase)
+    private static bool BuffInBlacklist(List<string> blacklist, string buffNameUpperCase)
     {
-        // buff contains the full buff name, includeAllBuffsBlacklist may contain the full buiff name or partial buff name
-        foreach (string blacklistName in includeAllBuffsBlacklist)
+        // buff contains the full buff name, blacklist may contain the full buiff name or partial buff name
+        foreach (string blacklistName in blacklist)
         {
             if (buffNameUpperCase.Contains(blacklistName))
             {
