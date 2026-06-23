@@ -336,5 +336,10 @@ namespace FlexiPanelMod
         {
             gFlexiPanels.ShowTargetMessage(__instance);
         }
+
+        public static void ShowAddMessage(EntityClientMessaging.Logic __instance)
+        {
+            gFlexiPanels.ShowAddMessage(__instance);
+        }
     }
 }

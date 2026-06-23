@@ -2,12 +2,13 @@
 This Mod is for Pantheon: Rise of the Fallen. It displays buffs / dbebuffs as defined in the configuration file FlexiPanelConfig.xml.
 
 It has added in following new commands have been added.
-/showflexipanels - Shows all configured panels
-/hideflexipanels - Hides all configured panels
-/configflexipanels - Reloads the configuration
-/pulling - A pull notiifcation with additional information is displayed in Group chat
+/showfp - Shows all configured panels
+/hidefp - Hides all configured panels
+/configfp - Reloads the configuration
+/pull - A pull notiifcation with additional information is displayed in Group chat
 /pop - A pop notification with additional information is displayed in Group chat
-/target - Show the current Target information in Group chat
+/target - A target notification with additional information is shown in Group chat
+/add - A add notification with additional information is displayed in Group Chat
 
 ## Maximum Number Of Panels Vs Performance
 All panels MUST finish all of their work in less than one second to ensure the times displayed update properly.  
@@ -39,6 +40,7 @@ You can change how opaque each panel is by setting the panels PanelOpacity attri
 ExcludeAllBuffs and ExcludeAllDebuffs take priority over IncludeAllBuffs/IncludeAllDebuffs
 When IncludeAllBuffs is set to true the color of the bars will be based on the Spell Type NOT the user defined row colors for performance reasons
 When IncludeAllBuffs is set to true the blacklist IncludeAllBuffsBlackList is used to prevent filling up the panel with common buffs
+When IncludeAllDebuffs is set to true the blacklist IncludeAllDebuffsBlackList is used to prevent filling up the panel with common debuffs
 
 ## Known Limitations
 Panels are not dynamically resizable

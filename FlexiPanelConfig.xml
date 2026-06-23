@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Panels>
-	<Panel ID="1" Title="Buffs" TargetOrTitle="target" PanelOpacity="90" RowsToDisplay="10" RowNameWidthPx="300" ExcludeAllBuffs="false" ExcludeAllDebuffs="true" IncludeAllBuffs="false" IncludeAllDebuffs="false" >
+	<Panel ID="1" Title="Buffs" TargetOrTitle="target" PanelOpacity="70" RowsToDisplay="10" RowNameWidthPx="300" ExcludeAllBuffs="false" ExcludeAllDebuffs="true" IncludeAllBuffs="false" IncludeAllDebuffs="false" >
 		<Rows>
 			<Row Name="Corrosive Brew"               Color="blue"              />
 			<Row Name="Tormenting Phantoms"          Color="burlyWood"         />
@@ -11,7 +11,7 @@
 			<Row Name="Umbravines"                   Color="pink"              />
 			<Row Name="Stinging Swarm"               Color="darkOrchid"        />
 			<Row Name="Divine Weakening"             Color="orange"            />
-			<Row Name="Shining Barrier"              Color="red"               Include="Duxdl,Duxclr"/>
+			<Row Name="Shining Barrier"              Color="red"               Include="playername1,playername2"/>
 			<Row Name="Divine Favor"                 Color="lavender"          Include="[Party]"/>
 			<Row Name="Synthetic Toxin"              Color="crimson"           />
 			<Row Name="Spinning Splinters"           Color="darkBlue"          Include="[Me]"/>
@@ -23,7 +23,7 @@
 			<Row Name="Mark Of The Fireclaw"         Color="indigo"            Include="[Me]"/>
 		</Rows>
 	</Panel>
-	<Panel ID="2" Title="Debuffs" TargetOrTitle="title" PanelOpacity="90" RowsToDisplay="10" RowWidthPx="300" ExcludeAllBuffs="true" ExcludeAllDebuffs="false" IncludeAllBuffs="false" IncludeAllDebuffs="false">
+	<Panel ID="2" Title="Debuffs" TargetOrTitle="title" PanelOpacity="70" RowsToDisplay="10" RowWidthPx="300" ExcludeAllBuffs="true" ExcludeAllDebuffs="false" IncludeAllBuffs="false" IncludeAllDebuffs="false">
 		<Rows>
 			<Row Name="Corrosive Brew"               Color="blue"              />
 			<Row Name="Tormenting Phantoms"          Color="burlyWood"         />
@@ -34,7 +34,7 @@
 			<Row Name="Umbravines"                   Color="pink"              />
 			<Row Name="Stinging Swarm"               Color="darkOrchid"        />
 			<Row Name="Divine Weakening"             Color="orange"            />
-			<Row Name="Shining Barrier"              Color="red"               Include="Duxdl, Duxclr"/>
+			<Row Name="Shining Barrier"              Color="red"               Include="playername1,playername2"/>
 			<Row Name="Divine Favor"                 Color="lavender"          Include="[Party]"/>
 			<Row Name="Synthetic Toxin"              Color="crimson"           />
 			<Row Name="Spinning Splinters"           Color="darkBlue"          Include="[Me]"/>
@@ -46,12 +46,12 @@
 			<Row Name="Mark Of The Fireclaw"         Color="indigo"            Include="[Me]"/>
 		</Rows>
 	</Panel>
-	<Panel ID="3" Title="AllBuffs" TargetOrTitle="title" PanelOpacity="90" RowsToDisplay="20" RowWidthPx="300" ExcludeAllBuffs="false" ExcludeAllDebuffs="true" IncludeAllBuffs="true" IncludeAllDebuffs="false">
+	<Panel ID="3" Title="AllBuffs" TargetOrTitle="title" PanelOpacity="70" RowsToDisplay="20" RowWidthPx="300" ExcludeAllBuffs="false" ExcludeAllDebuffs="true" IncludeAllBuffs="true" IncludeAllDebuffs="false">
 		<Rows>
 			<Row Name="AllBuffsMandatoryRow"               Color="blue"     Include="[Party]"/>
 		</Rows>
 	</Panel>
-	<Panel ID="4" Title="AllDebuffs" TargetOrTitle="title" PanelOpacity="90" RowsToDisplay="20" RowWidthPx="300" ExcludeAllBuffs="true" ExcludeAllDebuffs="false" IncludeAllBuffs="false" IncludeAllDebuffs="true">
+	<Panel ID="4" Title="AllDebuffs" TargetOrTitle="title" PanelOpacity="70" RowsToDisplay="20" RowWidthPx="300" ExcludeAllBuffs="true" ExcludeAllDebuffs="false" IncludeAllBuffs="false" IncludeAllDebuffs="true">
 		<Rows>
 			<Row Name="AllDebuffsMandatoryRow"               Color="blue"     Include="[Party]"/>
 		</Rows>

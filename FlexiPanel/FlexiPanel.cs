@@ -33,6 +33,7 @@ public class FlexiPanel : MonoBehaviour
     private static string pullMessage = "";
     private static string popMessage = "";
     private static string targetMessage = "";
+    private static string addMessage = "";
 
     // Tidy up the alloated resources when we logout / rechange the number of rows in the panel
     public void ClearTransformDictionaries()
@@ -408,11 +409,12 @@ public class FlexiPanel : MonoBehaviour
             int levelDelta = entityData.entityLevel - Globals.PlayerLevel;
             string levelDeltaString = (levelDelta < 0) ? $"{levelDelta}" : $"+{levelDelta}";
             string baseMessage = (entityData.traits.IsEmpty()) ?
-                $"{entityData.targetName.ToUpperSafe()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}" :
-                $"{entityData.targetName.ToUpperSafe()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
+                $"{entityData.targetName.ToTitleCase()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}" :
+                $"{entityData.targetName.ToTitleCase()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
             pullMessage = $"Pulling: {baseMessage}";
             popMessage = $"Pop: {baseMessage}";
             targetMessage = $"Target: {baseMessage}";
+            addMessage = $"Add: {baseMessage}";
 
             // We must now search every panel and find if that panel is tracking this buff and if it is follow its row rules
             foreach (UIWindowPanel uiWindowPanel in uiWindowPanelList)
@@ -560,11 +562,11 @@ public class FlexiPanel : MonoBehaviour
     private static bool HandleIncludeCriteria(PanelConfig panelConfig, RowConfig rowConfig, BuffData buff)
     {
         string includeCriteria = rowConfig.include;
-        string targetNetworkId = buff.targetNetworkId.ToString();
-        string casterNetworkId = buff.casterNetworkId.ToString();
-        string targetName = buff.targetName.ToString();
-        string casterName = buff.casterName.ToString();
-        string localPlayerName = Globals.LocalPlayer.Nameplate.nameText.text.ToString();
+        string targetNetworkId = buff.targetNetworkId;
+        string casterNetworkId = buff.casterNetworkId;
+        string targetName = buff.targetName;
+        string casterName = buff.casterName;
+        string localPlayerName = Globals.LocalPlayer.Nameplate.nameText.text;
 
         // If no include is provided deny by default
         if (includeCriteria.IsEmpty())
@@ -727,5 +729,10 @@ public class FlexiPanel : MonoBehaviour
     public void ShowTargetMessage(EntityClientMessaging.Logic __instance)
     {
         __instance.SendChatMessage(targetMessage, ChatChannelType.Group);
+    }
+
+    public void ShowAddMessage(EntityClientMessaging.Logic __instance)
+    {
+        __instance.SendChatMessage(addMessage, ChatChannelType.Group);
     }
 }

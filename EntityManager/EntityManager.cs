@@ -266,7 +266,7 @@ public static class EntityManager
         string networkId = entityStatusLogic.Entity.NetworkId.ToString();
         bool isDead = entityStatusLogic.Entity.Nameplate.isDead;
 
-        if (entityBuffDictionary.ContainsKey(networkId.ToString()))
+        if (entityBuffDictionary.ContainsKey(networkId))
         {
             // The API used reports dead enemies as alive when you move out of range, never go back from dead to not dead
             if (isDead == true && entityBuffDictionary[networkId].isDead == false)
@@ -320,7 +320,7 @@ public static class EntityManager
             bool isFirst = true;
             foreach (ActiveBuff activeBuff in entityNpcGameObject.Buffs.myActiveBuffs)
             {
-                string activeBuffName = activeBuff.BuffData.DisplayName.ToString();
+                string activeBuffName = activeBuff.BuffData.DisplayName;
                 // Find all traits, ignore any traits we dont want to display in the Target bar
                 if (activeBuffName.Contains(traitString))
                 {
@@ -343,7 +343,7 @@ public static class EntityManager
             // Set the remaining common data
             newEntity.targetClass = entityNpcGameObject.Info.Class.ToString();
             newEntity.targetKind = entityNpcGameObject.Info.Kind.ToString();
-            newEntity.targetName = entityNpcGameObject.Nameplate.nameText.text.ToString();
+            newEntity.targetName = entityNpcGameObject.Nameplate.nameText.text;
             newEntity.isDead = entityNpcGameObject.Status.IsDead();
         }
     }

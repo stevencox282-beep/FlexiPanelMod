@@ -14,7 +14,7 @@ public class SendChatMessageHook
     {
         if (Globals.PlayerIsLoaded == true)
         {
-            if (message == "/showflexipanels")
+            if (message == "/showfp")
             {
                 // Shows all configured panels
                 Globals.ShowPanels = true;
@@ -22,7 +22,7 @@ public class SendChatMessageHook
                 return false;
             }
 
-            if (message == "/hideflexipanels")
+            if (message == "/hidefp")
             {
                 // Hide all configured panels
                 Globals.ShowPanels = false;
@@ -31,7 +31,7 @@ public class SendChatMessageHook
             }
 
             // Reload the current panel configuration
-            if (message.Equals($"/configflexipanels"))
+            if (message.Equals($"/configfp"))
             {
                 ModMain.ClearTransformDictionaries();
                 ModMain.ReadPanelConfig();
@@ -40,7 +40,7 @@ public class SendChatMessageHook
             }
 
             // Shows the pulling message in Group chat
-            if (message == "/pulling")
+            if (message == "/pull")
             {
                 ModMain.ShowPullMessage(__instance);
                 return false;
@@ -57,6 +57,13 @@ public class SendChatMessageHook
             if (message == "/target")
             {
                 ModMain.ShowTargetMessage(__instance);
+                return false;
+            }
+
+            // Shows the current target information in Group chat
+            if (message == "/add")
+            {
+                ModMain.ShowAddMessage(__instance);
                 return false;
             }
         }
