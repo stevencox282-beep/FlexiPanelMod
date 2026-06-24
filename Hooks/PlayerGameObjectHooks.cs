@@ -24,18 +24,9 @@ public class PlayerNetworkStart
             {
                 Globals.PlayerNetworkId = EntityPlayerGameObject.LocalPlayerId.ToString();
                 // We add an entity that will contain all party buffs/debuffs
-                EntityManager.AddEntityIfMissing(Globals.Party);
+                EntityManager.AddEntityIfMissing(Globals.PartyBuffs);
             }
-
-            try
-            {
-                Globals.PlayerLevel = Int32.Parse(__instance.Nameplate.levelText.text); // Updates level on character load / zone
-            }
-            catch
-            {
-                MelonLogger.Error("Could not convert Local Player level to int, defaulting to player level 0");
-                Globals.PlayerLevel = 0;
-            }
+            
             Globals.PlayerIsLoaded = true;
             return;
         }
@@ -62,7 +53,6 @@ public class PlayerNetworkStop
             EntityManager.ClearEntityDatabase();
             Globals.LocalPlayer = null;
             Globals.PlayerNetworkId = string.Empty;
-            Globals.PlayerLevel = 0;
             return;
         }
     }

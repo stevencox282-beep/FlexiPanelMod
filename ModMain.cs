@@ -42,7 +42,7 @@ namespace FlexiPanelMod
                     _timeSinceLastUpdate = 0f;
 
                     // Get the data needed to update the display (party and enemy)
-                    EntityData partyEntityData = EntityManager.GetEntityData(Globals.Party);
+                    EntityData partyEntityData = EntityManager.GetEntityData(Globals.PartyBuffs);
                     EntityData enemyEntityData = new EntityData();
 
                     // If currentTargetNetworkId is not populated we still have to process party information
@@ -161,7 +161,7 @@ namespace FlexiPanelMod
                 }
 
                 // Default to player data
-                EntityData entityData = EntityManager.GetEntityData(Globals.Party);
+                EntityData entityData = EntityManager.GetEntityData(Globals.PartyBuffs);
                 EntityData enemyEntityData = new EntityData();
 
                 // If this is a buff going onto an Enemy (we do track) or a pet (which dont track)
@@ -283,12 +283,9 @@ namespace FlexiPanelMod
             }
 
             // Establish the target string
-            string baseMessage = (enemyEntityData.traits.IsEmpty()) ?
-                $"{enemyEntityData.targetName.ToTitleCase()}(Lv.{enemyEntityData.entityLevel}), {enemyEntityData.targetClass}, {enemyEntityData.targetKind}" :
-                $"{enemyEntityData.targetName.ToTitleCase()}(Lv.{enemyEntityData.entityLevel}), {enemyEntityData.targetClass}, {enemyEntityData.targetKind}, {enemyEntityData.traits}";
-            gFlexiPanels.SetTargetInformation(baseMessage);
+            CreateTargetBaseMessage(enemyEntityData);
 
-            EntityData partyEntityData = EntityManager.GetEntityData(Globals.Party);
+            EntityData partyEntityData = EntityManager.GetEntityData(Globals.PartyBuffs);
             // Reset the panel, we must do this to clear the window when somebody switches to a new target
             gFlexiPanels.ClearPanelsDisplay();
             gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist);
@@ -297,13 +294,21 @@ namespace FlexiPanelMod
             currentTargetNetworkId = targetLogic.Offensive.NetworkId.ToString();
         }
 
+        // For the current target, create the new base target message
+        private static void CreateTargetBaseMessage(EntityData entityData)
+        {
+            string baseMessage = (entityData.traits.IsEmpty()) ?
+                $"{entityData.targetName.ToTitleCase()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}" :
+                $"{entityData.targetName.ToTitleCase()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
+            gFlexiPanels.SetTargetInformation(baseMessage);
+        }
 
         // Removes a specific buff from an entity buff list
         public static void RemoveBuff(double time, ActiveBuff activeBuff)
         {
             // Get the list for the current player
             EntityData enemyEntityData = (currentTargetNetworkId.IsEmpty()) ? new EntityData() : EntityManager.GetEntityData(currentTargetNetworkId);
-            EntityData partyEntityData = EntityManager.GetEntityData(Globals.Party);
+            EntityData partyEntityData = EntityManager.GetEntityData(Globals.PartyBuffs);
             // Remove the mantle from the list
             for (int i = 0; i < partyEntityData.buffData.Count; i++)
             {

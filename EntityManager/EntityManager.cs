@@ -20,7 +20,7 @@ public static class EntityManager
     static EntityManager()
     {
         // We add an entity that will contain all party buffs/debuffs
-        AddEntityIfMissing(Globals.Party);
+        AddEntityIfMissing(Globals.PartyBuffs);
     }
 
     public static void ClearEntityDatabase()
@@ -246,7 +246,7 @@ public static class EntityManager
             newMonster.entityNetworkId = targetNetworkId;
             newMonster.isDead = false;
             newMonster.buffData = new List<BuffData>();
-            newMonster.targetName = (targetNetworkId.Equals(Globals.Party)) ? Globals.Party : string.Empty; // Set to PARTY if we are creating the party entity
+            newMonster.targetName = (targetNetworkId.Equals(Globals.PartyBuffs)) ? Globals.PartyBuffs : string.Empty; // Set to PARTY if we are creating the party entity
             entityBuffDictionary.Add(targetNetworkId, newMonster);
         }
     }

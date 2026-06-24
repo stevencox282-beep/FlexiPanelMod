@@ -141,7 +141,7 @@ public static class FlexiPanelBuilder
         for (int i = 0; i < panelConfig.rowsToDisplay; i++)
         {
             string imageName = $"{baseImageName}{i}_{panelConfig.panelID}";
-            BuildImage(rectTransform, imageName, Globals.NameMeshHeight, panelConfig.rowNameWidth, heightOffset, Globals.RowLeftMargin);
+            BuildImage(rectTransform, imageName, Globals.NameMeshHeightPx, panelConfig.rowNameWidth, heightOffset, Globals.RowLeftMargin);
             transformList.Add(rectTransform.transform.Find(imageName));
             heightOffset = heightOffset - interBarOffset;
         }
@@ -152,7 +152,7 @@ public static class FlexiPanelBuilder
     public static List<Transform> BuildTargetTextMeshs(RectTransform rectTransform, PanelConfig panelConfig)
     {
         // Text Mesh for Target Name
-        BuildTextMesh(rectTransform, baseTargetName, Globals.NameMeshHeight, panelConfig.rowNameWidth, 1.0f, 0.0f);
+        BuildTextMesh(rectTransform, baseTargetName, Globals.NameMeshHeightPx, panelConfig.rowNameWidth, 1.0f, 0.0f);
         List<Transform> transformList = new List<Transform>();
         transformList.Add(rectTransform.Find(baseTargetName));
         return transformList;
@@ -170,7 +170,7 @@ public static class FlexiPanelBuilder
         for (int i = 0; i < panelConfig.rowsToDisplay; i++)
         {
             string textName = $"{baseTextName}{i}_{panelConfig.panelID}";
-            BuildTextMesh(rectTransform, textName, Globals.NameMeshHeight, panelConfig.rowNameWidth, heightOffset, Globals.RowLeftMargin);
+            BuildTextMesh(rectTransform, textName, Globals.NameMeshHeightPx, panelConfig.rowNameWidth, heightOffset, Globals.RowLeftMargin);
             textMeshTransformList.Add(rectTransform.Find(textName));
             heightOffset = heightOffset - interBarOffset;
         }
@@ -189,7 +189,7 @@ public static class FlexiPanelBuilder
         for (int i = 0; i < panelConfig.rowsToDisplay; i++)
         {
             string timeTextName = $"{baseTimeTextName}{i}_{panelConfig.panelID}";
-            BuildTextMesh(rectTransform, timeTextName, Globals.TimeMeshHeight, Globals.TimeMeshWidth, heightOffset, Globals.TimeLeftMargin);
+            BuildTextMesh(rectTransform, timeTextName, Globals.TimeMeshHeightPx, Globals.TimeMeshWidthPx, heightOffset, Globals.TimeLeftMargin);
             timeTextMeshTransformList.Add(rectTransform.Find(timeTextName));
             heightOffset = heightOffset - interBarOffset;
         }

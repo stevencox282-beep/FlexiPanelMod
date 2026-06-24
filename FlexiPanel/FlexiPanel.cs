@@ -149,8 +149,8 @@ public class FlexiPanel : MonoBehaviour
         RectTransform rectTransform = gameObject.transform.GetComponent<RectTransform>();
 
         // The space we need per row 
-        int heightPerRow = Globals.NameMeshHeight;
-        int totalHeightNeeded = (heightPerRow + Globals.PixelsToAdd) * panelConfig.rowsToDisplay;
+        int heightPerRow = Globals.NameMeshHeightPx;
+        int totalHeightNeeded = (heightPerRow + Globals.VerticalSpacingPx) * panelConfig.rowsToDisplay;
         // We can not change the width, just the height
         Vector2 panelSize = new Vector2(panelConfig.panelWidth, totalHeightNeeded);
         rectTransform.pivot = new Vector2(0, 1);
@@ -440,7 +440,7 @@ public class FlexiPanel : MonoBehaviour
         {
             return $" {panelConfig.panelTitle}";
         }
-        else if (entityData.targetName.Equals(Globals.Party))
+        else if (entityData.targetName.Equals(Globals.PartyBuffs))
         {
             return $"  <b>Target:</b> None";
         }
@@ -517,7 +517,7 @@ public class FlexiPanel : MonoBehaviour
         destination.totalEncounterTime = source.totalEncounterTime;
         destination.targetClass = source.targetClass;
         destination.targetKind = source.targetKind;
-        destination.targetName = (source.targetName.IsEmpty()) ? Globals.Party : source.targetName;
+        destination.targetName = (source.targetName.IsEmpty()) ? Globals.PartyBuffs : source.targetName;
 
         // Now copy by value to avoid the nasty duplication caused if you copy using a reference
         foreach (var buff in source.buffData)

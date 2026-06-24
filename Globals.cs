@@ -6,32 +6,26 @@ public static class Globals
 {
     // Local Player
     public static bool PlayerIsLoaded = false; // Set true when a character loads/unloads from the game world / changes zones
-    public static int PlayerLevel = 0; // Holds the current player level
     public static string PlayerNetworkId = string.Empty;
     public static EntityPlayerGameObject? LocalPlayer = null;
 
     // Group Members
     public static List<string> GroupMemberNetworkIds = new List<string>(); // List of all group members (does not include LocalPlayer)
     public static List<string> GroupMemberNames = new List<string>(); // List of all group members (does not include LocalPlayer)
-    public static string Party = "Party Buffs"; // Used to create an EntityData that holds buff/debuff information for the party and local player
+    public static string PartyBuffs = "Party Buffs"; // Used to create an EntityData that holds buff/debuff information for the party and local player
 
     // Panel/TextMeshs
     public static bool ShowPanels = true; // Controls wether or not the panels will be displayed
-    public static int DefaultPanelHeight = 540; // y-axis
-    public static int DefaultPanelWidth = 300; // x-axis
-    public static int DefaultNameMeshWidth = 250;
-    public static int MinimumRowWidth = 200; // Anything less than this just makes no sense, you wont be able to see anything at all
-    public static int PixelsNeededForUptime = 75; // Number of pixel required to display the uptime part
-    public static float RowLeftMargin = 0.05f;
-    public static int NameMeshHeight = 12;
+    public static int DefaultPanelWidthPx = 300; // x-axis default width in pixels
+    public static int MinimumRowWidthPx = 200; // Minimum row width in pixels
+    public static int UptimeMinimumWidthPx = 75; // Number of pixel required to display the uptime part
+    public static int NameMeshHeightPx = 12; // Name Testmesh height in pixels
+    public static float RowLeftMargin = 0.05f; // Margin for every row in a panel
     public static float TimeLeftMargin = 0.75f; // The Time mesh must start after the name text mesh ends and the progress bars end
-    public static int TimeMeshHeight = NameMeshHeight;
-    public static int TimeMeshWidth = 75;
-    public static int FontSize = 10;
-    public static int PixelsToAdd = 6; // Number of pixels to add create enough height for a row to be separate from the one above and below
-    // Progress Bar Display Co-ordinates
-    public static float TopMargin = 0.04f;
-    public static float InterBarOffset = 0.028f;
+    public static int TimeMeshHeightPx = NameMeshHeightPx; // Time TestMesh height in pixels
+    public static int TimeMeshWidthPx = 75;  // Time TextMesh size in pixels
+    public static int FontSize = 10; // Font size for the text inside the TextMeshes
+    public static int VerticalSpacingPx = 6; // Number of pixels to add create enough height for a row to be separate from the one above and below
 }
 
 // Holds the data for each entity
@@ -77,7 +71,7 @@ public class BuffData()
 // Holds debuff uptime data
 public class ConsolidatedUptime()
 {
-    public string buffName;
+    public string buffName; // Buff/Debuff name
     public long totalEncounterUptime; // Time the buff has been up as a % of total encounter time
     public float totalEncounterUptimePercent; // Time the buff has been up as a % of total encounter time
 }

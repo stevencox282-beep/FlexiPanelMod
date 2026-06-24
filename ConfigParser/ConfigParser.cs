@@ -40,8 +40,8 @@ public class ConfigParser()
             panelConfig.includeAllDebuffs = (panelAttributes["IncludeAllDebuffs"] != null) ? bool.Parse(panelAttributes["IncludeAllDebuffs"].Value) : false;
             panelConfig.rowsToDisplay = (panelAttributes["RowsToDisplay"] != null) ? FlexiPanelUtils.SanitiseNumRows(Int32.Parse(panelAttributes["RowsToDisplay"].Value)) : 10;
             panelConfig.panelOpacity = (panelAttributes["PanelOpacity"] != null) ? (float.Parse(panelAttributes["PanelOpacity"].Value) / 100) : 1.0f;
-            panelConfig.panelWidth = (panelAttributes["PanelWidthPx"] != null) ? (Int32.Parse(panelAttributes["PanelWidthPx"].Value)) : Globals.DefaultPanelWidth;
-            panelConfig.rowNameWidth = panelConfig.panelWidth - Globals.PixelsNeededForUptime;
+            panelConfig.panelWidth = (panelAttributes["PanelWidthPx"] != null) ? (Int32.Parse(panelAttributes["PanelWidthPx"].Value)) : Globals.DefaultPanelWidthPx;
+            panelConfig.rowNameWidth = panelConfig.panelWidth - Globals.UptimeMinimumWidthPx;
 
             // VERY basic XML validation to prevent obviously contradictory configurations
             RangeCheckXMLParams(panelConfig);
@@ -124,10 +124,10 @@ public class ConfigParser()
     private void RangeCheckXMLParams(PanelConfig panelConfig)
     {
         // The panel width must be at least the with of the time text mesh, in reality is pro
-        if (panelConfig.panelWidth < Globals.MinimumRowWidth)
+        if (panelConfig.panelWidth < Globals.MinimumRowWidthPx)
         {
-            panelConfig.panelWidth = Globals.DefaultPanelWidth;
-            panelConfig.rowNameWidth = panelConfig.panelWidth - Globals.PixelsNeededForUptime;
+            panelConfig.panelWidth = Globals.DefaultPanelWidthPx;
+            panelConfig.rowNameWidth = panelConfig.panelWidth - Globals.UptimeMinimumWidthPx;
         }
 
         // Opacity cant be more than 1.0f or less than 0.0f

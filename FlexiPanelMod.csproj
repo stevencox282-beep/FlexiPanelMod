@@ -23,7 +23,6 @@
 	  <Compile Include="Hooks\BuffLogicHooks.cs" />
 	  <Compile Include="Hooks\EntityNpcGameObjectHooks.cs" />
 	  <Compile Include="Hooks\EntityStatusLogicHook.cs" />
-	  <Compile Include="Hooks\ExperienceHook.cs" />
 	  <Compile Include="Hooks\GroupMemberHooks.cs" />
 	  <Compile Include="Hooks\PlayerGameObjectHooks.cs" />
 	  <Compile Include="Hooks\SendChatMessageHook.cs" />
