@@ -232,10 +232,6 @@ public class FlexiPanel : MonoBehaviour
         // If we have any panels
         if (uiWindowPanelList.Count > 0)
         {
-            // Get the difference in levels between player and entity
-            int levelDelta = entityData.entityLevel - Globals.PlayerLevel;
-            string levelDeltaString = (levelDelta < 0) ? $"{levelDelta}" : $"+{levelDelta}";
-
             // We must now search every panel and find if that panel is tracking this buff and if it is follow its row rules
             foreach (UIWindowPanel uiWindowPanel in uiWindowPanelList)
             {
@@ -250,7 +246,7 @@ public class FlexiPanel : MonoBehaviour
                 // Update the target / panel title
                 foreach (Transform targetTransform in targetTransformList)
                 {
-                    targetTransform.GetComponent<TextMeshProUGUI>().text = GetTargetTransformText(panelConfig, entityData, levelDeltaString);
+                    targetTransform.GetComponent<TextMeshProUGUI>().text = GetTargetTransformText(panelConfig, entityData, enemyEntityData.entityLevel.ToString());
                 }
 
                 // Tracks the row in the panel that is the next to use
@@ -438,7 +434,7 @@ public class FlexiPanel : MonoBehaviour
     }
 
     // Get the string that will be in the panel title / target text
-    private string GetTargetTransformText(PanelConfig panelConfig, EntityData entityData, string levelDeltaString)
+    private string GetTargetTransformText(PanelConfig panelConfig, EntityData entityData, string enemeyLevel)
     {
         // Display the panel title if the user has selected that, otherwise display a suitable target name
         if (panelConfig.targetOrTitle.Equals("title"))
@@ -451,11 +447,11 @@ public class FlexiPanel : MonoBehaviour
         }
         else if (entityData.traits.IsEmpty())
         {
-            return $"  <b>Target:</b> {entityData.targetName.ToUpperSafe()}({levelDeltaString}), {entityData.targetClass}, {entityData.targetKind}";
+            return $"  <b>Target:</b> {entityData.targetName.ToUpperSafe()}(Lv.{enemeyLevel}), {entityData.targetClass}, {entityData.targetKind}";
         }
         else
         {
-            return $"  <b>Target:</b> {entityData.targetName.ToUpperSafe()}({levelDeltaString}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
+            return $"  <b>Target:</b> {entityData.targetName.ToUpperSafe()}(Lv.{enemeyLevel}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
         }
     }
 

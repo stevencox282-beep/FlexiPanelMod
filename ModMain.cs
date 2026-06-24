@@ -283,8 +283,6 @@ namespace FlexiPanelMod
             }
 
             // Establish the target string
-            int levelDelta = enemyEntityData.entityLevel - Globals.PlayerLevel;
-            string levelDeltaString = (levelDelta < 0) ? $"{levelDelta}" : $"+{levelDelta}";
             string baseMessage = (enemyEntityData.traits.IsEmpty()) ?
                 $"{enemyEntityData.targetName.ToTitleCase()}(Lv.{enemyEntityData.entityLevel}), {enemyEntityData.targetClass}, {enemyEntityData.targetKind}" :
                 $"{enemyEntityData.targetName.ToTitleCase()}(Lv.{enemyEntityData.entityLevel}), {enemyEntityData.targetClass}, {enemyEntityData.targetKind}, {enemyEntityData.traits}";
