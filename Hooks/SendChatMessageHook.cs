@@ -15,8 +15,9 @@ public class SendChatMessageHook
             if (message.Equals("/fpshow"))
             {
                 // Shows all configured panels
+                ModMain.ClearTransformDictionaries();
+                ModMain.InitialiseFlexiPanels();
                 Globals.ShowPanels = true;
-                ModMain.ShowFlexiPanels();
                 return false;
             }
 
