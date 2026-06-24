@@ -10,10 +10,8 @@ The following new commands have been added:
 /fpshow - Shows all configured panels
 /fphide - Hides all configured panels
 /fpreload - Reloads the configuration
-/fppull - A pull notiifcation with additional information is displayed in Group chat
-/fppop - A pop notification with additional information is displayed in Group chat
-/fptarget - A target notification with additional information is shown in Group chat
-/fpadd - A add notification with additional information is displayed in Group Chat
+/fptarget prepend-text - Takes one optional argument prepend-text which will appear before the Target information. 
+  E.G  /fptarget Pulling - Will displaying "Pulling Goblin Rockthrower(Lv.10), Rogue, Humanoid, Iron-Willed"
 
 ## Maximum Number Of Panels Vs Performance
 The mod sets no upper limit on the number of panels.
@@ -35,14 +33,14 @@ All other numbers provided will be rounded down to the nearest valiud value or d
 You can change the width of the panels (in pixels) by setting the property PanelWidthPx.  Very few limits or checks are placed on this value.
 
 ### How Buffs/Debuffs are displayed
-The order of rows in the config file (top to bottom) for a panel is the order they are displayed in that panel on the screen.
-You can specify if a row is displayed or not using the Include property:
+The order of rows in the config file for a panel is the order they are displayed in that panel on the screen.
+You can specify if a row is displayed using the Include property:
 "[Me]" = Only shows the row if this buff/debuff is on you specifically.
 "[Party]" = Only shows the row if this buff/debuff is on you specifically or your Party.
 "Name1,Name2,Name3" = Only shows the row if this buff/debuff is on any player name defined in the comma seperated list.
 
 Configured buffs/debuffs names (and only names) are not case sensitive.
-Configured buffs/debuffs are selected if a buff CONTAINS the configured buff/debuff name.  What does this mean?
+Configured buffs/debuffs are selected if a buff CONTAINS the configured buff/debuff name.
   If you create a row with the Name "Mantle" it will include all tiers of Mantle (assuming all Tiers actually have Mantle in the name)
   If you create a row with the Name "Rip" (Bleed debuff) it will also include "Grip Of Stone" (Shaman Buff) as Grip contains Rip and Name is not case-sensitive.
 
@@ -53,7 +51,7 @@ ExcludeAllBuffs/ExcludeAllDebuffs properties are dominant over IncludeAllBuffs/I
 ### IncludeAllBuffs / IncludeAllDebuffs Overrides
 These parameters are used to facilitate the create of generic catch all Buff or Debuff Panel.
 When either of these properties are set you MUST have one row which provides the Include information.
-When either of these properties are set to true the color of the bars will be based on the Spell Type.
+When either of these properties are set to true the color of the bars will be based on the Spell Type not custom colors.
 When IncludeAllBuffs is set to true the blacklist IncludeAllBuffsBlackList is used to prevent filling up the panel with common buffs.
 When IncludeAllDebuffs is set to true the blacklist IncludeAllDebuffsBlackList is used to prevent filling up the panel with common debuffs.
 ExcludeAllBuffs/ExcludeAllDebuffs properties are dominant over IncludeAllBuffs/IncludeAllDebuffs.
@@ -62,7 +60,7 @@ ExcludeAllBuffs/ExcludeAllDebuffs properties are dominant over IncludeAllBuffs/I
 You can define the color a row will for any row that is NOT included in a Panel that have IncludeAllBuffs or IncludeAllDebuffs set to true.
 You can set the color by specifying the color you want in the Color property.  E.G. Color="green"
 There is no support for RGBA color configuration.
-All available colors are defined by Unity. You can find the full Unity colour list for Unity 6.1 (correct at time of writing) available at [Unity Color List](https://docs.unity3d.com/6000.1/Documentation/ScriptReference/Color.html).
+All available colors are defined by Unity. You can find the full Unity colour list for Unity (correct at time of writing) available at [Unity Color List](https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Color.html).
 If the user provides a color that Unity does not support it will default to dark orange.
 
 ### Panel Opacity
@@ -70,7 +68,8 @@ You can change how opaque each panel is by setting the panels PanelOpacity attri
 
 ## Known Limitations
 Panels are not dynamically resizable
-Buffs are removed on change of zone due to problems tracking buffs across zones / logins
+Buff/Debuff data is removed on change of zone
+The screen updates only once per second so there can be a small delay between target information / buffs changing and panels being updated
 For debuffs that can only be applied once to an entity E.G. "Corrosive Brew" all casts of this debuff will still show up in the panel even if it has been over-written
 Some buffs can not be tracked such as "Exhausted" and ALL Stances such as Rogues "Shadow Walk" or DireLords "Nightmarish"
 Custom row colors are not supported for Panels that have IncludeAll<Buff/Debuff> set to true

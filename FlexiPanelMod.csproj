@@ -16,6 +16,7 @@
 	<ItemGroup>
 	  <Compile Include="ConfigParser\ConfigParser.cs" />
 	  <Compile Include="FlexiPanel\FlexiPanel.cs" />
+	  <Compile Include="FlexiPanel\FlexiPanelBuilder.cs" />
 	  <Compile Include="FlexiPanel\FlexiPanelUtils.cs" />
 	  <Compile Include="EntityManager\EntityManager.cs" />
 	  <Compile Include="Globals.cs" />

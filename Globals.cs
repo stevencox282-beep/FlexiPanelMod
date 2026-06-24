@@ -74,6 +74,14 @@ public class BuffData()
     public float consolidatedEncounterUptimePercent; // Time the buff has been up as a % of total encounter time
 }
 
+// Holds debuff uptime data
+public class ConsolidatedUptime()
+{
+    public string buffName;
+    public long totalEncounterUptime; // Time the buff has been up as a % of total encounter time
+    public float totalEncounterUptimePercent; // Time the buff has been up as a % of total encounter time
+}
+
 // Holds the data for the panesl to be displayed
 public class PanelConfig()
 {

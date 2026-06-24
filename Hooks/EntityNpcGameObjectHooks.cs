@@ -4,9 +4,8 @@ using Il2CppViNL;
 
 namespace FlexiPanelMod.Hooks;
 
-// This Hook is fired on login (after character selection) and change of zone
-[HarmonyPatch(typeof(EntityNpcGameObject))]
-[HarmonyPatch(nameof(EntityNpcGameObject.NetworkStart))]
+// This Hook is fired on login/change of zone
+[HarmonyPatch(typeof(EntityNpcGameObject)), HarmonyPatch(nameof(EntityNpcGameObject.NetworkStart))]
 public class NetworkStart
 {
     private static void Postfix(EntityNpcGameObject __instance, NetworkObject networkObject)
@@ -15,9 +14,8 @@ public class NetworkStart
     }
 }
 
-// This Hook is fired on log out change of zone
-[HarmonyPatch(typeof(EntityNpcGameObject))]
-[HarmonyPatch(nameof(EntityNpcGameObject.NetworkStop))]
+// This Hook is fired on log out/change of zone
+[HarmonyPatch(typeof(EntityNpcGameObject)), HarmonyPatch(nameof(EntityNpcGameObject.NetworkStop))]
 public class NetworkStop
 {
     private static void Prefix(EntityNpcGameObject __instance)

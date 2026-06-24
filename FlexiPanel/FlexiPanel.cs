@@ -2,9 +2,7 @@
 using Il2CppPantheonPersist;
 using Il2CppServiceStack;
 using Il2CppTMPro;
-using MelonLoader;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 using static Il2CppServiceStack.NetStandardPclExport;
 
@@ -13,42 +11,30 @@ namespace FlexiPanelMod;
 // Debuff Panel 
 public class FlexiPanel : MonoBehaviour
 {
-    // Base names of the transforms we are going to create
-    private static string baseTargetName = "FBDP_TargetName_FBDP_";
-    private static string baseTextName = "FBDP_TextName_FBDP_";
-    private static string baseTimeTextName = "FBDP_TimeTextName_FBDP_";
-    private static string baseImageName = "FBDP_ImageName_FBDP_";
+    // Base names of the transforms we are going to create for panels
     private static string basePanelName = "FBDP_DebuffPanel_FBDP_";
 
     // Setup lists that will hold all our transforms
     Dictionary<string, List<Transform>> targetNameTextMeshDictionary = new Dictionary<string, List<Transform>>();
-    Dictionary<string, List<Transform>> textMeshDictionary = new Dictionary<string, List<Transform>>();
+    Dictionary<string, List<Transform>> nameTextMeshDictionary = new Dictionary<string, List<Transform>>();
     Dictionary<string, List<Transform>> timeTextMeshDictionary = new Dictionary<string, List<Transform>>();
     Dictionary<string, List<Transform>> imageDictionary = new Dictionary<string, List<Transform>>();
-    UITutorialPopup gTutorialPopup = new UITutorialPopup();
 
-    // Holds the panel windows
+    // Holds the windows
     private static List<UIWindowPanel> uiWindowPanelList = new List<UIWindowPanel>();
-    private static Dictionary<string, PanelConfig> gPanelConfigDictionary = new Dictionary<string, PanelConfig>();
-    private static string pullMessage = "";
-    private static string popMessage = "";
+    // Holds the XML panel configuration
+    private static Dictionary<string, PanelConfig> panelConfigDictionary = new Dictionary<string, PanelConfig>();
+    // Used to hold the current target information
     private static string targetMessage = "";
-    private static string addMessage = "";
 
-    // Tidy up the alloated resources when we logout / rechange the number of rows in the panel
+    // Tidy up the alloated resources when we logout / change the panel configuration
     public void ClearTransformDictionaries()
     {
-        // Static variables can persist and not be garbage collected on zoning, logout or panel reloading so explicitly clear them out, we will rebuild them on loading into a zone
+        // Static variables persist and are not garbage collected on zoning, logout or panel reloading so explicitly clear them out, we will rebuild them on loading into a zone
         targetNameTextMeshDictionary.Clear();
-        textMeshDictionary.Clear();
+        nameTextMeshDictionary.Clear();
         timeTextMeshDictionary.Clear();
         imageDictionary.Clear();
-    }
-
-    // Preserves the UIToutorial transform which is needed to re-make the close button on the window
-    public void PreserveRequiredTransforms()
-    {
-        gTutorialPopup = UIPanelRoots.Instance.Mid.transform.GetComponentInChildren<UITutorialPopup>();
     }
 
     // Hides all configured panels
@@ -64,7 +50,7 @@ public class FlexiPanel : MonoBehaviour
     public void ShowFlexiPanels()
     {
         // Display the panel if the gloabl is set to allow it
-        if (Globals.ShowPanels == true)
+        if (Globals.ShowPanels.Equals(true))
         {
             foreach (var uiWindowPanel in uiWindowPanelList)
             {
@@ -74,9 +60,9 @@ public class FlexiPanel : MonoBehaviour
     }
 
     // Stores the current panel configuration
-    public void SetPanelConfig(ref Dictionary<string, PanelConfig> panelConfigDictionary)
+    public void SetPanelConfig(Dictionary<string, PanelConfig> panelConfigs)
     {
-        gPanelConfigDictionary = panelConfigDictionary;
+        panelConfigDictionary = panelConfigs;
     }
 
     // Tears down the resources allocated for the panels
@@ -100,7 +86,7 @@ public class FlexiPanel : MonoBehaviour
         uiWindowPanelList.Clear();
     }
 
-    // Creates panels
+    // Init panels
     public void InitialiseFlexiPanels()
     {
         // Destroy the windows and its list
@@ -113,9 +99,9 @@ public class FlexiPanel : MonoBehaviour
     // Creates panels
     private void CreateFlexiPanels()
     {
-        foreach (KeyValuePair<string, PanelConfig> item in gPanelConfigDictionary)
+        foreach (KeyValuePair<string, PanelConfig> panelKVP in panelConfigDictionary)
         {
-            PanelConfig panelConfig = item.Value;
+            PanelConfig panelConfig = panelKVP.Value;
 
             // Setup the general panel parameters
             GameObject gameObject = new GameObject($"{basePanelName}{panelConfig.panelID}");
@@ -139,10 +125,10 @@ public class FlexiPanel : MonoBehaviour
             // Setup the Window Panel
             uiDraggable._windowPanel = uiWindowPanel;
             uiWindowPanel.CanvasGroup = canvasGroup;
-            uiWindowPanel._displayName = item.Key;
+            uiWindowPanel._displayName = panelKVP.Key;
 
             // Add the MANDATORY elements to a panel, the compilor will not error if you don't do this but nothing will work
-            BuildCloseButtonAndBackground(rectTransform, gameObject, uiWindowPanel, panelConfig);
+            FlexiPanelBuilder.BuildCloseButtonAndBackground(rectTransform, gameObject, uiWindowPanel, panelConfig);
 
             // Set the panel size based on the number of rows we have to draw
             SetPanelSize(ref uiWindowPanel, panelConfig);
@@ -156,7 +142,7 @@ public class FlexiPanel : MonoBehaviour
         ShowFlexiPanels();
     }
 
-    // Sets the size of the panel based on the number of rows to add
+    // Sets the size of the panel based on the panel configuration
     public void SetPanelSize(ref UIWindowPanel uiWindowPanel, PanelConfig panelConfig)
     {
         // Get the RectTransform to add the rows too
@@ -182,171 +168,12 @@ public class FlexiPanel : MonoBehaviour
         RectTransform rectTransform = gameObject.transform.GetComponent<RectTransform>();
 
         // Add in the images that will be the progress bars
-        BuildImages(rectTransform, panelConfig);
+        imageDictionary.Add(panelConfig.panelID, FlexiPanelBuilder.BuildImages(rectTransform, panelConfig));
 
         // Add in Text Meshs that display the data
-        BuildTextMeshs(rectTransform, panelConfig);
-    }
-
-    // Constructs the close button and set the background
-    private void BuildCloseButtonAndBackground(Transform parentPanel, GameObject gameObject, UIWindowPanel uiWindowPanel, PanelConfig panelConfig)
-    {
-        // Source for copying button and backgrounds            
-        Transform tutorialButton = gTutorialPopup.transform.GetChild(0);
-
-        // Initialise the background for the new panel (MANDATORY)
-        Image imageToCopy = gTutorialPopup.GetComponent<Image>();
-        var image = gameObject.AddComponent<Image>();
-        image.type = Image.Type.Sliced;
-        image.sprite = imageToCopy.sprite;
-        Color newColor = image.color;
-        newColor.a = panelConfig.panelOpacity;
-        image.color = newColor;
-
-        // Initialise the close button of the panel (MANDATORY)
-        var closeButton = GameObject.Instantiate(tutorialButton, tutorialButton.transform.position, tutorialButton.transform.rotation, uiWindowPanel.transform);
-        var closeButtonRect = closeButton.GetComponent<RectTransform>();
-        closeButtonRect.sizeDelta = new Vector2(30, 30);
-        closeButtonRect.anchoredPosition = new Vector2(-13.5f, -12); // Tiny size, top right corner, this ruins the box detection though
-        closeButtonRect.pivot = new Vector2(0f, 0f);
-
-        // Initialise on click behaviour of the close button
-        var buttonComponent = closeButton.GetComponent<Button>();
-        buttonComponent.onClick = new Button.ButtonClickedEvent();
-        buttonComponent.onClick.RemoveAllListeners();
-        buttonComponent.onClick.AddCall(new InvokableCall(new Action(() =>
-        {
-            // Actually unloads the panel, not hide
-            uiWindowPanel.Hide();
-        })));
-        // Make clicking sound
-        buttonComponent.onClick.AddCall(new InvokableCall(new Action(() =>
-        {
-            closeButton.GetComponent<UI_Audio_Function>().Play_UI_Generic_Click();
-        })));
-    }
-
-    // Builder function to create a TextMesh component
-    private TextMeshProUGUI BuildTextMeshComponent(GameObject gameObject)
-    {
-        // Add and configure the TextMeshPros for rendering the time data
-        TextMeshProUGUI textMesh = gameObject.AddComponent<TextMeshProUGUI>();
-        textMesh.alignment = TextAlignmentOptions.Left;
-        textMesh.fontSize = Globals.FontSize;
-        textMesh.color = Color.white;
-        textMesh.text = "";
-        textMesh.autoSizeTextContainer = false;
-        textMesh.enableAutoSizing = false;
-
-        return textMesh;
-    }
-
-    // Builder function to create an TextMesh
-    private void BuildTextMesh(RectTransform rectTransform, string name, int height, int width, float heightOffset, float widthOffset)
-    {
-        GameObject gameObject = new GameObject(name);
-        // Set its parent to the new window panel (which is parented to Mid)
-        gameObject.transform.SetParent(rectTransform, false);
-        ContentSizeFitter contentSizeFitter = gameObject.AddComponent<ContentSizeFitter>();
-        contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-        contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
-
-        TextMeshProUGUI textMesh = BuildTextMeshComponent(gameObject);
-        var rectTransformOne = textMesh.rectTransform;
-        rectTransformOne.sizeDelta = new Vector2(width, height);
-        rectTransformOne.anchorMin = new Vector2(widthOffset, heightOffset);
-        rectTransformOne.anchorMax = new Vector2(widthOffset, heightOffset);
-        rectTransformOne.anchoredPosition = new Vector2(0f, 0f);
-        rectTransformOne.pivot = new Vector2(0f, 0f);
-    }
-
-    // Builder function to create an Image
-    private void BuildImage(RectTransform rectTransform, string name, int height, int width, float heightOffset, float widthOffset)
-    {
-        GameObject gameObject = new GameObject(name);
-        // Set its parent to the new window panel (which is parented to Mid)
-        gameObject.transform.SetParent(rectTransform, false);
-        ContentSizeFitter contentSizeFitter = gameObject.AddComponent<ContentSizeFitter>();
-        contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
-        contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
-
-        Image image = BuildImageComponent(gameObject);
-        var transform = image.rectTransform;
-        transform.sizeDelta = new Vector2(width, height);
-        transform.anchorMin = new Vector2(widthOffset, heightOffset);
-        transform.anchorMax = new Vector2(widthOffset, heightOffset);
-        transform.anchoredPosition = new Vector2(0f, 0f);
-        transform.pivot = new Vector2(0f, 0f);
-    }
-
-    // Builder function to create an image component
-    private Image BuildImageComponent(GameObject gameObject)
-    {
-        // Make a solid colour sprite for use in the bar
-        Texture2D tex = new Texture2D(1, 1);
-        // NEVER set this to black or clear, it stops the progress bar from changing color for reasoons that are not obvious
-        tex.SetPixel(0, 0, Color.pink);
-        tex.Apply();
-        Sprite sprite = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
-
-        gameObject.layer = Layers.UI;
-        var image = gameObject.AddComponent<Image>();
-        image.sprite = sprite;
-        image.type = Image.Type.Filled;
-        image.fillMethod = Image.FillMethod.Horizontal;
-        image.color = Color.black;
-        image.fillAmount = 0.0f; // 1.0f is full 0.0f is empty
-        return image;
-    }
-
-    // Builds all images (progress bars) to be display in the panel 
-    private void BuildImages(RectTransform rectTransform, PanelConfig panelConfig)
-    {
-        float heightOffset = 0.0f;
-        float interBarOffset = 0.0f;
-        FlexiPanelUtils.GetOffsetsForPanel(ref heightOffset, ref interBarOffset, panelConfig.rowsToDisplay);
-
-        // Make all the progress bars
-        List<Transform> transformList = new List<Transform>();
-        for (int i = 0; i < panelConfig.rowsToDisplay; i++)
-        {
-            string imageName = $"{baseImageName}{i}_{panelConfig.panelID}";
-            BuildImage(rectTransform, imageName, Globals.NameMeshHeight, panelConfig.rowNameWidth, heightOffset, Globals.RowLeftMargin);
-            transformList.Add(rectTransform.transform.Find(imageName));
-            heightOffset = heightOffset - interBarOffset;
-        }
-        imageDictionary.Add(panelConfig.panelID, transformList);
-    }
-
-    // Builds all TextMeshes (buff/time) to be display in the panel
-    private void BuildTextMeshs(RectTransform rectTransform, PanelConfig panelConfig)
-    {
-        // Text Mesh for Target Name
-        BuildTextMesh(rectTransform, baseTargetName, Globals.NameMeshHeight, panelConfig.rowNameWidth, 1.0f, 0.0f);
-        List<Transform> transformList = new List<Transform>();
-        transformList.Add(rectTransform.Find(baseTargetName));
-        targetNameTextMeshDictionary.Add(panelConfig.panelID, transformList);
-
-        // Build the meshes
-        float heightOffset = 0.0f;
-        float interBarOffset = 0.0f;
-        FlexiPanelUtils.GetOffsetsForPanel(ref heightOffset, ref interBarOffset, panelConfig.rowsToDisplay);
-
-        List<Transform> textMeshTransformList = new List<Transform>();
-        List<Transform> timeTextMeshTransformList = new List<Transform>();
-        for (int i = 0; i < panelConfig.rowsToDisplay; i++)
-        {
-            string textName = $"{baseTextName}{i}_{panelConfig.panelID}";
-            string timeTextName = $"{baseTimeTextName}{i}_{panelConfig.panelID}";
-            BuildTextMesh(rectTransform, textName, Globals.NameMeshHeight, panelConfig.rowNameWidth, heightOffset, Globals.RowLeftMargin);
-            BuildTextMesh(rectTransform, timeTextName, Globals.TimeMeshHeight, Globals.TimeMeshWidth, heightOffset, Globals.TimeLeftMargin);
-
-            textMeshTransformList.Add(rectTransform.Find(textName));
-            timeTextMeshTransformList.Add(rectTransform.Find(timeTextName));
-            heightOffset = heightOffset - interBarOffset;
-        }
-        textMeshDictionary.Add(panelConfig.panelID, textMeshTransformList);
-        timeTextMeshDictionary.Add(panelConfig.panelID, timeTextMeshTransformList);
+        targetNameTextMeshDictionary.Add(panelConfig.panelID, FlexiPanelBuilder.BuildTargetTextMeshs(rectTransform, panelConfig));
+        nameTextMeshDictionary.Add(panelConfig.panelID, FlexiPanelBuilder.BuildNameTextMeshs(rectTransform, panelConfig));
+        timeTextMeshDictionary.Add(panelConfig.panelID, FlexiPanelBuilder.BuildTimeTextMeshs(rectTransform, panelConfig));
     }
 
     // Clears the text displayed in the Panel
@@ -367,7 +194,7 @@ public class FlexiPanel : MonoBehaviour
                 }
             }
 
-            foreach (List<Transform> textMeshTransformList in textMeshDictionary.Values)
+            foreach (List<Transform> textMeshTransformList in nameTextMeshDictionary.Values)
             {
                 foreach (Transform textMeshTransform in textMeshTransformList)
                 {
@@ -389,42 +216,35 @@ public class FlexiPanel : MonoBehaviour
                 {
                     // Now update the progress bar colour and time
                     Image image = imageTransform.transform.GetComponent<Image>();
-                    // Set colour to black on reset
-                    image.color = Color.black;
+                    // Set fill amount to zero
                     image.fillAmount = 0.0f;
                 }
             }
         }
     }
 
-    // Update the text displayed in the Debuff Box
+    // Update the data displayed in the Panels
     public void UpdatePanelsDisplay(EntityData enemyEntityData, EntityData partyEntityData, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist)
     {
-        // Try and stop unwanted access to the panel to prevent exceptions
+        // Merge the data into a single object to ease its parsing
         EntityData entityData = MergeEntityData(enemyEntityData, partyEntityData);
 
+        // If we have any panels
         if (uiWindowPanelList.Count > 0)
         {
             // Get the difference in levels between player and entity
             int levelDelta = entityData.entityLevel - Globals.PlayerLevel;
             string levelDeltaString = (levelDelta < 0) ? $"{levelDelta}" : $"+{levelDelta}";
-            string baseMessage = (entityData.traits.IsEmpty()) ?
-                $"{entityData.targetName.ToTitleCase()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}" :
-                $"{entityData.targetName.ToTitleCase()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
-            pullMessage = $"Pulling: {baseMessage}";
-            popMessage = $"Pop: {baseMessage}";
-            targetMessage = $"Target: {baseMessage}";
-            addMessage = $"Add: {baseMessage}";
 
             // We must now search every panel and find if that panel is tracking this buff and if it is follow its row rules
             foreach (UIWindowPanel uiWindowPanel in uiWindowPanelList)
             {
                 // Get the panel details for this window
                 string panelID = uiWindowPanel._displayName;
-                PanelConfig panelConfig = gPanelConfigDictionary[panelID];
+                PanelConfig panelConfig = panelConfigDictionary[panelID];
                 List<Transform> targetTransformList = targetNameTextMeshDictionary[panelID];
+                List<Transform> nameTextMeshTransformList = nameTextMeshDictionary[panelID];
                 List<Transform> timeTextMeshTransformList = timeTextMeshDictionary[panelID];
-                List<Transform> textMeshTransformList = textMeshDictionary[panelID];
                 List<Transform> imageTransformList = imageDictionary[panelID];
 
                 // Update the target / panel title
@@ -449,37 +269,19 @@ public class FlexiPanel : MonoBehaviour
                         if (HandleIncludeCriteria(panelConfig, rowConfig, buff))
                         {
                             // If the buff is valid or we have a valid override
-                            if ( true == IsValidBuff(panelConfig, rowConfig, buff, buffNameUpperCase) || true == HasValidOverride(panelConfig, buff, buffNameUpperCase, includeAllBuffsBlacklist, includeAllDebuffsBlacklist))
+                            if (true == IsValidBuff(panelConfig, rowConfig, buff, buffNameUpperCase) || true == HasValidOverride(panelConfig, buff, buffNameUpperCase, includeAllBuffsBlacklist, includeAllDebuffsBlacklist))
                             {
-                                bool includeThisBuff = (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.includeAllBuffs == true) ? true : false;
-                                bool includThisDebuff = (buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.includeAllDebuffs == true) ? true : false;
+                                bool includeThisBuff = (buff.categoryType.Equals(BuffCategoryType.Beneficial.ToString()) && panelConfig.includeAllBuffs.Equals(true)) ? true : false;
+                                bool includThisDebuff = (buff.categoryType.Equals(BuffCategoryType.Harmful.ToString()) && panelConfig.includeAllDebuffs.Equals(true)) ? true : false;
 
                                 // Found a required buff/debuff, update the panel with this data
-                                textMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $" {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.targetName})";
+                                nameTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $" {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.targetName})";
                                 // Set the time value for the row
                                 timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = GetTimeTextMeshsText(buff);
 
                                 // Now update the progress bar color and time
                                 Image image = imageTransformList[panelDisplayIndex].GetComponent<Image>();
-                                if (includeThisBuff == true || includThisDebuff == true)
-                                {
-                                    image.color = FlexiPanelUtils.getBarColours(buff.spellType);
-                                }
-                                else
-                                {
-                                    // Set color based on the user defined color, if the user has given us an invalid colour, default to orange
-                                    try
-                                    {
-                                        image.color = (Color)typeof(Color).GetProperty(rowConfig.color.ToLowerInvariant()).GetValue(null, null);
-                                    }
-                                    catch
-                                    {
-                                        image.color = Color.orange;
-                                    }
-                                }
-
-                                // Set the fill amount 1.0f is full, 0.0f is empty
-                                image.fillAmount = ((1 / buff.buffDuration) * buff.buffDurationRemaining);
+                                UpdateImageDisplay(rowConfig, buff, image, includeThisBuff, includThisDebuff);
                                 // Move to the next row in the panel
                                 panelDisplayIndex++;
                             }
@@ -491,17 +293,17 @@ public class FlexiPanel : MonoBehaviour
     }
 
 
-    // This is a valid buff if the name matches the name for the current row and it is a valid type for this panel
+    // Determines if this buff is valid for further processing
     private static bool IsValidBuff(PanelConfig panelConfig, RowConfig rowConfig, BuffData buff, string buffNameUpperCase)
     {
         // Check the name and the buff type are valid
         if (buffNameUpperCase.Contains(rowConfig.displayText))
         {
-            if (panelConfig.excludeAllBuffs == true && buff.categoryType == BuffCategoryType.Beneficial.ToString())
+            if (panelConfig.excludeAllBuffs.Equals(true) && buff.categoryType.Equals(BuffCategoryType.Beneficial.ToString()))
             {
                 return false;
             }
-            else if (panelConfig.excludeAllDebuffs == true && buff.categoryType == BuffCategoryType.Harmful.ToString())
+            else if (panelConfig.excludeAllDebuffs.Equals(true) && buff.categoryType.Equals(BuffCategoryType.Harmful.ToString()))
             {
                 return false;
             }
@@ -514,30 +316,25 @@ public class FlexiPanel : MonoBehaviour
     // Returns true if we have a valid overide
     private static bool HasValidOverride(PanelConfig panelConfig, BuffData buff, string buffNameUpperCase, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist)
     {
-        // true means we do not include this
-        bool excludeThisBuff = (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.excludeAllBuffs == true) ? true : false;
-        // true means we do not include this
-        bool excludeThisDebuff = (buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.excludeAllDebuffs == true) ? true : false;
-
-        // true means we do include this
-        bool includeThisBuff = (buff.categoryType == BuffCategoryType.Beneficial.ToString() && panelConfig.includeAllBuffs == true) ? true : false;
-        // true means we do include this
-        bool includThisDebuff = (buff.categoryType == BuffCategoryType.Harmful.ToString() && panelConfig.includeAllDebuffs == true) ? true : false;
+        bool excludeThisBuff = (buff.categoryType.Equals(BuffCategoryType.Beneficial.ToString()) && panelConfig.excludeAllBuffs.Equals(true)) ? true : false;
+        bool excludeThisDebuff = (buff.categoryType.Equals(BuffCategoryType.Harmful.ToString()) && panelConfig.excludeAllDebuffs.Equals(true)) ? true : false;
+        bool includeThisBuff = (buff.categoryType.Equals(BuffCategoryType.Beneficial.ToString()) && panelConfig.includeAllBuffs.Equals(true)) ? true : false;
+        bool includThisDebuff = (buff.categoryType.Equals(BuffCategoryType.Harmful.ToString() ) && panelConfig.includeAllDebuffs.Equals(true)) ? true : false;
 
         // Process the excludes first, we want to keep the panel as clear as possible
-        if (excludeThisBuff == true)
+        if (excludeThisBuff.Equals(true))
         {
             return false;
         }
-        else if (excludeThisDebuff == true)
+        else if (excludeThisDebuff.Equals(true))
         {
             return false;
         }
-        else if (includeThisBuff == true && false == BuffInBlacklist(includeAllBuffsBlacklist, buffNameUpperCase))
+        else if (includeThisBuff.Equals(true) && false == BuffInBlacklist(includeAllBuffsBlacklist, buffNameUpperCase))
         {
             return true;
         }
-        else if (includThisDebuff == true && false == BuffInBlacklist(includeAllDebuffsBlacklist, buffNameUpperCase))
+        else if (includThisDebuff.Equals(true) && false == BuffInBlacklist(includeAllDebuffsBlacklist, buffNameUpperCase))
         {
             return true;
         }
@@ -610,7 +407,37 @@ public class FlexiPanel : MonoBehaviour
         return false;
     }
 
-    // Get the string that will be in the panel title / target textmesh
+    // Updates the display of a row
+    private void UpdateImageDisplay(RowConfig rowConfig, BuffData buff, Image image, bool includeThisBuff, bool includThisDebuff)
+    {
+        if (includeThisBuff.Equals(true) || includThisDebuff.Equals(true))
+        {
+            image.color = FlexiPanelUtils.getBarColours(buff.spellType);
+        }
+        else
+        {
+            // Set color based on the user defined color, if the user has given us an invalid colour, default to orange
+            try
+            {
+                image.color = (Color)typeof(Color).GetProperty(rowConfig.color.ToLowerInvariant()).GetValue(null, null);
+            }
+            catch
+            {
+                image.color = Color.orange;
+            }
+        }
+
+        // Set the fill amount 1.0f is full, 0.0f is empty
+        image.fillAmount = ((1 / buff.buffDuration) * buff.buffDurationRemaining);
+    }
+
+    // Sets the target information based on the currently selected target
+    public void SetTargetInformation(string baseMessage)
+    {
+        targetMessage = baseMessage;
+    }
+
+    // Get the string that will be in the panel title / target text
     private string GetTargetTransformText(PanelConfig panelConfig, EntityData entityData, string levelDeltaString)
     {
         // Display the panel title if the user has selected that, otherwise display a suitable target name
@@ -638,28 +465,34 @@ public class FlexiPanel : MonoBehaviour
         // Format the time remianing to be human redable
         if (buff.buffDurationRemaining < 60)
         {
-            if (buff.categoryType == BuffCategoryType.Beneficial.ToString())
+            // Display the remaining time in seconds
+            if (buff.categoryType.Equals(BuffCategoryType.Beneficial.ToString()))
             {
                 return $"{buff.buffDurationRemaining}s (Buff)";
             }
             else
             {
-                // Display the remaining time in seconds
                 return $"{buff.buffDurationRemaining}s ({buff.consolidatedEncounterUptimePercent.ToString("0")}%)";
             }
         }
         else
         {
-            if (buff.categoryType == BuffCategoryType.Beneficial.ToString())
+            // Display the remaining time in minutes and seconds
+            if (buff.categoryType.Equals(BuffCategoryType.Beneficial.ToString()))
             {
                 return $"{Math.Floor((decimal)buff.buffDurationRemaining / 60)}m{Math.Floor((decimal)buff.buffDurationRemaining) % 60}s (Buff)";
             }
             else
             {
-                // Display the remaining time in minutes and seconds
                 return $"{Math.Floor((decimal)buff.buffDurationRemaining / 60)}m{Math.Floor((decimal)buff.buffDurationRemaining) % 60}s, ({buff.consolidatedEncounterUptimePercent.ToString("0")}%)";
             }
         }
+    }
+
+    // Ensure we dont loose the template we need to remake our panels
+    public void PreserveRequiredTransforms()
+    {
+        FlexiPanelBuilder.PreserveRequiredTransforms();
     }
 
     // This function takes the current enemies and party buffs and merges them into a single EntityData to make the update of the display panels simpler
@@ -673,6 +506,7 @@ public class FlexiPanel : MonoBehaviour
         return finalEntityData;
     }
 
+    // A basic copy by value function
     private void CopyByValue(EntityData source, ref EntityData destination)
     {
         if (source == null || destination == null)
@@ -713,26 +547,17 @@ public class FlexiPanel : MonoBehaviour
         }
     }
 
-    // Add the pull message to the Group chat
-    public void ShowPullMessage(EntityClientMessaging.Logic __instance)
-    {
-        __instance.SendChatMessage(pullMessage, ChatChannelType.Group);
-    }
-
-    // Add the pop message to the Group chat
-    public void ShowPopMessage(EntityClientMessaging.Logic __instance)
-    {
-        __instance.SendChatMessage(popMessage, ChatChannelType.Group);
-    }
-
     // Add the target information to the Group chat
-    public void ShowTargetMessage(EntityClientMessaging.Logic __instance)
+    public void ShowTargetMessage(EntityClientMessaging.Logic __instance, string message)
     {
+        string[] split = message.Split();
+        // If we have an argument
+        if (split.Length > 1)
+        {
+            // Preprend the text to the target information
+            targetMessage = $"{split[1]} {targetMessage}";
+        }
+        
         __instance.SendChatMessage(targetMessage, ChatChannelType.Group);
-    }
-
-    public void ShowAddMessage(EntityClientMessaging.Logic __instance)
-    {
-        __instance.SendChatMessage(addMessage, ChatChannelType.Group);
     }
 }

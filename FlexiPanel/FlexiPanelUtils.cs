@@ -43,7 +43,6 @@ public static class FlexiPanelUtils
     }
 
     // Converts the provoided number of rows to a valid number
-    // We support the following.  5..10,15,20,25,30,35
     public static int SanitiseNumRows(int numRows)
     {
         // Ensure we have at least 5 row
@@ -85,10 +84,10 @@ public static class FlexiPanelUtils
         return numRows = (numRows > 35) ? 35 : numRows;
     }
 
+    // Get colors based on spell type
     public static Color getBarColours(string spellType)
     {
         Color returnColor = Color.black;
-        // List the string values for all MaxDisplayableDebuffs debuffs
         switch (spellType)
         {
             case "Augmentation":

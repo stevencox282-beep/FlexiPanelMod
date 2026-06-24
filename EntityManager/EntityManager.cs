@@ -5,15 +5,9 @@ using Unity.Collections;
 
 namespace FlexiPanelMod;
 
-public class ConsolidatedUptime()
-{
-    public string buffName;
-    public long totalEncounterUptime; // Time the buff has been up as a % of total encounter time
-    public float totalEncounterUptimePercent; // Time the buff has been up as a % of total encounter time
-}
-
 public static class EntityManager
 {
+    // Do not track information about these specific NPCs
     private static readonly string[] NPCBlacklist = { "Banner of Arms", "Banner of Onslaught", "Challenger's Banner", "Rallying Banner", "Shieldman's Banner", "ghostly riddler" };
     // Global to hold the list of all Entities
     private static Dictionary<string, EntityData> entityBuffDictionary = new Dictionary<string, EntityData>();
@@ -78,7 +72,7 @@ public static class EntityManager
             List<ConsolidatedUptime> consolidatedUptimeList = consolidatedUptimeDictionary[entityNetworkId];
             foreach (var temp in consolidatedUptimeList)
             {
-                if (temp.buffName == buffData.buffName)
+                if (temp.buffName.Equals(buffData.buffName))
                 {
                     // This buff already exists, dont add it twice
                     return;
@@ -102,7 +96,7 @@ public static class EntityManager
         {
             foreach (var uptimeItem in consolidatedUptimeList)
             {
-                if (uptimeItem.buffName == buffName)
+                if (uptimeItem.buffName.Equals(buffName))
                 {
                     uptimeItem.totalEncounterUptime++;
                 }
@@ -116,7 +110,7 @@ public static class EntityManager
         List<ConsolidatedUptime> ConsolidatedUptimeList = consolidatedUptimeDictionary[entityNetworkId];
         foreach (var uptimeItem in ConsolidatedUptimeList)
         {
-            if (uptimeItem.buffName == buffName)
+            if (uptimeItem.buffName.Equals(buffName))
             {
                 return uptimeItem.totalEncounterUptime;
             }
@@ -164,8 +158,8 @@ public static class EntityManager
             {
                 BuffData buff = buffData.ElementAt(j);
                 // Update the time remaining and the size of the progress bar, stop at zero seconds
-                buff.buffDurationRemaining = (buff.buffDurationRemaining == 0) ? 0 : buff.buffDurationRemaining - 1;
-                if (buff.buffDurationRemaining <= 0 && removal == true)
+                buff.buffDurationRemaining = (buff.buffDurationRemaining.Equals(0)) ? 0 : buff.buffDurationRemaining - 1;
+                if (buff.buffDurationRemaining <= 0 && removal.Equals(true))
                 {
                     buffData.RemoveAt(j);
                 }
@@ -205,7 +199,7 @@ public static class EntityManager
                 foreach (BuffData buff in entity.buffData)
                 {
                     // If the buff on the entity is the buff we are looking for
-                    if (buff.buffName == currentHistoricDebuffName)
+                    if (buff.buffName.Equals(currentHistoricDebuffName))
                     {
                         // Match found, increase the encounter uptime only if the current duration remaining on the buff is > 0
                         if (buff.buffDurationRemaining > 0)
@@ -215,7 +209,7 @@ public static class EntityManager
                         }
 
                         // OnUpdate will certainly run before we can target and engage an entity in range, prevent a possible DIV0
-                        if (entity.encounterStartTime == 0L)
+                        if (entity.encounterStartTime.Equals(0L))
                         {
                             buff.consolidatedEncounterUptimePercent = 0L;
                         }
@@ -252,7 +246,7 @@ public static class EntityManager
             newMonster.entityNetworkId = targetNetworkId;
             newMonster.isDead = false;
             newMonster.buffData = new List<BuffData>();
-            newMonster.targetName = (targetNetworkId == Globals.Party) ? Globals.Party : string.Empty; // Set to PARTY if we are creating the party entity
+            newMonster.targetName = (targetNetworkId.Equals(Globals.Party)) ? Globals.Party : string.Empty; // Set to PARTY if we are creating the party entity
             entityBuffDictionary.Add(targetNetworkId, newMonster);
         }
     }
@@ -269,7 +263,7 @@ public static class EntityManager
         if (entityBuffDictionary.ContainsKey(networkId))
         {
             // The API used reports dead enemies as alive when you move out of range, never go back from dead to not dead
-            if (isDead == true && entityBuffDictionary[networkId].isDead == false)
+            if (isDead.Equals(true) && entityBuffDictionary[networkId].isDead.Equals(false))
             {
                 entityBuffDictionary[networkId].isDead = true; // Once set to true can NEVER be set to false
             }
@@ -281,7 +275,7 @@ public static class EntityManager
     {
         var npcName = entityNpcGameObject.Nameplate.nameText.text;
 
-        if (entityNpcGameObject.Profession == NpcProfession.None)
+        if (entityNpcGameObject.Profession.Equals(NpcProfession.None))
         {
             if (entityNpcGameObject.Status.IsDead())
             {
@@ -328,7 +322,7 @@ public static class EntityManager
                     if (result.Length > 1)
                     {
                         // We have a trait.  if this is the first trait, we dont want the leading comma
-                        if (isFirst == true)
+                        if (isFirst.Equals(true))
                         {
                             newEntity.traits = result[1];
                             isFirst = false;

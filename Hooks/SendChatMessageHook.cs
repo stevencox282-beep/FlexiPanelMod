@@ -12,9 +12,9 @@ public class SendChatMessageHook
 {
     private static bool Prefix(EntityClientMessaging.Logic __instance, string message, ChatChannelType channel)
     {
-        if (Globals.PlayerIsLoaded == true)
+        if (Globals.PlayerIsLoaded.Equals(true))
         {
-            if (message == "/fpshow")
+            if (message.Equals("/fpshow"))
             {
                 // Shows all configured panels
                 Globals.ShowPanels = true;
@@ -22,7 +22,7 @@ public class SendChatMessageHook
                 return false;
             }
 
-            if (message == "/fphide")
+            if (message.Equals("/fphide"))
             {
                 // Hide all configured panels
                 Globals.ShowPanels = false;
@@ -39,31 +39,10 @@ public class SendChatMessageHook
                 return false;
             }
 
-            // Shows the pulling message in Group chat
-            if (message == "/fppull")
-            {
-                ModMain.ShowPullMessage(__instance);
-                return false;
-            }
-
-            // Shows the pop message in Group chat
-            if (message == "/fppop")
-            {
-                ModMain.ShowPopMessage(__instance);
-                return false;
-            }
-
             // Shows the current target information in Group chat
-            if (message == "/fptarget")
+            if (message.Contains("/fptarget"))
             {
-                ModMain.ShowTargetMessage(__instance);
-                return false;
-            }
-
-            // Shows the current target information in Group chat
-            if (message == "/fpadd")
-            {
-                ModMain.ShowAddMessage(__instance);
+                ModMain.ShowTargetMessage(__instance, message);
                 return false;
             }
         }

@@ -11,13 +11,13 @@ public class PlayerNetworkStart
     private static void Postfix(EntityPlayerGameObject __instance)
     {
         // Fired in character select
-        if (__instance.NetworkId.Value == 1)
+        if (__instance.NetworkId.Value.Equals(1))
         {
             Globals.PlayerIsLoaded = false;
             return;
         }
 
-        if (__instance.NetworkId.Value == EntityPlayerGameObject.LocalPlayerId.Value)
+        if (__instance.NetworkId.Value.Equals(EntityPlayerGameObject.LocalPlayerId.Value))
         {
             Globals.LocalPlayer = __instance;
             if (Globals.PlayerNetworkId.Equals(string.Empty))
@@ -49,13 +49,13 @@ public class PlayerNetworkStop
     private static void Prefix(EntityPlayerGameObject __instance)
     {
         // Fired in character select
-        if (__instance.NetworkId.Value == 1)
+        if (__instance.NetworkId.Value.Equals(1))
         {
             Globals.PlayerIsLoaded = false;
             return;
         }
 
-        if (__instance.NetworkId.Value == EntityPlayerGameObject.LocalPlayerId.Value)
+        if (__instance.NetworkId.Value.Equals(EntityPlayerGameObject.LocalPlayerId.Value))
         {
             // We have logged out / changed zones.  Clear the screen as we cant reliably tell what buffs have / have not been preserved during zone transition or between logout and login
             Globals.PlayerIsLoaded = false;

@@ -1,5 +1,4 @@
 ﻿using Il2CppServiceStack;
-using Il2Cpp뤗;
 using MelonLoader;
 using System.Xml;
 
@@ -8,7 +7,7 @@ namespace FlexiPanelMod;
 public class ConfigParser()
 {
     // Parses the Panel configuration from the XML file and uses it to setup the panels
-    public void ParseConfig(ref Dictionary<string, PanelConfig> panelConfigDictionary, ref List<string> includeAllBuffsBlacklist, ref List<string> includeAllDebuffsBlacklist)
+    public void ParseConfig(Dictionary<string, PanelConfig> panelConfigDictionary, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist)
     {
         // Ensure the panel config store and the blacklist is clear 
         panelConfigDictionary.Clear();
@@ -84,8 +83,8 @@ public class ConfigParser()
             }
         }
 
-        // Process IncludeAll blacklist information if available
-        if (allBuffBlacklist.Count == 1)
+        // Process IncludeAllBuff blacklist information if available
+        if (allBuffBlacklist.Count.Equals(1))
         {
             XmlNodeList entryList = allBuffBlacklist[0].ChildNodes;
 
@@ -102,8 +101,8 @@ public class ConfigParser()
             }
         }
 
-        // Process IncludeAllBuffs blacklist information if available
-        if (allDebuffBlacklist.Count == 1)
+        // Process IncludeAllDebuffs blacklist information if available
+        if (allDebuffBlacklist.Count.Equals(1))
         {
             XmlNodeList entryList = allDebuffBlacklist[0].ChildNodes;
 
@@ -121,7 +120,7 @@ public class ConfigParser()
         }
     }
 
-    // Performs basic range checking on the input parameters to prevent obvious bad configuration from ruining everything
+    // Performs basic range checking on the input parameters
     private void RangeCheckXMLParams(PanelConfig panelConfig)
     {
         // The panel width must be at least the with of the time text mesh, in reality is pro
@@ -142,13 +141,13 @@ public class ConfigParser()
         }
 
         // Exclude takes priority over include
-        if (panelConfig.excludeAllBuffs == true)
+        if (panelConfig.excludeAllBuffs.Equals(true))
         {
             panelConfig.includeAllBuffs = false;
         }
 
         // Exclude takes priority over include
-        if (panelConfig.excludeAllDebuffs == true)
+        if (panelConfig.excludeAllDebuffs.Equals(true))
         {
             panelConfig.includeAllDebuffs = false;
         }
