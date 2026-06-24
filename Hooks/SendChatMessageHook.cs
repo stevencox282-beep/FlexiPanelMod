@@ -1,8 +1,6 @@
 using HarmonyLib;
 using Il2Cpp;
 using Il2CppPantheonPersist;
-using Il2CppViNL;
-using MelonLoader;
 
 namespace FlexiPanelMod.Hooks;
 

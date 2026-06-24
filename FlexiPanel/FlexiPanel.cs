@@ -4,7 +4,6 @@ using Il2CppServiceStack;
 using Il2CppTMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static Il2CppServiceStack.NetStandardPclExport;
 
 namespace FlexiPanelMod;
 
@@ -315,7 +314,7 @@ public class FlexiPanel : MonoBehaviour
         bool excludeThisBuff = (buff.categoryType.Equals(BuffCategoryType.Beneficial.ToString()) && panelConfig.excludeAllBuffs.Equals(true)) ? true : false;
         bool excludeThisDebuff = (buff.categoryType.Equals(BuffCategoryType.Harmful.ToString()) && panelConfig.excludeAllDebuffs.Equals(true)) ? true : false;
         bool includeThisBuff = (buff.categoryType.Equals(BuffCategoryType.Beneficial.ToString()) && panelConfig.includeAllBuffs.Equals(true)) ? true : false;
-        bool includThisDebuff = (buff.categoryType.Equals(BuffCategoryType.Harmful.ToString() ) && panelConfig.includeAllDebuffs.Equals(true)) ? true : false;
+        bool includThisDebuff = (buff.categoryType.Equals(BuffCategoryType.Harmful.ToString()) && panelConfig.includeAllDebuffs.Equals(true)) ? true : false;
 
         // Process the excludes first, we want to keep the panel as clear as possible
         if (excludeThisBuff.Equals(true))
@@ -553,7 +552,7 @@ public class FlexiPanel : MonoBehaviour
             // Preprend the text to the target information
             targetMessage = $"{split[1]} {targetMessage}";
         }
-        
+
         __instance.SendChatMessage(targetMessage, ChatChannelType.Group);
     }
 }

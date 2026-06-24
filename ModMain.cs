@@ -196,7 +196,7 @@ namespace FlexiPanelMod
                     entityData.buffData.Add(buffData);
                     // Update the buff list and uptimes
                     EntityManager.AddEntityToUniqueDebuffs(activeBuff.Target?.NetworkId.ToString(), buffData.buffName);
-                    EntityManager.AddConsolidatedUptime(activeBuff.Target.NetworkId.ToString(), buffData);                    
+                    EntityManager.AddConsolidatedUptime(activeBuff.Target.NetworkId.ToString(), buffData);
                 }
             }
         }
@@ -223,7 +223,7 @@ namespace FlexiPanelMod
             // Currently a bug in ILC2PP, handle it here and default if we exception
             try
             {
-                
+
                 newDebuff.spellType = activeBuff.CreatedByAbility.SpellType.ToString();
             }
             catch

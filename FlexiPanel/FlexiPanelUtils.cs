@@ -36,7 +36,7 @@ public static class FlexiPanelUtils
                 interBarOffset = 0.032f;
                 break;
             case 35:
-                interBarOffset = 0.028f; 
+                interBarOffset = 0.028f;
                 heightOffset = 1f - 0.04f;
                 break;
         }
