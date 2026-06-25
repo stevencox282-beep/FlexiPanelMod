@@ -11,7 +11,7 @@ The following new commands have been added:
 /fphide - Hides all configured panels
 /fpreload - Reloads the configuration
 /fptarget prepend-text - Takes one optional argument prepend-text which will appear before the Target information. 
-  E.G  /fptarget Pulling - Will displaying "Pulling Goblin Rockthrower(Lv.10), Rogue, Humanoid, Iron-Willed"
+  E.G  /fptarget Pulling - Will display "Pulling Goblin Rockthrower(Lv.10), Rogue, Humanoid, Iron-Willed"
 
 ## Maximum Number Of Panels Vs Performance
 The mod sets no upper limit on the number of panels.

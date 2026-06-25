@@ -13,10 +13,10 @@ public static class FlexiPanelBuilder
     private static UITutorialPopup tutorialPopup = new UITutorialPopup();
 
     // Base names of the transforms we are going to create
-    private static string baseTargetName = "FBDP_TargetName_FBDP_";
-    private static string baseTextName = "FBDP_TextName_FBDP_";
-    private static string baseTimeTextName = "FBDP_TimeTextName_FBDP_";
-    private static string baseImageName = "FBDP_ImageName_FBDP_";
+    private static string baseTargetName = "FP_TargetName_FP_";
+    private static string baseTextName = "FP_TextName_FP_";
+    private static string baseTimeTextName = "FP_TimeTextName_FP_";
+    private static string baseImageName = "FP_ImageName_FP_";
 
     // Constructs the close button and set the background
     public static void BuildCloseButtonAndBackground(Transform parentPanel, GameObject gameObject, UIWindowPanel uiWindowPanel, PanelConfig panelConfig)
@@ -24,7 +24,7 @@ public static class FlexiPanelBuilder
         // Source for copying button and backgrounds            
         Transform tutorialButton = tutorialPopup.transform.GetChild(0);
 
-        // Initialise the background for the new panel (MANDATORY)
+        // Initialise the background for the new panel
         Image imageToCopy = tutorialPopup.GetComponent<Image>();
         var image = gameObject.AddComponent<Image>();
         image.type = Image.Type.Sliced;

@@ -11,7 +11,7 @@ namespace FlexiPanelMod;
 public class FlexiPanel : MonoBehaviour
 {
     // Base names of the transforms we are going to create for panels
-    private static string basePanelName = "FBDP_DebuffPanel_FBDP_";
+    private static string basePanelName = "FP_Panel_FP_";
 
     // Setup lists that will hold all our transforms
     Dictionary<string, List<Transform>> targetNameTextMeshDictionary = new Dictionary<string, List<Transform>>();
@@ -75,7 +75,7 @@ public class FlexiPanel : MonoBehaviour
             {
                 if (uiWindowPanelList[i].gameObject != null)
                 {
-                    // WARNING.  This removes UITotorialPopup from Mid.  Make sure you have a copy somewhere or stuff breaks
+                    // WARNING.  This removes UITutorialPopup from Mid.  Make sure you have a copy somewhere or stuff breaks
                     Destroy(uiWindowPanelList[i].gameObject);
                 }
             }
@@ -178,9 +178,6 @@ public class FlexiPanel : MonoBehaviour
     // Clears the text displayed in the Panel
     public void ClearPanelsDisplay()
     {
-        // This is a terrible way to handle change of character but I can't find a better way, there might be a Hook to use but I can't find one
-        // Using Player Network Start causes crashes as it fires before the UI is ready to render the panel, UICompass or similar Hooks dont fire on change of character
-
         // Try and stop unwanted access to the panel to prevent exceptions
         if (uiWindowPanelList.Count > 0)
         {
