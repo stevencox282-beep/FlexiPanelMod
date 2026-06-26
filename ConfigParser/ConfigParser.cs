@@ -31,15 +31,15 @@ public class ConfigParser()
             // Current Panel
             XmlNode panel = panelList[panelIndex];
             XmlAttributeCollection panelAttributes = panel.Attributes;
-            panelConfig.panelID = panelAttributes["ID"].Value; // This is mandatory if it is not provided exception and force everything to stop
-            panelConfig.panelTitle = panelAttributes["Title"].Value; // This is mandatory if it is not provided exception and force everything to stop
-            panelConfig.targetOrTitle = panelAttributes["TargetOrTitle"].Value; // This is mandatory if it is not provided exception and force everything to stop
+            panelConfig.panelID = $"{panelIndex}";
+            panelConfig.panelTitle = (panelAttributes["Title"] != null) ? panelAttributes["Title"].Value : Globals.DefaultPanelTitle;
+            panelConfig.targetOrTitle = (panelAttributes["TargetOrTitle"] != null) ? panelAttributes["TargetOrTitle"].Value.ToLowerSafe() : Globals.PanelDisplaysTitle;
             panelConfig.excludeAllBuffs = (panelAttributes["ExcludeAllBuffs"] != null) ? bool.Parse(panelAttributes["ExcludeAllBuffs"].Value) : false;
             panelConfig.excludeAllDebuffs = (panelAttributes["ExcludeAllDebuffs"] != null) ? bool.Parse(panelAttributes["ExcludeAllDebuffs"].Value) : false;
             panelConfig.includeAllBuffs = (panelAttributes["IncludeAllBuffs"] != null) ? bool.Parse(panelAttributes["IncludeAllBuffs"].Value) : false;
             panelConfig.includeAllDebuffs = (panelAttributes["IncludeAllDebuffs"] != null) ? bool.Parse(panelAttributes["IncludeAllDebuffs"].Value) : false;
-            panelConfig.rowsToDisplay = (panelAttributes["RowsToDisplay"] != null) ? FlexiPanelUtils.SanitiseNumRows(Int32.Parse(panelAttributes["RowsToDisplay"].Value)) : 10;
-            panelConfig.panelOpacity = (panelAttributes["PanelOpacity"] != null) ? (float.Parse(panelAttributes["PanelOpacity"].Value) / 100) : 1.0f;
+            panelConfig.rowsToDisplay = (panelAttributes["RowsToDisplay"] != null) ? FlexiPanelUtils.SanitiseNumRows(Int32.Parse(panelAttributes["RowsToDisplay"].Value)) : Globals.DefaultNumRows;
+            panelConfig.panelOpacity = (panelAttributes["PanelOpacity"] != null) ? (float.Parse(panelAttributes["PanelOpacity"].Value) / 100) : Globals.DefaultPanelOpacity;
             panelConfig.panelWidth = (panelAttributes["PanelWidthPx"] != null) ? (Int32.Parse(panelAttributes["PanelWidthPx"].Value)) : Globals.DefaultPanelWidthPx;
             panelConfig.rowNameWidth = panelConfig.panelWidth - Globals.UptimeMinimumWidthPx;
 
@@ -62,7 +62,7 @@ public class ConfigParser()
                 // Store in PanelConfig
                 RowConfig rowConfig = new RowConfig();
                 rowConfig.displayText = (rowAttributes["Name"] != null) ? rowAttributes["Name"].Value.ToUpperSafe() : string.Empty;
-                rowConfig.color = (rowAttributes["Color"] != null) ? rowAttributes["Color"].Value : "orange";
+                rowConfig.color = (rowAttributes["Color"] != null) ? rowAttributes["Color"].Value : Globals.DefaultRowColor.ToString();
                 rowConfig.include = (rowAttributes["Include"] != null) ? rowAttributes["Include"].Value : string.Empty;
                 panelConfig.rowConfig.Add(rowConfig);
             }

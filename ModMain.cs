@@ -151,15 +151,15 @@ namespace FlexiPanelMod
         // Adds a new buff or refreshes a buff
         public static void OnAddOrRefreshBuff(double time, ActiveBuff activeBuff, bool inBackground, bool isRefresh, bool isItemBuff)
         {
+            // Check everything major for null values, sometimes they appear and I dont know why
+            if (activeBuff.Target == null || activeBuff.Caster == null)
+            {
+                return;
+            }
+
             // Make sure we track only valid entities
             if (IsValidTarget(activeBuff))
             {
-                // Check everything major for null values, sometimes they appear and I dont know why
-                if (activeBuff.BuffData == null || activeBuff.Target == null || activeBuff.Target.Nameplate == null || activeBuff.Caster == null || activeBuff.Caster.Nameplate == null)
-                {
-                    return;
-                }
-
                 // Default to player data
                 EntityData entityData = EntityManager.GetEntityData(Globals.PartyBuffs);
                 EntityData enemyEntityData = new EntityData();
@@ -195,7 +195,7 @@ namespace FlexiPanelMod
                     CreateNewBuff(entityData, activeBuff, ref buffData);
                     entityData.buffData.Add(buffData);
                     // Update the buff list and uptimes
-                    EntityManager.AddEntityToUniqueDebuffs(activeBuff.Target?.NetworkId.ToString(), buffData.buffName);
+                    EntityManager.AddEntityToUniqueDebuffs(activeBuff.Target.NetworkId.ToString(), buffData.buffName);
                     EntityManager.AddConsolidatedUptime(activeBuff.Target.NetworkId.ToString(), buffData);
                 }
             }
@@ -223,7 +223,6 @@ namespace FlexiPanelMod
             // Currently a bug in ILC2PP, handle it here and default if we exception
             try
             {
-
                 newDebuff.spellType = activeBuff.CreatedByAbility.SpellType.ToString();
             }
             catch
@@ -306,6 +305,13 @@ namespace FlexiPanelMod
         // Removes a specific buff from an entity buff list
         public static void RemoveBuff(double time, ActiveBuff activeBuff)
         {
+            // Some times these are null and it is unclear why so always check
+            if (activeBuff.Target == null || activeBuff.Caster == null)
+            {
+                return;
+            }
+
+            MelonLogger.Warning($"activeBuff = {activeBuff.BuffData.DisplayName} activeBuff.Caster.Info.DisplayName = {activeBuff.Caster.Info.DisplayName} activeBuff.Target.Info.DisplayName = {activeBuff.Target.Info.DisplayName}");
             // Get the list for the current player
             EntityData enemyEntityData = (currentTargetNetworkId.IsEmpty()) ? new EntityData() : EntityManager.GetEntityData(currentTargetNetworkId);
             EntityData partyEntityData = EntityManager.GetEntityData(Globals.PartyBuffs);
@@ -315,8 +321,8 @@ namespace FlexiPanelMod
                 BuffData buffData = partyEntityData.buffData[i];
                 // If we are the correct buff and its the correct target and caster
                 if (buffData.buffName.Equals(activeBuff.BuffData.DisplayName) &&
-                    buffData.targetNetworkId.ToString().Equals(activeBuff.Target.NetworkId.ToString()) &&
-                    buffData.casterNetworkId.ToString().Equals(activeBuff.Caster.NetworkId.ToString()))
+                    buffData.targetNetworkId.ToString().Equals(activeBuff.Target?.NetworkId.ToString()) &&
+                    buffData.casterNetworkId.ToString().Equals(activeBuff.Caster?.NetworkId.ToString()))
                 {
                     buffData.buffDurationRemaining = 0;
                     buffData.numStacks = activeBuff.StackCount;

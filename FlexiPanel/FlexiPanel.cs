@@ -24,7 +24,7 @@ public class FlexiPanel : MonoBehaviour
     // Holds the XML panel configuration
     private static Dictionary<string, PanelConfig> panelConfigDictionary = new Dictionary<string, PanelConfig>();
     // Used to hold the current target information
-    private static string targetMessage = "";
+    private static string targetMessage = string.Empty;
 
     // Tidy up the alloated resources when we logout / change the panel configuration
     public void ClearTransformDictionaries()
@@ -362,7 +362,7 @@ public class FlexiPanel : MonoBehaviour
         {
             return false;
         }
-        else if (includeCriteria.ToUpperSafe().Equals("[ME]"))
+        else if (includeCriteria.ToUpperSafe().Equals(Globals.IncludeMe))
         {
             // If this is for the local player
             if ((targetNetworkId.Equals(Globals.PlayerNetworkId) || casterNetworkId.Equals(Globals.PlayerNetworkId)))
@@ -387,7 +387,7 @@ public class FlexiPanel : MonoBehaviour
             }
             return inList;
         }
-        else if (includeCriteria.ToUpperSafe().Contains("[PARTY]"))
+        else if (includeCriteria.ToUpperSafe().Contains(Globals.IncludeParty))
         {
             if (targetNetworkId.Equals(Globals.PlayerNetworkId) || casterNetworkId.Equals(Globals.PlayerNetworkId) || Globals.GroupMemberNetworkIds.Contains(targetNetworkId) || Globals.GroupMemberNetworkIds.Contains(casterNetworkId))
             {
@@ -433,7 +433,7 @@ public class FlexiPanel : MonoBehaviour
     private string GetTargetTransformText(PanelConfig panelConfig, EntityData entityData, string enemeyLevel)
     {
         // Display the panel title if the user has selected that, otherwise display a suitable target name
-        if (panelConfig.targetOrTitle.Equals("title"))
+        if (panelConfig.targetOrTitle.Equals(Globals.PanelDisplaysTitle))
         {
             return $" {panelConfig.panelTitle}";
         }
@@ -543,13 +543,14 @@ public class FlexiPanel : MonoBehaviour
     public void ShowTargetMessage(EntityClientMessaging.Logic __instance, string message)
     {
         string[] split = message.Split();
+        string displayMessage = string.Empty;
         // If we have an argument
         if (split.Length > 1)
         {
             // Preprend the text to the target information
-            targetMessage = $"{split[1]} {targetMessage}";
+            displayMessage = $"{split[1]} {targetMessage}";
         }
 
-        __instance.SendChatMessage(targetMessage, ChatChannelType.Group);
+        __instance.SendChatMessage(displayMessage, ChatChannelType.Group);
     }
 }

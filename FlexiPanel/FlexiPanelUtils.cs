@@ -142,7 +142,7 @@ public static class FlexiPanelUtils
                 returnColor = Color.blueViolet;
                 break;
             default:
-                returnColor = Color.darkOrange;
+                returnColor = Globals.DefaultRowColor;
                 break;
         }
 

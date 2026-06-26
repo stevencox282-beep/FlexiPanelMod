@@ -18,6 +18,8 @@ public static class Globals
     public static bool ShowPanels = true; // Controls wether or not the panels will be displayed
     public static int DefaultPanelWidthPx = 300; // x-axis default width in pixels
     public static int MinimumRowWidthPx = 200; // Minimum row width in pixels
+    public static int DefaultNumRows = 10; // Default number of rows to display in a panel
+    public static float DefaultPanelOpacity = 1.0f; // Default Opacity for a panel is fully opaque
     public static int UptimeMinimumWidthPx = 75; // Number of pixel required to display the uptime part
     public static int NameMeshHeightPx = 12; // Name Testmesh height in pixels
     public static float RowLeftMargin = 0.05f; // Margin for every row in a panel
@@ -26,6 +28,13 @@ public static class Globals
     public static int TimeMeshWidthPx = 75;  // Time TextMesh size in pixels
     public static int FontSize = 10; // Font size for the text inside the TextMeshes
     public static int VerticalSpacingPx = 6; // Number of pixels to add create enough height for a row to be separate from the one above and below
+    public static UnityEngine.Color DefaultRowColor = UnityEngine.Color.darkOrange;
+
+    // XML parameters
+    public static string DefaultPanelTitle = "No Title Set"; // The default title name
+    public static string PanelDisplaysTitle = "title"; // Used to determine if the panel will display a title or the target information
+    public static string IncludeMe = "[ME]"; // Used to indicate this row only applies to the local player
+    public static string IncludeParty = "[PARTY]"; // Used to indicate this row applies to the party and the local player
 }
 
 // Holds the data for each entity

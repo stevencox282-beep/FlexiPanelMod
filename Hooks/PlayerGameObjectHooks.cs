@@ -1,6 +1,5 @@
 using HarmonyLib;
 using Il2Cpp;
-using MelonLoader;
 
 namespace FlexiPanelMod.Hooks;
 
@@ -26,7 +25,7 @@ public class PlayerNetworkStart
                 // We add an entity that will contain all party buffs/debuffs
                 EntityManager.AddEntityIfMissing(Globals.PartyBuffs);
             }
-            
+
             Globals.PlayerIsLoaded = true;
             return;
         }
