@@ -171,8 +171,8 @@ public class FlexiPanel : MonoBehaviour
         timeTextMeshDictionary.Add(panelConfig.panelID, FlexiPanelBuilder.BuildTimeTextMeshs(rectTransform, panelConfig));
     }
 
-    // Clears the text displayed in the Panel
-    public void ClearPanelsDisplay()
+    // Clears the Panels
+    private void ClearPanelsDisplay()
     {
         // Try and stop unwanted access to the panel to prevent exceptions
         if (uiWindowPanelList.Count > 0)
@@ -221,6 +221,8 @@ public class FlexiPanel : MonoBehaviour
         // If we have any panels and they are set to be displayed
         if (uiWindowPanelList.Count > 0 && Globals.UpdatePanels.Equals(true))
         {
+            // Clear out the display before we update it
+            ClearPanelsDisplay();
             // Merge the data into a single object to ease its parsing
             EntityData entityData = MergeEntityData(enemyEntityData, partyEntityData);
 

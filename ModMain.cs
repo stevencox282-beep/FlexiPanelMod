@@ -71,7 +71,6 @@ namespace FlexiPanelMod
                     // Call the entitiy manager and get it to update the uptime timers
                     EntityManager.UpdateEncounterUpTime();
                     // Update panels
-                    gFlexiPanels.ClearPanelsDisplay();
                     gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist);
                 }
             }
@@ -281,8 +280,7 @@ namespace FlexiPanelMod
             CreateTargetBaseMessage(enemyEntityData);
 
             EntityData partyEntityData = EntityManager.GetEntityData(Globals.PartyBuffs);
-            // Reset the panel, we must do this to clear the window when somebody switches to a new target
-            gFlexiPanels.ClearPanelsDisplay();
+            // Update the panel display
             gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist);
 
             // Store this for use in OnUpdate()
