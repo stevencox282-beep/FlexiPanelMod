@@ -13,9 +13,10 @@ public static class Globals
     public static List<string> GroupMemberNetworkIds = new List<string>(); // List of all group members (does not include LocalPlayer)
     public static List<string> GroupMemberNames = new List<string>(); // List of all group members (does not include LocalPlayer)
     public static string PartyBuffs = "Party Buffs"; // Used to create an EntityData that holds buff/debuff information for the party and local player
+    public static string FPTtargetCommand = "/fptarget";
 
     // Panel/TextMeshs
-    public static bool ShowPanels = true; // Controls wether or not the panels will be displayed
+    public static bool UpdatePanels = true; // Controls wether or not the panels will be updated
     public static int DefaultPanelWidthPx = 300; // x-axis default width in pixels
     public static int MinimumRowWidthPx = 200; // Minimum row width in pixels
     public static int DefaultNumRows = 10; // Default number of rows to display in a panel

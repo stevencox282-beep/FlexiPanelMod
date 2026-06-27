@@ -48,13 +48,9 @@ public class FlexiPanel : MonoBehaviour
     // Shows all configured panels
     public void ShowFlexiPanels()
     {
-        // Display the panel if the gloabl is set to allow it
-        if (Globals.ShowPanels.Equals(true))
+        foreach (var uiWindowPanel in uiWindowPanelList)
         {
-            foreach (var uiWindowPanel in uiWindowPanelList)
-            {
-                uiWindowPanel.Show();
-            }
+            uiWindowPanel.Show();
         }
     }
 
@@ -222,12 +218,12 @@ public class FlexiPanel : MonoBehaviour
     // Update the data displayed in the Panels
     public void UpdatePanelsDisplay(EntityData enemyEntityData, EntityData partyEntityData, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist)
     {
-        // Merge the data into a single object to ease its parsing
-        EntityData entityData = MergeEntityData(enemyEntityData, partyEntityData);
-
-        // If we have any panels
-        if (uiWindowPanelList.Count > 0)
+        // If we have any panels and they are set to be displayed
+        if (uiWindowPanelList.Count > 0 && Globals.UpdatePanels.Equals(true))
         {
+            // Merge the data into a single object to ease its parsing
+            EntityData entityData = MergeEntityData(enemyEntityData, partyEntityData);
+
             // We must now search every panel and find if that panel is tracking this buff and if it is follow its row rules
             foreach (UIWindowPanel uiWindowPanel in uiWindowPanelList)
             {
@@ -544,13 +540,18 @@ public class FlexiPanel : MonoBehaviour
     {
         string[] split = message.Split();
         string displayMessage = string.Empty;
-        // If we have an argument
-        if (split.Length > 1)
-        {
-            // Preprend the text to the target information
-            displayMessage = $"{split[1]} {targetMessage}";
-        }
-
-        __instance.SendChatMessage(displayMessage, ChatChannelType.Group);
+      
+        // Preprend the text to the target information
+       for (int i = 1; i < split.Length; i++)
+       {
+            // Prevent recurseive calls to this function
+            if (split[i].Contains(Globals.FPTtargetCommand))
+            {
+                continue;
+            }
+           displayMessage = $"{displayMessage} {split[i]}";
+       }
+        displayMessage = (displayMessage.IsEmpty() ) ? targetMessage : $"{displayMessage} {targetMessage}";
+        __instance.SendChatMessage(displayMessage, ChatChannelType.PlayerSay);
     }
 }

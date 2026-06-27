@@ -15,16 +15,17 @@ public class SendChatMessageHook
             if (message.Equals("/fpshow"))
             {
                 // Shows all configured panels
+                Globals.UpdatePanels = false;
                 ModMain.ClearTransformDictionaries();
                 ModMain.InitialiseFlexiPanels();
-                Globals.ShowPanels = true;
+                Globals.UpdatePanels = true;
                 return false;
             }
 
             if (message.Equals("/fphide"))
             {
                 // Hide all configured panels
-                Globals.ShowPanels = false;
+                Globals.UpdatePanels = false;
                 ModMain.HideFlexiPanels();
                 return false;
             }
@@ -32,14 +33,16 @@ public class SendChatMessageHook
             // Reload the current panel configuration
             if (message.Equals($"/fpreload"))
             {
+                Globals.UpdatePanels = false;
                 ModMain.ClearTransformDictionaries();
                 ModMain.ReadPanelConfig();
                 ModMain.InitialiseFlexiPanels();
+                Globals.UpdatePanels = true;
                 return false;
             }
 
             // Shows the current target information in Group chat
-            if (message.Contains("/fptarget"))
+            if (message.Contains(Globals.FPTtargetCommand))
             {
                 ModMain.ShowTargetMessage(__instance, message);
                 return false;

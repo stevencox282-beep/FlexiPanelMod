@@ -117,11 +117,7 @@ namespace FlexiPanelMod
         // Sshow all panels
         public static void ShowFlexiPanels()
         {
-            // Display the panel if the gloabl is set to allow it
-            if (Globals.ShowPanels.Equals(true))
-            {
-                gFlexiPanels.ShowFlexiPanels();
-            }
+            gFlexiPanels.ShowFlexiPanels();
         }
 
         // Hide all panels
@@ -311,7 +307,7 @@ namespace FlexiPanelMod
                 return;
             }
 
-            MelonLogger.Warning($"activeBuff = {activeBuff.BuffData.DisplayName} activeBuff.Caster.Info.DisplayName = {activeBuff.Caster.Info.DisplayName} activeBuff.Target.Info.DisplayName = {activeBuff.Target.Info.DisplayName}");
+            MelonLogger.Warning($"RemoveBuff() activeBuff = {activeBuff.BuffData.DisplayName} activeBuff.Caster.Info.DisplayName = {activeBuff.Caster.Info.DisplayName} activeBuff.Target.Info.DisplayName = {activeBuff.Target.Info.DisplayName}");
             // Get the list for the current player
             EntityData enemyEntityData = (currentTargetNetworkId.IsEmpty()) ? new EntityData() : EntityManager.GetEntityData(currentTargetNetworkId);
             EntityData partyEntityData = EntityManager.GetEntityData(Globals.PartyBuffs);
@@ -321,8 +317,8 @@ namespace FlexiPanelMod
                 BuffData buffData = partyEntityData.buffData[i];
                 // If we are the correct buff and its the correct target and caster
                 if (buffData.buffName.Equals(activeBuff.BuffData.DisplayName) &&
-                    buffData.targetNetworkId.ToString().Equals(activeBuff.Target?.NetworkId.ToString()) &&
-                    buffData.casterNetworkId.ToString().Equals(activeBuff.Caster?.NetworkId.ToString()))
+                    buffData.targetNetworkId.ToString().Equals(activeBuff.Target.NetworkId.ToString()) &&
+                    buffData.casterNetworkId.ToString().Equals(activeBuff.Caster.NetworkId.ToString()))
                 {
                     buffData.buffDurationRemaining = 0;
                     buffData.numStacks = activeBuff.StackCount;
