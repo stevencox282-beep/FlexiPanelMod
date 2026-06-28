@@ -13,5 +13,6 @@ public class UICompassHooks
         // Do not block this on PlayerIsLoaded, it will exception if you do as OnUpdate() gets called before the panel is made and kaboom
         FlexiPanelBuilder.PreserveRequiredTransforms();
         ModMain.InitialiseFlexiPanels();
+        Globals.UpdatePanels = true;
     }
 }

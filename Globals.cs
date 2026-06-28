@@ -16,7 +16,7 @@ public static class Globals
     public static string FPTtargetCommand = "/fptarget";
 
     // Panel/TextMeshs
-    public static bool UpdatePanels = true; // Controls wether or not the panels will be updated
+    public static bool UpdatePanels = false; // Controls wether or not the panels will be updated
     public static int DefaultPanelWidthPx = 300; // x-axis default width in pixels
     public static int MinimumRowWidthPx = 200; // Minimum row width in pixels
     public static int DefaultNumRows = 10; // Default number of rows to display in a panel

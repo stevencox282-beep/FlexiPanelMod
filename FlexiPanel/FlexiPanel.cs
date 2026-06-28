@@ -554,6 +554,6 @@ public class FlexiPanel : MonoBehaviour
            displayMessage = $"{displayMessage} {split[i]}";
        }
         displayMessage = (displayMessage.IsEmpty() ) ? targetMessage : $"{displayMessage} {targetMessage}";
-        __instance.SendChatMessage(displayMessage, ChatChannelType.PlayerSay);
+        __instance.SendChatMessage(displayMessage, ChatChannelType.Group);
     }
 }
