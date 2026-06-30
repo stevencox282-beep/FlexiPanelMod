@@ -23,6 +23,9 @@ You can provide a Name for a Panel by setting TargetOrTitle to "title" and then 
 Alternatly you can set TargetOrTitle to "target" and it will display the improved target information next to that panel instead.
 You can not have both on a single panel.
 
+## What Is In Each Row
+
+
 ## Config File And Location
 The configuration file needed for this mod is FlexiPanelConfig.xml.  It MUST be placed in the <GamePath>/UserData/ directory.
 The filename AND its contents are CASE-SENSITIVE and there is almost no error handling code written in the mod, be extra careful when changing things
@@ -43,6 +46,10 @@ Configured buffs/debuffs names (and only names) are not case sensitive.
 Configured buffs/debuffs are selected if a buff CONTAINS the configured buff/debuff name.
   If you create a row with the Name "Mantle" it will include all tiers of Mantle (assuming all Tiers actually have Mantle in the name)
   If you create a row with the Name "Rip" (Bleed debuff) it will also include "Grip Of Stone" (Shaman Buff) as Grip contains Rip and Name is not case-sensitive.
+
+All rows in all Panels will adhere to following the formattings:
+  Buff Name      (Target Name)    Time Remaining(s)    (Buff)
+  Debuff Name    (Target Name)    Time Remaining(s)    Uptime(%)
 
 ### ExcludeAllBuffs / ExcludeAllDeBuffs Overrides
 These two Panel properties exist to help keep panels small and specific.  Use these to set the general parameters for your Panel.
