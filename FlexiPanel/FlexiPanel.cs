@@ -561,6 +561,6 @@ public class FlexiPanel : MonoBehaviour
            displayMessage = $"{displayMessage} {split[i]}";
        }
         displayMessage = (displayMessage.IsEmpty() ) ? targetMessage : $"{displayMessage} {targetMessage}";
-        __instance.SendChatMessage(displayMessage, ChatChannelType.Whisper);
+        __instance.SendChatMessage(displayMessage, ChatChannelType.Group);
     }
 }
