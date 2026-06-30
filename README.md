@@ -57,10 +57,10 @@ When IncludeAllDebuffs is set to true the blacklist IncludeAllDebuffsBlackList i
 ExcludeAllBuffs/ExcludeAllDebuffs properties are dominant over IncludeAllBuffs/IncludeAllDebuffs.
 
 ### Row Color And Color Availability
-You can define the color a row will for any row that is NOT included in a Panel that have IncludeAllBuffs or IncludeAllDebuffs set to true.
-You can set the color by specifying the color you want in the Color property.  E.G. Color="green"
+You can define the color a row.  E.G. Color="green"
+You can NOT set the color of a row in a Panel has either IncludeAllBuffs or IncludeAllDebuffs set to true, instead SpellType will be used to determine the color.
 There is no support for RGBA color configuration.
-All available colors are defined by Unity. You can find the full Unity colour list for Unity (correct at time of writing) available at [Unity Color List](https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Color.html).
+All available colors are defined by Unity. You can find the full colour list for Unity (correct at time of writing) available at [Unity Color List](https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Color.html).
 If the user provides a color that Unity does not support it will default to dark orange.
 
 ### Panel Opacity
@@ -72,7 +72,7 @@ This information is displayed in any panel with TargetOrTitle set to "target" an
 
 ## Known Limitations
 Panels are not dynamically resizable
-Buff/Debuff data is removed on change of zone
+Buff/Debuff data is removed on change of zone (information of buff loss on change of zone is not available so I assume they are all lost)
 The screen updates only once per second so there can be a small delay between target information / buffs changing and panels being updated
 For debuffs that can only be applied once to an entity E.G. "Corrosive Brew" all casts of this debuff will still show up in the panel even if it has been over-written
 Some buffs can not be tracked such as "Exhausted" and ALL Stances such as Rogues "Shadow Walk" or DireLords "Nightmarish"
