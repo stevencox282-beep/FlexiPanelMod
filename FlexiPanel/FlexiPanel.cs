@@ -2,6 +2,7 @@
 using Il2CppPantheonPersist;
 using Il2CppServiceStack;
 using Il2CppTMPro;
+using MelonLoader;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -370,23 +371,6 @@ public class FlexiPanel : MonoBehaviour
                 return true;
             }
         }
-        else if (includeCriteria.ToUpperSafe().Contains(","))  // If this is not a player specifically added to track, we filter it out
-        {
-            bool inList = false;
-            // Split the comma separated list into names
-            string[] playerNameArray = includeCriteria.Split(',');
-            // for every player in the list of player names provided in the config file
-            for (int fi = 0; fi < playerNameArray.Length; fi++)
-            {
-                // Only display this row if the caster or the target for this buff is in the list, or you are the person who cast this buff (so healers can track their own buffs on specific players)
-                if (targetName.Equals(playerNameArray[fi].Trim()))
-                {
-                    inList = true;
-                    break;
-                }
-            }
-            return inList;
-        }
         else if (includeCriteria.ToUpperSafe().Contains(Globals.IncludeParty))
         {
             if (targetNetworkId.Equals(Globals.PlayerNetworkId) || casterNetworkId.Equals(Globals.PlayerNetworkId) || Globals.GroupMemberNetworkIds.Contains(targetNetworkId) || Globals.GroupMemberNetworkIds.Contains(casterNetworkId))
@@ -394,7 +378,21 @@ public class FlexiPanel : MonoBehaviour
                 return true;
             }
         }
-
+        else if (!includeCriteria.Contains('[') && !includeCriteria.Contains(']') && !includeCriteria.IsEmpty())  // If this is not [ME] or [PARTY] or empty
+        {
+            // Split the comma separated list into names
+            string[] playerNameArray = includeCriteria.Split(',');
+            // for every player in the list of player names provided in the config file
+            for (int fi = 0; fi < playerNameArray.Length; fi++)
+            {
+                // Only display this row if the caster or the target for this buff is in the list, or you are the person who cast this buff (so healers can track their own buffs on specific players)
+                if (targetName.ToUpperSafe().Equals(playerNameArray[fi].Trim().ToUpperSafe()))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
         // Default to not display
         return false;
     }

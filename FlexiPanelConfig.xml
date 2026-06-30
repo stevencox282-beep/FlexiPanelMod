@@ -9,7 +9,7 @@
 			<Row Name="Thorncoat"                    Color="purple"            Include="[Party]"/>
 			<Row Name="Divine Favor"                 Color="lavender"          Include="[Party]"/>
 			<Row Name="Spinning Splinters"           Color="darkBlue"          Include="[Party]"/>
-			<Row Name="Shining Barrier"              Color="red"               Include="playername1,playername2"/>
+			<Row Name="Shining Barrier"              Color="red"               Include="playername1"/>
 		</Rows>
 	</Panel>
 	<Panel Title="Debuffs" TargetOrTitle="title" PanelOpacity="70" RowsToDisplay="10" PanelWidthPx="300" ExcludeAllBuffs="true" ExcludeAllDebuffs="false" IncludeAllBuffs="false" IncludeAllDebuffs="false">
@@ -22,17 +22,17 @@
 			<Row Name="Synthetic Toxin"              Color="crimson"           Include="[Party]"/>
 			<Row Name="Smoke Trick"                  Color="gray"              Include="[Party]"/>
 			<Row Name="Mezmerize"                    Color="mediumPurple"      Include="[Party]"/>
-			<Row Name="Rip"                          Color="red"               Include="playername1,playername2"/>
+			<Row Name="Rip"                          Color="red"               Include="playername2,playername3"/>
 		</Rows>
 	</Panel>
 	<Panel Title="AllBuffs" TargetOrTitle="title" PanelOpacity="70" RowsToDisplay="20" PanelWidthPx="300" ExcludeAllBuffs="false" ExcludeAllDebuffs="true" IncludeAllBuffs="true" IncludeAllDebuffs="false">
 		<Rows>
-			<Row Name="AllBuffsMandatoryRow"               Color="blue"     Include="[Party]"/>
+			<Row Name="AllBuffsMandatoryRow"         Color="blue"              Include="[Party]"/>
 		</Rows>
 	</Panel>
 	<Panel Title="AllDebuffs" TargetOrTitle="title" PanelOpacity="70" RowsToDisplay="20" PanelWidthPx="300" ExcludeAllBuffs="true" ExcludeAllDebuffs="false" IncludeAllBuffs="false" IncludeAllDebuffs="true">
 		<Rows>
-			<Row Name="AllDebuffsMandatoryRow"               Color="blue"     Include="[Party]"/>
+			<Row Name="AllDebuffsMandatoryRow"       Color="blue"              Include="[Party]"/>
 		</Rows>
 	</Panel>
 
@@ -44,9 +44,9 @@
 		<Entry Name="Mark Of The Fireclaw"/>
 		<Entry Name="Grip Of Stone"/>
 		<Entry Name="Wind Strider"/>
-		<Entry Name="Agewalker's Gift"/>
+		<Entry Name="Agewalkers Gift"/>
 		<Entry Name="Ancestral Companion"/>
-		<Entry Name="Natures Shroud"/>
+		<Entry Name="Nature Shroud"/>
 		<Entry Name="Spirit Of The "/>
 		<Entry Name="Treeform"/>
 		<Entry Name="Swiftgills Finn"/>
