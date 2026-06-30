@@ -1,8 +1,8 @@
 # FlexiPanelMod
 This Mod is for Pantheon: Rise of the Fallen. It provides buff and debuff information about players and the enemy you currently have targetted.
-1) Display Buff/Debuff/Both information in a panel
-2) Allowss you to track this information for yourslef, your party or specific player names 
-4) Access to additional enemy target information accessible via the /commands listed below
+1) Displays Buff/Debuff information in a number of panels
+2) Allows you to track this information for your own character, your party or specific player names
+4) Access to additional enemy target information accessible via new /commands
 5) You can create any number of panels you wish, change their height and width (with restrictions) and change the Panels opacity
 6) Allows for change of configuration without restarting the game
 
@@ -11,7 +11,7 @@ The following new commands have been added:
 /fphide - Hides all configured panels
 /fpreload - Reloads the configuration
 /fptarget prepend-text - Takes one optional argument prepend-text which will appear before the Target information. 
-  E.G  /fptarget Pulling - Will display "Pulling Goblin Rockthrower(Lv.10), Rogue, Humanoid, Iron-Willed"
+  E.G  /fptarget Pulling - Will display "Pulling Goblin Rockthrower(Lv.10), Rogue, Humanoid, Iron-Willed" in the GROUP chat and ONLY in the GROUP chat
 
 ## Maximum Number Of Panels Vs Performance
 The mod sets no upper limit on the number of panels.
@@ -67,7 +67,8 @@ If the user provides a color that Unity does not support it will default to dark
 You can change how opaque each panel is by setting the panels PanelOpacity attribute in the configuration.  100 = fully opaque, 0 = fully transparent
 
 ### Confiuguring the improved target information
-The <TargetInfo> node in the config file can be used to configure what is displayed in the improved target string
+The <TargetInfo> node in the config file can be used to configure what is displayed in the improved target string.
+This information is displayed in any panel with TargetOrTitle set to "target" and by use of the /fptarget command which sends it ONLY to Group chat.
 
 ## Known Limitations
 Panels are not dynamically resizable
