@@ -1,13 +1,14 @@
 ﻿using Il2CppServiceStack;
 using MelonLoader;
 using System.Xml;
+using static Il2CppServiceStack.NetStandardPclExport;
 
 namespace FlexiPanelMod;
 
 public class ConfigParser()
 {
     // Parses the Panel configuration from the XML file and uses it to setup the panels
-    public void ParseConfig(Dictionary<string, PanelConfig> panelConfigDictionary, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist)
+    public void ParseConfig(Dictionary<string, PanelConfig> panelConfigDictionary, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist, FPTargetCmd fpTargetCmd)
     {
         // Ensure the panel config store and the blacklist is clear 
         panelConfigDictionary.Clear();
@@ -22,6 +23,7 @@ public class ConfigParser()
         XmlNodeList panelList = xmlDoc.GetElementsByTagName("Panel");
         XmlNodeList allBuffBlacklist = xmlDoc.GetElementsByTagName("IncludeAllBuffsBlackList");
         XmlNodeList allDebuffBlacklist = xmlDoc.GetElementsByTagName("IncludeAllDebuffsBlackList");
+        XmlNodeList fpTargetCmdList = xmlDoc.GetElementsByTagName("FPTargetCmd");
 
         // Process all Panels
         for (int panelIndex = 0; panelIndex < panelList.Count; panelIndex++)
@@ -81,6 +83,18 @@ public class ConfigParser()
                     throw;
                 }
             }
+        }
+
+        // Process the FPTarget Command params
+        if (fpTargetCmdList.Count.Equals(1))
+        {
+            XmlNode fpTargetList = fpTargetCmdList[0];
+            XmlAttributeCollection fpTargetAttributess = fpTargetList.Attributes;
+
+            fpTargetCmd.showClass = (fpTargetAttributess["ShowClass"] != null) ? bool.Parse(fpTargetAttributess["ShowClass"].Value) : false;
+            fpTargetCmd.showKind = (fpTargetAttributess["ShowKind"] != null) ? bool.Parse(fpTargetAttributess["ShowKind"].Value) : false;
+            fpTargetCmd.showLevel = (fpTargetAttributess["ShowLevel"] != null) ? bool.Parse(fpTargetAttributess["ShowLevel"].Value) : false;
+            fpTargetCmd.showTraits = (fpTargetAttributess["ShowTraits"] != null) ? bool.Parse(fpTargetAttributess["ShowTraits"].Value) : false;
         }
 
         // Process IncludeAllBuff blacklist information if available

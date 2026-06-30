@@ -110,3 +110,11 @@ public class RowConfig()
     public string color; // Colour of the bar
     public string include; // Include who we track this buff/debuff for.  Valid includes are:  [Me]/[Party]/David,Sharon,Peter
 };
+
+public class FPTargetCmd()
+{
+    public bool showKind = false;
+    public bool showClass = false;
+    public bool showLevel = false;
+    public bool showTraits = false;
+}

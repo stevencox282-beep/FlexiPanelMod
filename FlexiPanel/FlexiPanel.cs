@@ -69,7 +69,9 @@ public class FlexiPanel : MonoBehaviour
         {
             if (uiWindowPanelList[i])
             {
-                if (uiWindowPanelList[i].gameObject != null)
+                // Do not use != null here, destroyed object in Unity are not null, their internal stuctures are nulled out until garabage collection occurs which 
+                // requires all references of the object to go out of scope
+                if (uiWindowPanelList[i].gameObject)
                 {
                     // WARNING.  This removes UITutorialPopup from Mid.  Make sure you have a copy somewhere or stuff breaks
                     Destroy(uiWindowPanelList[i].gameObject);
@@ -216,7 +218,7 @@ public class FlexiPanel : MonoBehaviour
     }
 
     // Update the data displayed in the Panels
-    public void UpdatePanelsDisplay(EntityData enemyEntityData, EntityData partyEntityData, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist)
+    public void UpdatePanelsDisplay(EntityData enemyEntityData, EntityData partyEntityData, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist, FPTargetCmd fpTargetCmd)
     {
         // If we have any panels and they are set to be displayed
         if (uiWindowPanelList.Count > 0 && Globals.UpdatePanels.Equals(true))
@@ -240,7 +242,7 @@ public class FlexiPanel : MonoBehaviour
                 // Update the target / panel title
                 foreach (Transform targetTransform in targetTransformList)
                 {
-                    targetTransform.GetComponent<TextMeshProUGUI>().text = GetTargetTransformText(panelConfig, entityData, enemyEntityData.entityLevel.ToString());
+                    targetTransform.GetComponent<TextMeshProUGUI>().text = GetTargetTransformText(panelConfig, entityData, enemyEntityData.entityLevel.ToString(), fpTargetCmd);
                 }
 
                 // Tracks the row in the panel that is the next to use
@@ -428,8 +430,13 @@ public class FlexiPanel : MonoBehaviour
     }
 
     // Get the string that will be in the panel title / target text
-    private string GetTargetTransformText(PanelConfig panelConfig, EntityData entityData, string enemeyLevel)
+    private string GetTargetTransformText(PanelConfig panelConfig, EntityData entityData, string enemeyLevel, FPTargetCmd fpTargetCmd)
     {
+        string targetLevel = (fpTargetCmd.showLevel.Equals(true) ? $"(Lv.{ enemeyLevel})" : "");
+        string targetClass = (fpTargetCmd.showClass.Equals(true) ? $", {entityData.targetClass}" : "");
+        string targetKind = (fpTargetCmd.showKind.Equals(true) ? $", {entityData.targetKind}" : "");
+        string targetTraits = (fpTargetCmd.showTraits.Equals(true) ? $", {entityData.traits}" : "");
+
         // Display the panel title if the user has selected that, otherwise display a suitable target name
         if (panelConfig.targetOrTitle.Equals(Globals.PanelDisplaysTitle))
         {
@@ -441,11 +448,11 @@ public class FlexiPanel : MonoBehaviour
         }
         else if (entityData.traits.IsEmpty())
         {
-            return $"  <b>Target:</b> {entityData.targetName.ToUpperSafe()}(Lv.{enemeyLevel}), {entityData.targetClass}, {entityData.targetKind}";
+            return $"  <b>Target:</b> {entityData.targetName.ToUpperSafe()}{targetLevel}{targetClass}{targetKind}";
         }
         else
         {
-            return $"  <b>Target:</b> {entityData.targetName.ToUpperSafe()}(Lv.{enemeyLevel}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
+            return $"  <b>Target:</b> {entityData.targetName.ToUpperSafe()}{targetLevel}{targetClass}{targetKind}{targetTraits}";
         }
     }
 
@@ -554,6 +561,6 @@ public class FlexiPanel : MonoBehaviour
            displayMessage = $"{displayMessage} {split[i]}";
        }
         displayMessage = (displayMessage.IsEmpty() ) ? targetMessage : $"{displayMessage} {targetMessage}";
-        __instance.SendChatMessage(displayMessage, ChatChannelType.Group);
+        __instance.SendChatMessage(displayMessage, ChatChannelType.Whisper);
     }
 }

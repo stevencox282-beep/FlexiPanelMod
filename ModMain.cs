@@ -20,6 +20,7 @@ namespace FlexiPanelMod
         private static ConfigParser configParser = new ConfigParser(); // Parses the mods configuration
         private static List<string> includeAllBuffsBlacklist = new List<string>(); // Holds the blacklist for IncludeAllBuffs
         private static List<string> includeAllDebuffsBlacklist = new List<string>(); // Holds the blacklist for IncludeAllDebuffs
+        private static FPTargetCmd fpTargetCmd = new FPTargetCmd();
 
         // Performed before character selection
         public override void OnInitializeMelon()
@@ -71,7 +72,7 @@ namespace FlexiPanelMod
                     // Call the entitiy manager and get it to update the uptime timers
                     EntityManager.UpdateEncounterUpTime();
                     // Update panels
-                    gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist);
+                    gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist, fpTargetCmd);
                 }
             }
         }
@@ -82,7 +83,7 @@ namespace FlexiPanelMod
             Dictionary<string, PanelConfig> panelConfigDictionary = new Dictionary<string, PanelConfig>(); // All panels
             try
             {
-                configParser.ParseConfig(panelConfigDictionary, includeAllBuffsBlacklist, includeAllDebuffsBlacklist);
+                configParser.ParseConfig(panelConfigDictionary, includeAllBuffsBlacklist, includeAllDebuffsBlacklist, fpTargetCmd);
             }
             catch (Exception e)
             {
@@ -146,7 +147,7 @@ namespace FlexiPanelMod
         // Adds a new buff or refreshes a buff
         public static void OnAddOrRefreshBuff(double time, ActiveBuff activeBuff, bool inBackground, bool isRefresh, bool isItemBuff)
         {
-            // Check everything major for null values, sometimes they appear and I dont know why
+            // Check for null values, sometimes these are just missing from the provided data, suspect a bug somewhere in the game code
             if (activeBuff.Target == null || activeBuff.Caster == null)
             {
                 return;
@@ -281,7 +282,7 @@ namespace FlexiPanelMod
 
             EntityData partyEntityData = EntityManager.GetEntityData(Globals.PartyBuffs);
             // Update the panel display
-            gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist);
+            gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist, fpTargetCmd);
 
             // Store this for use in OnUpdate()
             currentTargetNetworkId = targetLogic.Offensive.NetworkId.ToString();
@@ -299,13 +300,13 @@ namespace FlexiPanelMod
         // Removes a specific buff from an entity buff list
         public static void RemoveBuff(double time, ActiveBuff activeBuff)
         {
-            // Some times these are null and it is unclear why so always check
-            if (activeBuff.Target == null || activeBuff.Caster == null)
+            // Check for null values, sometimes these are just missing from the provided data, suspect a bug somewhere in the game code
+            if (activeBuff == null || activeBuff.Target == null || activeBuff.Caster == null || activeBuff.BuffData == null)
             {
                 return;
             }
 
-            MelonLogger.Warning($"RemoveBuff() activeBuff = {activeBuff.BuffData.DisplayName} activeBuff.Caster.Info.DisplayName = {activeBuff.Caster.Info.DisplayName} activeBuff.Target.Info.DisplayName = {activeBuff.Target.Info.DisplayName}");
+            //MelonLogger.Warning($"RemoveBuff() activeBuff = {activeBuff.BuffData.DisplayName} activeBuff.Caster.Info.DisplayName = {activeBuff.Caster.Info.DisplayName} activeBuff.Target.Info.DisplayName = {activeBuff.Target.Info.DisplayName}");
             // Get the list for the current player
             EntityData enemyEntityData = (currentTargetNetworkId.IsEmpty()) ? new EntityData() : EntityManager.GetEntityData(currentTargetNetworkId);
             EntityData partyEntityData = EntityManager.GetEntityData(Globals.PartyBuffs);
