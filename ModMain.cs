@@ -20,7 +20,7 @@ namespace FlexiPanelMod
         private static ConfigParser configParser = new ConfigParser(); // Parses the mods configuration
         private static List<string> includeAllBuffsBlacklist = new List<string>(); // Holds the blacklist for IncludeAllBuffs
         private static List<string> includeAllDebuffsBlacklist = new List<string>(); // Holds the blacklist for IncludeAllDebuffs
-        private static FPTargetCmd fpTargetCmd = new FPTargetCmd();
+        private static TargetInfoConfig targetInfoConfig = new TargetInfoConfig(); // Hold the configuration for the improved target information
 
         // Performed before character selection
         public override void OnInitializeMelon()
@@ -72,7 +72,7 @@ namespace FlexiPanelMod
                     // Call the entitiy manager and get it to update the uptime timers
                     EntityManager.UpdateEncounterUpTime();
                     // Update panels
-                    gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist, fpTargetCmd);
+                    gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist, targetInfoConfig);
                 }
             }
         }
@@ -83,7 +83,7 @@ namespace FlexiPanelMod
             Dictionary<string, PanelConfig> panelConfigDictionary = new Dictionary<string, PanelConfig>(); // All panels
             try
             {
-                configParser.ParseConfig(panelConfigDictionary, includeAllBuffsBlacklist, includeAllDebuffsBlacklist, fpTargetCmd);
+                configParser.ParseConfig(panelConfigDictionary, includeAllBuffsBlacklist, includeAllDebuffsBlacklist, targetInfoConfig);
             }
             catch (Exception e)
             {
@@ -282,7 +282,7 @@ namespace FlexiPanelMod
 
             EntityData partyEntityData = EntityManager.GetEntityData(Globals.PartyBuffs);
             // Update the panel display
-            gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist, fpTargetCmd);
+            gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist, targetInfoConfig);
 
             // Store this for use in OnUpdate()
             currentTargetNetworkId = targetLogic.Offensive.NetworkId.ToString();

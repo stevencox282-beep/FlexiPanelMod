@@ -8,7 +8,7 @@ namespace FlexiPanelMod;
 public class ConfigParser()
 {
     // Parses the Panel configuration from the XML file and uses it to setup the panels
-    public void ParseConfig(Dictionary<string, PanelConfig> panelConfigDictionary, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist, FPTargetCmd fpTargetCmd)
+    public void ParseConfig(Dictionary<string, PanelConfig> panelConfigDictionary, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist, TargetInfoConfig targetInfoConfig)
     {
         // Ensure the panel config store and the blacklist is clear 
         panelConfigDictionary.Clear();
@@ -23,7 +23,7 @@ public class ConfigParser()
         XmlNodeList panelList = xmlDoc.GetElementsByTagName("Panel");
         XmlNodeList allBuffBlacklist = xmlDoc.GetElementsByTagName("IncludeAllBuffsBlackList");
         XmlNodeList allDebuffBlacklist = xmlDoc.GetElementsByTagName("IncludeAllDebuffsBlackList");
-        XmlNodeList fpTargetCmdList = xmlDoc.GetElementsByTagName("FPTargetCmd");
+        XmlNodeList targetInfoConfigList = xmlDoc.GetElementsByTagName("TargetInfoConfig");
 
         // Process all Panels
         for (int panelIndex = 0; panelIndex < panelList.Count; panelIndex++)
@@ -85,16 +85,15 @@ public class ConfigParser()
             }
         }
 
-        // Process the FPTarget Command params
-        if (fpTargetCmdList.Count.Equals(1))
+        // Process the Target Info params
+        if (targetInfoConfigList.Count.Equals(1))
         {
-            XmlNode fpTargetList = fpTargetCmdList[0];
-            XmlAttributeCollection fpTargetAttributess = fpTargetList.Attributes;
+            XmlAttributeCollection targetInfoConfigAttributess = targetInfoConfigList[0].Attributes;
 
-            fpTargetCmd.showClass = (fpTargetAttributess["ShowClass"] != null) ? bool.Parse(fpTargetAttributess["ShowClass"].Value) : false;
-            fpTargetCmd.showKind = (fpTargetAttributess["ShowKind"] != null) ? bool.Parse(fpTargetAttributess["ShowKind"].Value) : false;
-            fpTargetCmd.showLevel = (fpTargetAttributess["ShowLevel"] != null) ? bool.Parse(fpTargetAttributess["ShowLevel"].Value) : false;
-            fpTargetCmd.showTraits = (fpTargetAttributess["ShowTraits"] != null) ? bool.Parse(fpTargetAttributess["ShowTraits"].Value) : false;
+            targetInfoConfig.showClass = (targetInfoConfigAttributess["ShowClass"] != null) ? bool.Parse(targetInfoConfigAttributess["ShowClass"].Value) : false;
+            targetInfoConfig.showKind = (targetInfoConfigAttributess["ShowKind"] != null) ? bool.Parse(targetInfoConfigAttributess["ShowKind"].Value) : false;
+            targetInfoConfig.showLevel = (targetInfoConfigAttributess["ShowLevel"] != null) ? bool.Parse(targetInfoConfigAttributess["ShowLevel"].Value) : false;
+            targetInfoConfig.showTraits = (targetInfoConfigAttributess["ShowTraits"] != null) ? bool.Parse(targetInfoConfigAttributess["ShowTraits"].Value) : false;
         }
 
         // Process IncludeAllBuff blacklist information if available

@@ -20,7 +20,7 @@ All panels MUST finish all of their work in less than one second to ensure the t
 
 ## Panel Titles
 You can provide a Name for a Panel by setting TargetOrTitle to "title" and then setting Title appropriatly.
-Alternatly you can set TargetOrTitle to "target"  and it will display the improved target information next to that panel instead.
+Alternatly you can set TargetOrTitle to "target" and it will display the improved target information next to that panel instead.
 You can not have both on a single panel.
 
 ## Config File And Location
@@ -29,8 +29,8 @@ The filename AND its contents are CASE-SENSITIVE and there is almost no error ha
 
 ### Resizing Panels And Restrictions
 You can resize each panels' number of rows to display by setting the property RowsToDisplay in valid combinations of: 5,10,15,20,25,30,35.
-All other numbers provided will be rounded down to the nearest valiud value or defaulted to ten.
-You can change the width of the panels (in pixels) by setting the property PanelWidthPx.  Very few limits or checks are placed on this value.
+All other numbers provided will be rounded down to the nearest valid value or defaulted to ten.
+You can change the width of the panels (in pixels) by setting the property PanelWidthPx.
 
 ### How Buffs/Debuffs are displayed
 The order of rows in the config file for a panel is the order they are displayed in that panel on the screen.
@@ -65,6 +65,9 @@ If the user provides a color that Unity does not support it will default to dark
 
 ### Panel Opacity
 You can change how opaque each panel is by setting the panels PanelOpacity attribute in the configuration.  100 = fully opaque, 0 = fully transparent
+
+### Confiuguring the improved target information
+The <TargetInfo> node in the config file can be used to configure what is displayed in the improved target string
 
 ## Known Limitations
 Panels are not dynamically resizable

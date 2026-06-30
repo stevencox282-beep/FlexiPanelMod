@@ -355,6 +355,5 @@ public static class EntityManager
         {
             MelonLogger.Error($"OnNpcRemoved() Entry {entityNpcGameObject.NetworkId.ToString()} does not exist");
         }
-
     }
 }

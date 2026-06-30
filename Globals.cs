@@ -111,7 +111,8 @@ public class RowConfig()
     public string include; // Include who we track this buff/debuff for.  Valid includes are:  [Me]/[Party]/David,Sharon,Peter
 };
 
-public class FPTargetCmd()
+// Holds configuration information for the improved target information
+public class TargetInfoConfig()
 {
     public bool showKind = false;
     public bool showClass = false;

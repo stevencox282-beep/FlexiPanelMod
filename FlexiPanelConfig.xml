@@ -36,8 +36,8 @@
 		</Rows>
 	</Panel>
 
-	<!-- Configure what is displayed in the /wwfptarget commmand-->
-	<FPTargetCmd ShowKind="true" ShowClass="true" ShowLevel="true" ShowTraits="true"/>
+	<!-- Configure what is displayed in the improved target information -->
+	<TargetInfoConfig ShowKind="false" ShowClass="true" ShowLevel="true" ShowTraits="true"/>
 	
 	<!-- Prevent the IncludeAllBuffs Panel from being flooded with common buffs -->
 	<IncludeAllBuffsBlackList>
