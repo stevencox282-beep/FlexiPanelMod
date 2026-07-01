@@ -243,7 +243,7 @@ public class FlexiPanel : MonoBehaviour
                 // Update the target / panel title
                 foreach (Transform targetTransform in targetTransformList)
                 {
-                    targetTransform.GetComponent<TextMeshProUGUI>().text = GetTargetTransformText(panelConfig, entityData, enemyEntityData.entityLevel.ToString(), targetInfoConfig);
+                    targetTransform.GetComponent<TextMeshProUGUI>().text = (panelConfig.targetOrTitle.Equals(Globals.PanelDisplaysTitle)) ? $" {panelConfig.panelTitle}" : targetMessage ;
                 }
 
                 // Tracks the row in the panel that is the next to use
@@ -421,36 +421,26 @@ public class FlexiPanel : MonoBehaviour
         image.fillAmount = ((1 / buff.buffDuration) * buff.buffDurationRemaining);
     }
 
-    // Sets the target information based on the currently selected target
-    public void SetTargetInformation(string baseMessage)
-    {
-        targetMessage = baseMessage;
-    }
-
     // Get the string that will be in the panel title / target text
-    private string GetTargetTransformText(PanelConfig panelConfig, EntityData entityData, string enemeyLevel, TargetInfoConfig targetInfoConfig)
+    public void SetTargetMessage(EntityData entityData, TargetInfoConfig targetInfoConfig)
     {
-        string targetLevel = (targetInfoConfig.showLevel.Equals(true) ? $"(Lv.{ enemeyLevel})" : "");
+        string targetLevel = (targetInfoConfig.showLevel.Equals(true) ? $"(Lv.{entityData.entityLevel.ToString()})" : "");
         string targetClass = (targetInfoConfig.showClass.Equals(true) ? $", {entityData.targetClass}" : "");
         string targetKind = (targetInfoConfig.showKind.Equals(true) ? $", {entityData.targetKind}" : "");
         string targetTraits = (targetInfoConfig.showTraits.Equals(true) ? $", {entityData.traits}" : "");
 
-        // Display the panel title if the user has selected that, otherwise display a suitable target name
-        if (panelConfig.targetOrTitle.Equals(Globals.PanelDisplaysTitle))
+        // Display a suitable target name
+        if (entityData.targetName.Equals(Globals.PartyBuffs))
         {
-            return $" {panelConfig.panelTitle}";
-        }
-        else if (entityData.targetName.Equals(Globals.PartyBuffs))
-        {
-            return $"  <b>Target:</b> None";
+            targetMessage = $"  Target: None";
         }
         else if (entityData.traits.IsEmpty())
         {
-            return $"  <b>Target:</b> {entityData.targetName.ToUpperSafe()}{targetLevel}{targetClass}{targetKind}";
+            targetMessage = $"  Target: {entityData.targetName.ToUpperSafe()}{targetLevel}{targetClass}{targetKind}";
         }
         else
         {
-            return $"  <b>Target:</b> {entityData.targetName.ToUpperSafe()}{targetLevel}{targetClass}{targetKind}{targetTraits}";
+            targetMessage = $"  Target: {entityData.targetName.ToUpperSafe()}{targetLevel}{targetClass}{targetKind}{targetTraits}";
         }
     }
 

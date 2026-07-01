@@ -278,7 +278,8 @@ namespace FlexiPanelMod
             }
 
             // Establish the target string
-            CreateTargetBaseMessage(enemyEntityData);
+            gFlexiPanels.SetTargetMessage(enemyEntityData, targetInfoConfig);
+
 
             EntityData partyEntityData = EntityManager.GetEntityData(Globals.PartyBuffs);
             // Update the panel display
@@ -286,15 +287,6 @@ namespace FlexiPanelMod
 
             // Store this for use in OnUpdate()
             currentTargetNetworkId = targetLogic.Offensive.NetworkId.ToString();
-        }
-
-        // For the current target, create the new base target message
-        private static void CreateTargetBaseMessage(EntityData entityData)
-        {
-            string baseMessage = (entityData.traits.IsEmpty()) ?
-                $"{entityData.targetName.ToTitleCase()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}" :
-                $"{entityData.targetName.ToTitleCase()}(Lv.{entityData.entityLevel}), {entityData.targetClass}, {entityData.targetKind}, {entityData.traits}";
-            gFlexiPanels.SetTargetInformation(baseMessage);
         }
 
         // Removes a specific buff from an entity buff list
