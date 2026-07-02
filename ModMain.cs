@@ -254,6 +254,7 @@ namespace FlexiPanelMod
             {
                 // Either the user has pressed ESC so they are targetting nothing or something has gone wrong somewhere
                 currentTargetNetworkId = string.Empty;
+                gFlexiPanels.ClearTargetMessage();
                 return;
             }
 

@@ -25,7 +25,7 @@ public class FlexiPanel : MonoBehaviour
     // Holds the XML panel configuration
     private static Dictionary<string, PanelConfig> panelConfigDictionary = new Dictionary<string, PanelConfig>();
     // Used to hold the current target information
-    private static string targetMessage = string.Empty;
+    private static string targetMessage = $"  Target: None";
 
     // Tidy up the alloated resources when we logout / change the panel configuration
     public void ClearTransformDictionaries()
@@ -419,6 +419,12 @@ public class FlexiPanel : MonoBehaviour
 
         // Set the fill amount 1.0f is full, 0.0f is empty
         image.fillAmount = ((1 / buff.buffDuration) * buff.buffDurationRemaining);
+    }
+
+    // Clears the Target message
+    public void ClearTargetMessage()
+    {
+        targetMessage = $"  Target: None";
     }
 
     // Get the string that will be in the panel title / target text
