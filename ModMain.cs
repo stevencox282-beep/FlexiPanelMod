@@ -13,7 +13,7 @@ namespace FlexiPanelMod
     public class ModMain : MelonMod
     {
         // UI Elements
-        private static FlexiPanel gFlexiPanels = new FlexiPanel();
+        private static FlexiPanel flexiPanels = new FlexiPanel();
         private static string currentTargetNetworkId = string.Empty; // Only update in offensive target select and only use in OnUpdate
         private const float UpdateInterval = 1.0f; // Update interval in seconds
         private static float _timeSinceLastUpdate;
@@ -72,7 +72,7 @@ namespace FlexiPanelMod
                     // Call the entitiy manager and get it to update the uptime timers
                     EntityManager.UpdateEncounterUpTime();
                     // Update panels
-                    gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist, targetInfoConfig);
+                    flexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist, targetInfoConfig);
                 }
             }
         }
@@ -91,7 +91,7 @@ namespace FlexiPanelMod
                 throw;
             }
             // Parse out the config to populate the panels and rows
-            gFlexiPanels.SetPanelConfig(panelConfigDictionary);
+            flexiPanels.SetPanelConfig(panelConfigDictionary);
 
         }
 
@@ -99,31 +99,31 @@ namespace FlexiPanelMod
         public static void PreserveRequiredTransforms()
         {
             // This is a nasty hack but is required because I am too dumb to get resizing panels working
-            gFlexiPanels.PreserveRequiredTransforms();
+            flexiPanels.PreserveRequiredTransforms();
         }
 
         // Ttear down all the resources allocated by the panel
         public static void ClearTransformDictionaries()
         {
-            gFlexiPanels.ClearTransformDictionaries();
+            flexiPanels.ClearTransformDictionaries();
         }
 
         // Create panels
         public static void InitialiseFlexiPanels()
         {
-            gFlexiPanels.InitialiseFlexiPanels();
+            flexiPanels.InitialiseFlexiPanels();
         }
 
         // Sshow all panels
         public static void ShowFlexiPanels()
         {
-            gFlexiPanels.ShowFlexiPanels();
+            flexiPanels.ShowFlexiPanels();
         }
 
         // Hide all panels
         public static void HideFlexiPanels()
         {
-            gFlexiPanels.HideFlexiPanels();
+            flexiPanels.HideFlexiPanels();
         }
 
         // Determines if the target for a buff is valid for us to track
@@ -254,7 +254,7 @@ namespace FlexiPanelMod
             {
                 // Either the user has pressed ESC so they are targetting nothing or something has gone wrong somewhere
                 currentTargetNetworkId = string.Empty;
-                gFlexiPanels.ClearTargetMessage();
+                flexiPanels.ClearTargetMessage();
                 return;
             }
 
@@ -272,19 +272,18 @@ namespace FlexiPanelMod
                 enemyEntityData = EntityManager.GetEntityData(targetLogic.Offensive.NetworkId.ToString());
             }
 
-            // Return if entity is dead
+            // Return if entity is dead but do no erase the name, I want this name to stay until you select a new mob or de-select the mob, even if it despawns which is not triggered here
             if (enemyEntityData.isDead.Equals(true))
             {
                 return;
             }
 
             // Establish the target string
-            gFlexiPanels.SetTargetMessage(enemyEntityData, targetInfoConfig);
-
+            flexiPanels.SetTargetMessage(enemyEntityData, targetInfoConfig);
 
             EntityData partyEntityData = EntityManager.GetEntityData(Globals.PartyBuffs);
             // Update the panel display
-            gFlexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist, targetInfoConfig);
+            flexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist, targetInfoConfig);
 
             // Store this for use in OnUpdate()
             currentTargetNetworkId = targetLogic.Offensive.NetworkId.ToString();
@@ -321,7 +320,7 @@ namespace FlexiPanelMod
         // Show curent target message
         public static void ShowTargetMessage(EntityClientMessaging.Logic __instance, string message)
         {
-            gFlexiPanels.ShowTargetMessage(__instance, message);
+            flexiPanels.ShowTargetMessage(__instance, message);
         }
     }
 }

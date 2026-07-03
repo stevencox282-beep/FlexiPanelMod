@@ -23,9 +23,6 @@ You can provide a Name for a Panel by setting TargetOrTitle to "title" and then 
 Alternatly you can set TargetOrTitle to "target" and it will display the improved target information next to that panel instead.
 You can not have both on a single panel.
 
-## What Is In Each Row
-
-
 ## Config File And Location
 The configuration file needed for this mod is FlexiPanelConfig.xml.  It MUST be placed in the <GamePath>/UserData/ directory.
 The filename AND its contents are CASE-SENSITIVE and there is almost no error handling code written in the mod, be extra careful when changing things
