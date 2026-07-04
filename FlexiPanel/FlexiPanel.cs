@@ -1,8 +1,6 @@
 ﻿using Il2Cpp;
-using Il2CppPantheonPersist;
 using Il2CppServiceStack;
 using Il2CppTMPro;
-using MelonLoader;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,8 +22,6 @@ public class FlexiPanel : MonoBehaviour
     private static List<UIWindowPanel> uiWindowPanelList = new List<UIWindowPanel>();
     // Holds the XML panel configuration
     private static Dictionary<string, PanelConfig> panelConfigDictionary = new Dictionary<string, PanelConfig>();
-    // Used to hold the current target information
-    private static string targetMessage = $"  Target: None";
 
     // Tidy up the alloated resources when we logout / change the panel configuration
     public void ClearTransformDictionaries()
@@ -219,7 +215,7 @@ public class FlexiPanel : MonoBehaviour
     }
 
     // Update the data displayed in the Panels
-    public void UpdatePanelsDisplay(EntityData enemyEntityData, EntityData partyEntityData, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist, TargetInfoConfig targetInfoConfig)
+    public void UpdatePanelsDisplay(EntityData enemyEntityData, EntityData partyEntityData, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist)
     {
         // If we have any panels and they are set to be displayed
         if (uiWindowPanelList.Count > 0 && Globals.UpdatePanels.Equals(true))
@@ -243,7 +239,7 @@ public class FlexiPanel : MonoBehaviour
                 // Update the target / panel title
                 foreach (Transform targetTransform in targetTransformList)
                 {
-                    targetTransform.GetComponent<TextMeshProUGUI>().text = (panelConfig.targetOrTitle.Equals(Globals.PanelDisplaysTitle)) ? $" {panelConfig.panelTitle}" : targetMessage ;
+                    targetTransform.GetComponent<TextMeshProUGUI>().text = $" {panelConfig.panelTitle}";
                 }
 
                 // Tracks the row in the panel that is the next to use
@@ -421,35 +417,6 @@ public class FlexiPanel : MonoBehaviour
         image.fillAmount = ((1 / buff.buffDuration) * buff.buffDurationRemaining);
     }
 
-    // Clears the Target message
-    public void ClearTargetMessage()
-    {
-        targetMessage = $"  Target: None";
-    }
-
-    // Get the string that will be in the panel title / target text
-    public void SetTargetMessage(EntityData entityData, TargetInfoConfig targetInfoConfig)
-    {
-        string targetLevel = (targetInfoConfig.showLevel.Equals(true) ? $"(Lv.{entityData.entityLevel.ToString()})" : "");
-        string targetClass = (targetInfoConfig.showClass.Equals(true) ? $", {entityData.targetClass}" : "");
-        string targetKind = (targetInfoConfig.showKind.Equals(true) ? $", {entityData.targetKind}" : "");
-        string targetTraits = (targetInfoConfig.showTraits.Equals(true) ? $", {entityData.traits}" : "");
-
-        // Display a suitable target name
-        if (entityData.targetName.Equals(Globals.PartyBuffs))
-        {
-            targetMessage = $"  Target: None";
-        }
-        else if (entityData.traits.IsEmpty())
-        {
-            targetMessage = $"  Target: {entityData.targetName.ToUpperSafe()}{targetLevel}{targetClass}{targetKind}";
-        }
-        else
-        {
-            targetMessage = $"  Target: {entityData.targetName.ToUpperSafe()}{targetLevel}{targetClass}{targetKind}{targetTraits}";
-        }
-    }
-
     // Gets the string that will be in the time part of the row
     private string GetTimeTextMeshsText(BuffData buff)
     {
@@ -536,25 +503,5 @@ public class FlexiPanel : MonoBehaviour
             newDebuffdata.categoryType = buff.categoryType;
             destination.buffData.Add(newDebuffdata);
         }
-    }
-
-    // Add the target information to the Group chat
-    public void ShowTargetMessage(EntityClientMessaging.Logic __instance, string message)
-    {
-        string[] split = message.Split();
-        string displayMessage = string.Empty;
-      
-        // Preprend the text to the target information
-       for (int i = 1; i < split.Length; i++)
-       {
-            // Prevent recurseive calls to this function
-            if (split[i].Contains(Globals.FPTtargetCommand))
-            {
-                continue;
-            }
-           displayMessage = $"{displayMessage} {split[i]}";
-       }
-        displayMessage = (displayMessage.IsEmpty() ) ? targetMessage : $"{displayMessage} {targetMessage}";
-        __instance.SendChatMessage(displayMessage, ChatChannelType.Group);
     }
 }

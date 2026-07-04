@@ -1,14 +1,13 @@
 ﻿using Il2CppServiceStack;
 using MelonLoader;
 using System.Xml;
-using static Il2CppServiceStack.NetStandardPclExport;
 
 namespace FlexiPanelMod;
 
 public class ConfigParser()
 {
     // Parses the Panel configuration from the XML file and uses it to setup the panels
-    public void ParseConfig(Dictionary<string, PanelConfig> panelConfigDictionary, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist, TargetInfoConfig targetInfoConfig)
+    public void ParseConfig(Dictionary<string, PanelConfig> panelConfigDictionary, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist)
     {
         // Ensure the panel config store and the blacklist is clear 
         panelConfigDictionary.Clear();
@@ -83,17 +82,6 @@ public class ConfigParser()
                     throw;
                 }
             }
-        }
-
-        // Process the Target Info params
-        if (targetInfoConfigList.Count.Equals(1))
-        {
-            XmlAttributeCollection targetInfoConfigAttributess = targetInfoConfigList[0].Attributes;
-
-            targetInfoConfig.showClass = (targetInfoConfigAttributess["ShowClass"] != null) ? bool.Parse(targetInfoConfigAttributess["ShowClass"].Value) : false;
-            targetInfoConfig.showKind = (targetInfoConfigAttributess["ShowKind"] != null) ? bool.Parse(targetInfoConfigAttributess["ShowKind"].Value) : false;
-            targetInfoConfig.showLevel = (targetInfoConfigAttributess["ShowLevel"] != null) ? bool.Parse(targetInfoConfigAttributess["ShowLevel"].Value) : false;
-            targetInfoConfig.showTraits = (targetInfoConfigAttributess["ShowTraits"] != null) ? bool.Parse(targetInfoConfigAttributess["ShowTraits"].Value) : false;
         }
 
         // Process IncludeAllBuff blacklist information if available

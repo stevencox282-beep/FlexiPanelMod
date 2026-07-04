@@ -20,7 +20,6 @@ namespace FlexiPanelMod
         private static ConfigParser configParser = new ConfigParser(); // Parses the mods configuration
         private static List<string> includeAllBuffsBlacklist = new List<string>(); // Holds the blacklist for IncludeAllBuffs
         private static List<string> includeAllDebuffsBlacklist = new List<string>(); // Holds the blacklist for IncludeAllDebuffs
-        private static TargetInfoConfig targetInfoConfig = new TargetInfoConfig(); // Hold the configuration for the improved target information
 
         // Performed before character selection
         public override void OnInitializeMelon()
@@ -72,7 +71,7 @@ namespace FlexiPanelMod
                     // Call the entitiy manager and get it to update the uptime timers
                     EntityManager.UpdateEncounterUpTime();
                     // Update panels
-                    flexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist, targetInfoConfig);
+                    flexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist);
                 }
             }
         }
@@ -83,7 +82,7 @@ namespace FlexiPanelMod
             Dictionary<string, PanelConfig> panelConfigDictionary = new Dictionary<string, PanelConfig>(); // All panels
             try
             {
-                configParser.ParseConfig(panelConfigDictionary, includeAllBuffsBlacklist, includeAllDebuffsBlacklist, targetInfoConfig);
+                configParser.ParseConfig(panelConfigDictionary, includeAllBuffsBlacklist, includeAllDebuffsBlacklist);
             }
             catch (Exception e)
             {
@@ -254,7 +253,6 @@ namespace FlexiPanelMod
             {
                 // Either the user has pressed ESC so they are targetting nothing or something has gone wrong somewhere
                 currentTargetNetworkId = string.Empty;
-                flexiPanels.ClearTargetMessage();
                 return;
             }
 
@@ -278,12 +276,9 @@ namespace FlexiPanelMod
                 return;
             }
 
-            // Establish the target string
-            flexiPanels.SetTargetMessage(enemyEntityData, targetInfoConfig);
-
             EntityData partyEntityData = EntityManager.GetEntityData(Globals.PartyBuffs);
             // Update the panel display
-            flexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist, targetInfoConfig);
+            flexiPanels.UpdatePanelsDisplay(enemyEntityData, partyEntityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist);
 
             // Store this for use in OnUpdate()
             currentTargetNetworkId = targetLogic.Offensive.NetworkId.ToString();
@@ -316,11 +311,6 @@ namespace FlexiPanelMod
                     EntityManager.UpdateDurationRemaining();
                 }
             }
-        }
-        // Show curent target message
-        public static void ShowTargetMessage(EntityClientMessaging.Logic __instance, string message)
-        {
-            flexiPanels.ShowTargetMessage(__instance, message);
         }
     }
 }

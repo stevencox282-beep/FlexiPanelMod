@@ -40,13 +40,6 @@ public class SendChatMessageHook
                 Globals.UpdatePanels = true;
                 return false;
             }
-
-            // Shows the current target information in Group chat
-            if (message.Contains(Globals.FPTtargetCommand))
-            {
-                ModMain.ShowTargetMessage(__instance, message);
-                return false;
-            }
         }
         return true;
     }

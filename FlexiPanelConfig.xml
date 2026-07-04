@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Panels>
-	<Panel Title="Buffs" TargetOrTitle="target" PanelOpacity="70" RowsToDisplay="10" PanelWidthPx="300" ExcludeAllBuffs="false" ExcludeAllDebuffs="true" IncludeAllBuffs="false" IncludeAllDebuffs="false" >
+	<Panel Title="Buffs" PanelOpacity="70" RowsToDisplay="10" PanelWidthPx="300" ExcludeAllBuffs="false" ExcludeAllDebuffs="true" IncludeAllBuffs="false" IncludeAllDebuffs="false" >
 		<Rows>
 			<Row Name="Tormenting Phantoms"          Color="burlywood"         Include="[Me]"/>
 			<Row Name="Provoking Phantoms"           Color="darkOliveGreen"    Include="[Me]"/>
@@ -12,7 +12,7 @@
 			<Row Name="Shining Barrier"              Color="red"               Include="playername1"/>
 		</Rows>
 	</Panel>
-	<Panel Title="Debuffs" TargetOrTitle="title" PanelOpacity="70" RowsToDisplay="10" PanelWidthPx="300" ExcludeAllBuffs="true" ExcludeAllDebuffs="false" IncludeAllBuffs="false" IncludeAllDebuffs="false">
+	<Panel Title="Debuffs" PanelOpacity="70" RowsToDisplay="10" PanelWidthPx="300" ExcludeAllBuffs="true" ExcludeAllDebuffs="false" IncludeAllBuffs="false" IncludeAllDebuffs="false">
 		<Rows>
 			<Row Name="Tormenting Phantoms"          Color="burlywood"         Include="[Me]"/>
 			<Row Name="Provoking Phantoms"           Color="darkOliveGreen"    Include="[Me]"/>
@@ -25,20 +25,17 @@
 			<Row Name="Rip"                          Color="red"               Include="playername2,playername3"/>
 		</Rows>
 	</Panel>
-	<Panel Title="AllBuffs" TargetOrTitle="title" PanelOpacity="70" RowsToDisplay="20" PanelWidthPx="300" ExcludeAllBuffs="false" ExcludeAllDebuffs="true" IncludeAllBuffs="true" IncludeAllDebuffs="false">
+	<Panel Title="AllBuffs" PanelOpacity="70" RowsToDisplay="20" PanelWidthPx="300" ExcludeAllBuffs="false" ExcludeAllDebuffs="true" IncludeAllBuffs="true" IncludeAllDebuffs="false">
 		<Rows>
 			<Row Name="AllBuffsMandatoryRow"         Color="blue"              Include="[Party]"/>
 		</Rows>
 	</Panel>
-	<Panel Title="AllDebuffs" TargetOrTitle="title" PanelOpacity="70" RowsToDisplay="20" PanelWidthPx="300" ExcludeAllBuffs="true" ExcludeAllDebuffs="false" IncludeAllBuffs="false" IncludeAllDebuffs="true">
+	<Panel Title="AllDebuffs" PanelOpacity="70" RowsToDisplay="20" PanelWidthPx="300" ExcludeAllBuffs="true" ExcludeAllDebuffs="false" IncludeAllBuffs="false" IncludeAllDebuffs="true">
 		<Rows>
 			<Row Name="AllDebuffsMandatoryRow"       Color="blue"              Include="[Party]"/>
 		</Rows>
 	</Panel>
 
-	<!-- Configure what is displayed in the improved target information -->
-	<TargetInfoConfig ShowKind="false" ShowClass="true" ShowLevel="true" ShowTraits="true"/>
-	
 	<!-- Prevent the IncludeAllBuffs Panel from being flooded with common buffs -->
 	<IncludeAllBuffsBlackList>
 		<Entry Name="Mark Of The Fireclaw"/>

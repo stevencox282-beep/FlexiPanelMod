@@ -2,7 +2,6 @@
 This Mod is for Pantheon: Rise of the Fallen. It provides buff and debuff information about players and the enemy you currently have targetted.
 * Displays Buff/Debuff information in a number of panels
 * Allows you to track this information for your own character, your party or specific player names
-* Access to additional enemy target information accessible via new /commands
 * You can create any number of panels you wish, change their height and width (with restrictions) and change the Panels opacity
 * Allows for change of configuration without restarting the game
 
@@ -10,8 +9,6 @@ The following new commands have been added:
 * /fpshow - Shows all configured panels
 * /fphide - Hides all configured panels
 * /fpreload - Reloads the configuration
-* /fptarget prepend-text - Takes one optional argument prepend-text which will appear before the Target information.  
-  E.G  /fptarget Pulling - Will display "Pulling Goblin Rockthrower(Lv.10), Rogue, Humanoid, Iron-Willed" in the GROUP chat and ONLY in the GROUP chat
 
 ## Maximum Number Of Panels Vs Performance
 * The mod sets no upper limit on the number of panels.
@@ -68,10 +65,6 @@ The following new commands have been added:
 
 ### Panel Opacity
 * You can change how opaque each panel is by setting the panels PanelOpacity attribute in the configuration.  100 = fully opaque, 0 = fully transparent.
-
-### Confiuguring the improved target information
-* The <TargetInfo> node in the config file can be used to configure what is displayed in the improved target string.  
-* This information is displayed in any panel with TargetOrTitle set to "target" and by use of the /fptarget command which sends it ONLY to Group chat.  
 
 ## Known Limitations
 * Panels are not dynamically resizable.  
