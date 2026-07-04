@@ -16,9 +16,7 @@ The following new commands have been added:
 * All panels MUST finish all of their work in less than one second to ensure the times displayed update properly.  
 
 ## Panel Titles
-* You can provide a Name for a Panel by setting TargetOrTitle to "title" and then setting Title appropriatly.  
-* Alternatly you can set TargetOrTitle to "target" and it will display the improved target information next to that panel instead.  
-* You can not have both on a single panel.  
+* You can provide a Name for a Panel by setting TargetOrTitle to "title" and then setting Title appropriatly.
 
 ## Config File And Location
 * The configuration file needed for this mod is FlexiPanelConfig.xml.  It MUST be placed in the <GamePath>/UserData/ directory.  
