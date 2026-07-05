@@ -409,7 +409,7 @@ public class FlexiPanel : MonoBehaviour
             }
             catch
             {
-                image.color = Color.orange;
+                image.color = Globals.DefaultRowColor;
             }
         }
 

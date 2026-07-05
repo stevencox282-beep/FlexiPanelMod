@@ -100,7 +100,7 @@ public static class FlexiPanelUtils
                 returnColor = Color.brown;
                 break;
             case "Enervation":
-                returnColor = Color.green;
+                returnColor = Color.darkOliveGreen;
                 break;
             case "Evocation":
                 returnColor = Color.red;
@@ -130,7 +130,7 @@ public static class FlexiPanelUtils
                 returnColor = Color.steelBlue;
                 break;
             case "TricksOfTheTrade":
-                returnColor = Color.oldLace;
+                returnColor = Color.orange;
                 break;
             case "Trapping":
                 returnColor = Color.azure;
