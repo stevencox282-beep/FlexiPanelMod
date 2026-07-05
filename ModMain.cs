@@ -293,7 +293,6 @@ namespace FlexiPanelMod
                 return;
             }
 
-            //MelonLogger.Warning($"RemoveBuff() activeBuff = {activeBuff.BuffData.DisplayName} activeBuff.Caster.Info.DisplayName = {activeBuff.Caster.Info.DisplayName} activeBuff.Target.Info.DisplayName = {activeBuff.Target.Info.DisplayName}");
             // Get the list for the current player
             EntityData enemyEntityData = (currentTargetNetworkId.IsEmpty()) ? new EntityData() : EntityManager.GetEntityData(currentTargetNetworkId);
             EntityData partyEntityData = EntityManager.GetEntityData(Globals.PartyBuffs);
