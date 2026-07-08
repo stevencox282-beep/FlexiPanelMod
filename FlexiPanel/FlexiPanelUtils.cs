@@ -66,7 +66,7 @@ public static class FlexiPanelUtils
             return 20;
         }
 
-        if (numRows > 20 && numRows < 21)
+        if (numRows > 20 && numRows < 26)
         {
             return 25;
         }
