@@ -1,5 +1,6 @@
 <Project>
   <PropertyGroup>
+	  <!-- <GamePath>C:/Program Files (x86)/Steam/steamapps/common/Pantheon Rise of the Fallen</GamePath> -->
 	  <GamePath>C:\Users\steve\Documents\My Games\PantheonPTR\App</GamePath>
   </PropertyGroup>
 </Project>

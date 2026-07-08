@@ -260,8 +260,7 @@ public class FlexiPanel : MonoBehaviour
                             // If the buff is valid or we have a valid override
                             if (true == IsValidBuff(panelConfig, rowConfig, buff, buffNameUpperCase) || true == HasValidOverride(panelConfig, buff, buffNameUpperCase, includeAllBuffsBlacklist, includeAllDebuffsBlacklist))
                             {
-                                bool includeThisBuff = (buff.categoryType.Equals(BuffCategoryType.Beneficial.ToString()) && panelConfig.includeAllBuffs.Equals(true)) ? true : false;
-                                bool includThisDebuff = (buff.categoryType.Equals(BuffCategoryType.Harmful.ToString()) && panelConfig.includeAllDebuffs.Equals(true)) ? true : false;
+                                bool includeOverride = ((buff.categoryType.Equals(BuffCategoryType.Beneficial.ToString()) && panelConfig.includeAllBuffs.Equals(true))) || ((buff.categoryType.Equals(BuffCategoryType.Harmful.ToString()) && panelConfig.includeAllDebuffs.Equals(true)));
 
                                 // Found a required buff/debuff, update the panel with this data
                                 nameTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $" {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.targetName})";
@@ -270,7 +269,7 @@ public class FlexiPanel : MonoBehaviour
 
                                 // Now update the progress bar color and time
                                 Image image = imageTransformList[panelDisplayIndex].GetComponent<Image>();
-                                UpdateImageDisplay(rowConfig, buff, image, includeThisBuff, includThisDebuff);
+                                UpdateImageDisplay(rowConfig, buff, image, includeOverride);
                                 // Move to the next row in the panel
                                 panelDisplayIndex++;
                             }
@@ -394,9 +393,9 @@ public class FlexiPanel : MonoBehaviour
     }
 
     // Updates the display of a row
-    private void UpdateImageDisplay(RowConfig rowConfig, BuffData buff, Image image, bool includeThisBuff, bool includThisDebuff)
+    private void UpdateImageDisplay(RowConfig rowConfig, BuffData buff, Image image, bool includeOverride)
     {
-        if (includeThisBuff.Equals(true) || includThisDebuff.Equals(true))
+        if (includeOverride.Equals(true))
         {
             image.color = FlexiPanelUtils.getBarColours(buff.spellType);
         }
