@@ -214,27 +214,25 @@ public class FlexiPanel : MonoBehaviour
         }
     }
 
-    // Update the data displayed in the Panels
+    // Updates the data displayed in the various panels
     public void UpdatePanelsDisplay(EntityData enemyEntityData, EntityData partyEntityData, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist)
     {
         // If we have any panels and they are set to be displayed
         if (uiWindowPanelList.Count > 0 && Globals.UpdatePanels.Equals(true))
         {
-            // Clear out the display before we update it
-            ClearPanelsDisplay();
             // Merge the data into a single object to ease its parsing
             EntityData entityData = MergeEntityData(enemyEntityData, partyEntityData);
 
-            // We must now search every panel and find if that panel is tracking this buff and if it is follow its row rules
+            // Clear out the display before we update it
+            ClearPanelsDisplay();
+
+            // Process each Panel
             foreach (UIWindowPanel uiWindowPanel in uiWindowPanelList)
             {
                 // Get the panel details for this window
                 string panelID = uiWindowPanel._displayName;
                 PanelConfig panelConfig = panelConfigDictionary[panelID];
                 List<Transform> targetTransformList = targetNameTextMeshDictionary[panelID];
-                List<Transform> nameTextMeshTransformList = nameTextMeshDictionary[panelID];
-                List<Transform> timeTextMeshTransformList = timeTextMeshDictionary[panelID];
-                List<Transform> imageTransformList = imageDictionary[panelID];
 
                 // Update the target / panel title
                 foreach (Transform targetTransform in targetTransformList)
@@ -242,39 +240,101 @@ public class FlexiPanel : MonoBehaviour
                     targetTransform.GetComponent<TextMeshProUGUI>().text = $" {panelConfig.panelTitle}";
                 }
 
-                // Tracks the row in the panel that is the next to use
-                int panelDisplayIndex = 0;
-                // Parse the list of all viable rows then find a mtach in the buffs list on the current target and update the rows for the panel
-                foreach (RowConfig rowConfig in panelConfig.rowConfig)
+                // Call the correct update function for the different panel types
+                if (panelConfig.includeAllBuffs.Equals(true) || panelConfig.includeAllDebuffs.Equals(true))
                 {
-                    // Search every buff for RowConfig.displayText, but dont display more rows than we allocated in the panel
-                    for (int i = 0; (i < entityData.buffData.Count && panelDisplayIndex < panelConfig.rowsToDisplay); i++)
+                    // These panels include all buffs and/or debuffs by default and remove rows by way of a blacklist
+                    UpdateInclusionaryPanelDisplays(entityData, includeAllBuffsBlacklist, includeAllDebuffsBlacklist, panelConfig);
+                }
+                else
+                {
+                    // These panels exluced all buffs/debuffs by default and add exceptions by way of the RowConfig (a whitelist)
+                    UpdateExclusionaryPanelDisplays(entityData, panelConfig);
+                }
+            }
+        }
+    }
+
+    // Update the data displayed in the Panels that are exlusionary I.E.  They exclude all buffs / debuffs by default
+    public void UpdateExclusionaryPanelDisplays(EntityData entityData, PanelConfig panelConfig)
+    {
+        // Get the panel details for this window
+        string panelID = panelConfig.panelID;
+        List<Transform> nameTextMeshTransformList = nameTextMeshDictionary[panelID];
+        List<Transform> timeTextMeshTransformList = timeTextMeshDictionary[panelID];
+        List<Transform> imageTransformList = imageDictionary[panelID];
+
+        // Tracks the row in the panel that is the next to use
+        int panelDisplayIndex = 0;
+        // Parse the list of all viable rows then find a mtach in the buffs list on the current target and update the rows for the panel
+        foreach (RowConfig rowConfig in panelConfig.rowConfig)
+        {
+            // Search every buff for RowConfig.displayText, but dont display more rows than we allocated in the panel
+            for (int i = 0; (i < entityData.buffData.Count && panelDisplayIndex < panelConfig.rowsToDisplay); i++)
+            {
+                // Get the next buff in the list of all buff
+                BuffData buff = entityData.buffData[i];
+                string buffNameUpperCase = buff.buffName.ToUpperSafe();
+
+                // Check the include criteria
+                if (HandleIncludeCriteria(panelConfig, rowConfig, buff))
+                {
+                    // If the buff is valid
+                    if (IsValidBuff(panelConfig, rowConfig, buff, buffNameUpperCase))
                     {
-                        // Get the next buff in the list of all buff
-                        BuffData buff = entityData.buffData[i];
-                        string buffNameUpperCase = buff.buffName.ToUpperSafe();
+                        // Found a required buff/debuff, update the panel with this data
+                        nameTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $" {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.targetName})";
+                        // Set the time value for the row
+                        timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = GetTimeTextMeshsText(buff);
 
-                        // Check the include criteria
-                        if (HandleIncludeCriteria(panelConfig, rowConfig, buff))
-                        {
-                            // If the buff is valid or we have a valid override
-                            if (true == IsValidBuff(panelConfig, rowConfig, buff, buffNameUpperCase) || true == HasValidOverride(panelConfig, buff, buffNameUpperCase, includeAllBuffsBlacklist, includeAllDebuffsBlacklist))
-                            {
-                                bool includeOverride = ((buff.categoryType.Equals(BuffCategoryType.Beneficial.ToString()) && panelConfig.includeAllBuffs.Equals(true))) || ((buff.categoryType.Equals(BuffCategoryType.Harmful.ToString()) && panelConfig.includeAllDebuffs.Equals(true)));
-
-                                // Found a required buff/debuff, update the panel with this data
-                                nameTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $" {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.targetName})";
-                                // Set the time value for the row
-                                timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = GetTimeTextMeshsText(buff);
-
-                                // Now update the progress bar color and time
-                                Image image = imageTransformList[panelDisplayIndex].GetComponent<Image>();
-                                UpdateImageDisplay(rowConfig, buff, image, includeOverride);
-                                // Move to the next row in the panel
-                                panelDisplayIndex++;
-                            }
-                        }
+                        // Now update the progress bar color and time
+                        Image image = imageTransformList[panelDisplayIndex].GetComponent<Image>();
+                        UpdateImageDisplay(rowConfig, buff, image, false);
+                        // Move to the next row in the panel
+                        panelDisplayIndex++;
                     }
+                }
+            }
+        }
+    }
+
+    // Update the data displayed in the Panels that are inclusionary I.E. they include all buffs / debuffs by default
+    public void UpdateInclusionaryPanelDisplays(EntityData entityData, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist, PanelConfig panelConfig)
+    {
+        string panelID = panelConfig.panelID;
+        List<Transform> nameTextMeshTransformList = nameTextMeshDictionary[panelID];
+        List<Transform> timeTextMeshTransformList = timeTextMeshDictionary[panelID];
+        List<Transform> imageTransformList = imageDictionary[panelID];
+
+        // Tracks the row in the panel that is the next to use
+        int panelDisplayIndex = 0;
+
+        // Only use the first Row no matter how many Rows are provided
+        RowConfig rowConfig = panelConfig.rowConfig.ElementAt(0);
+
+        // Process every buff/debuff that is not in the blacklist, dont display more rows than we allocated in the panel
+        for (int i = 0; (i < entityData.buffData.Count && panelDisplayIndex < panelConfig.rowsToDisplay); i++)
+        {
+            // Get the next buff in the list of all buff
+            BuffData buff = entityData.buffData[i];
+            string buffNameUpperCase = buff.buffName.ToUpperSafe();
+
+            // Check the include criteria
+            if (HandleIncludeCriteria(panelConfig, rowConfig, buff))
+            {
+                // If the buff is valid
+                if (IsValidBuff(panelConfig, buff, buffNameUpperCase, includeAllBuffsBlacklist, includeAllDebuffsBlacklist))
+                {
+                    // Found a required buff/debuff, update the panel with this data
+                    nameTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = $" {buff.buffName} ({buff.numStacks}/{buff.maxStacks}), ({buff.targetName})";
+                    // Set the time value for the row
+                    timeTextMeshTransformList[panelDisplayIndex].GetComponent<TextMeshProUGUI>().text = GetTimeTextMeshsText(buff);
+
+                    // Now update the progress bar color and time
+                    Image image = imageTransformList[panelDisplayIndex].GetComponent<Image>();
+                    UpdateImageDisplay(rowConfig, buff, image, true);
+                    // Move to the next row in the panel
+                    panelDisplayIndex++;
                 }
             }
         }
@@ -301,8 +361,8 @@ public class FlexiPanel : MonoBehaviour
         return false;
     }
 
-    // Returns true if we have a valid overide
-    private static bool HasValidOverride(PanelConfig panelConfig, BuffData buff, string buffNameUpperCase, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist)
+    // Returns true if we have a valid buffs
+    private static bool IsValidBuff(PanelConfig panelConfig, BuffData buff, string buffNameUpperCase, List<string> includeAllBuffsBlacklist, List<string> includeAllDebuffsBlacklist)
     {
         bool excludeThisBuff = (buff.categoryType.Equals(BuffCategoryType.Beneficial.ToString()) && panelConfig.excludeAllBuffs.Equals(true)) ? true : false;
         bool excludeThisDebuff = (buff.categoryType.Equals(BuffCategoryType.Harmful.ToString()) && panelConfig.excludeAllDebuffs.Equals(true)) ? true : false;

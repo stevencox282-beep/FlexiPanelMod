@@ -13,7 +13,7 @@ public static class Globals
     public static List<string> GroupMemberNetworkIds = new List<string>(); // List of all group members (does not include LocalPlayer)
     public static List<string> GroupMemberNames = new List<string>(); // List of all group members (does not include LocalPlayer)
     public static string PartyBuffs = "Party Buffs"; // Used to create an EntityData that holds buff/debuff information for the party and local player
-    public static string FPTtargetCommand = "/fptarget";
+    public static string FPTtargetCommand = "/fptarget"; // Used to reload the configuration
 
     // Panel/TextMeshs
     public static bool UpdatePanels = false; // Controls wether or not the panels will be updated
@@ -29,10 +29,11 @@ public static class Globals
     public static int TimeMeshWidthPx = 75;  // Time TextMesh size in pixels
     public static int FontSize = 10; // Font size for the text inside the TextMeshes
     public static int VerticalSpacingPx = 6; // Number of pixels to add create enough height for a row to be separate from the one above and below
-    public static UnityEngine.Color DefaultRowColor = UnityEngine.Color.darkOrange;
+    public static UnityEngine.Color DefaultRowColor = UnityEngine.Color.darkOrange; // Default color if an invalid color or no color is specified
 
     // XML parameters
     public static string DefaultPanelTitle = "No Title Set"; // The default title name
+    public static string DefaultRowDisplayText = "DEFAULT"; // The default buff/debuff name text
     public static string PanelDisplaysTitle = "title"; // Used to determine if the panel will display a title or the target information
     public static string IncludeMe = "[ME]"; // Used to indicate this row only applies to the local player
     public static string IncludeParty = "[PARTY]"; // Used to indicate this row applies to the party and the local player

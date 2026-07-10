@@ -54,18 +54,30 @@ public class ConfigParser()
 
             // Process the rows
             panelConfig.rowConfig = new List<RowConfig>();
-            for (int rowIndex = 0; rowIndex < allRows.Count; rowIndex++)
+            if (allRows.Count.Equals(0))
             {
-                // Current Row
-                XmlNode row = allRows[rowIndex];
-                XmlAttributeCollection rowAttributes = row.Attributes;
+                RowConfig defaultRow = new RowConfig();
+                defaultRow.displayText = Globals.DefaultRowDisplayText;
+                defaultRow.color = Globals.DefaultRowColor.ToString();
+                defaultRow.include = Globals.IncludeParty;
+                panelConfig.rowConfig.Add(defaultRow);
+            }
+            else
+            {
+                // IF we have rows
+                for (int rowIndex = 0; rowIndex < allRows.Count; rowIndex++)
+                {
+                    // Current Row
+                    XmlNode row = allRows[rowIndex];
+                    XmlAttributeCollection rowAttributes = row.Attributes;
 
-                // Store in PanelConfig
-                RowConfig rowConfig = new RowConfig();
-                rowConfig.displayText = (rowAttributes["Name"] != null) ? rowAttributes["Name"].Value.ToUpperSafe() : string.Empty;
-                rowConfig.color = (rowAttributes["Color"] != null) ? rowAttributes["Color"].Value : Globals.DefaultRowColor.ToString();
-                rowConfig.include = (rowAttributes["Include"] != null) ? rowAttributes["Include"].Value : string.Empty;
-                panelConfig.rowConfig.Add(rowConfig);
+                    // Store in PanelConfig
+                    RowConfig rowConfig = new RowConfig();
+                    rowConfig.displayText = (rowAttributes["Name"] != null) ? rowAttributes["Name"].Value.ToUpperSafe() : string.Empty;
+                    rowConfig.color = (rowAttributes["Color"] != null) ? rowAttributes["Color"].Value : Globals.DefaultRowColor.ToString();
+                    rowConfig.include = (rowAttributes["Include"] != null) ? rowAttributes["Include"].Value : string.Empty;
+                    panelConfig.rowConfig.Add(rowConfig);
+                }
             }
 
             // If we have a new panel, add it
